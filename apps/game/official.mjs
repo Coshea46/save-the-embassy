@@ -3,7 +3,12 @@ import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { rest } from "@embassy/contracts";
-import { createScenario, Simulation, entrance } from "@embassy/simulation";
+import {
+  createScenario,
+  Simulation,
+  entrance,
+  shortestPath,
+} from "@embassy/simulation";
 import { fullCatalogue } from "@embassy/tasks";
 import { roomAt } from "./session.mjs";
 
@@ -44,9 +49,13 @@ export function remoteTransport(service) {
       body: route.method === "GET" ? undefined : JSON.stringify(request),
     });
     if (!response.ok) {
+      const problem = await response.json().catch(() => ({}));
       const error = new Error(
-        "Competition server returned HTTP " + response.status,
+        typeof problem?.error === "string"
+          ? problem.error
+          : "Competition server returned HTTP " + response.status,
       );
+      error.status = response.status;
       if (response.status === 429) {
         const raw = response.headers.get("retry-after");
         const seconds =
@@ -143,12 +152,24 @@ export class Official {
   persist() {
     return this.store.save(this.data);
   }
-  async connect(display_name, join_code) {
+  async connect(display_name, join_code, player) {
     this.data = await this.store.load();
     const d = this.data;
     const ids = { workshop_id: this.workshop };
+    if (player) {
+      if (d.participant_id && d.participant_id !== player.participant_id)
+        throw new Error(
+          "A different player already has a saved run for this workshop.",
+        );
+      Object.assign(d, player, { joined: true });
+    }
+    if (!d.joined && d.name && d.name !== display_name) {
+      delete d.access_token;
+      delete d.participant_id;
+    }
     if (!d.access_token) {
       Object.assign(d, await this.call("register", ids, { display_name }));
+      d.name = display_name;
       await this.persist();
     }
     if (!d.joined) {
@@ -178,6 +199,30 @@ export class Official {
     await this.persist();
     return this.frame();
   }
+  async anotherAttempt() {
+    const d = this.data;
+    if (!d.finished || this.mock)
+      throw new Error("Finish this official run first.");
+    d.nextStartKey ??= randomUUID();
+    await this.persist();
+    const status = await this.call(
+      "start",
+      { workshop_id: this.workshop },
+      { idempotency_key: d.nextStartKey },
+      d.access_token,
+    );
+    Object.assign(d, {
+      status,
+      startKey: d.nextStartKey,
+      history: [],
+      log: [],
+      finished: false,
+      position: entrance,
+    });
+    delete d.nextStartKey;
+    await this.persist();
+    return this.frame();
+  }
   async advance(bridge) {
     const d = this.data;
     if (!d.pending) {
@@ -202,6 +247,7 @@ export class Official {
       body,
       d.access_token,
     );
+    let route = [];
     if (op === "decide") {
       const task = before.observation.available_tasks.find(
         (t) => t.id === body.selected_task_id,
@@ -210,6 +256,14 @@ export class Official {
         tick: before.tick,
         text: task ? "Selected " + task.title : "Wait one tick",
       });
+      if (task) {
+        const travelled = after.metrics.travel - before.metrics.travel;
+        route = shortestPath(
+          before.observation.agent.position,
+          task.position,
+        ).slice(0, travelled);
+        d.position = route.at(-1) ?? before.observation.agent.position;
+      }
       if (task && after.metrics.completed > before.metrics.completed) {
         d.history.unshift({
           tick: after.tick,
@@ -217,7 +271,6 @@ export class Official {
           outcome: "Completed",
           reward: task.reward,
         });
-        d.position = task.position;
       }
     } else d.finished = true;
     d.position =
@@ -227,7 +280,7 @@ export class Official {
     d.status = after;
     d.pending = null;
     await this.persist();
-    return this.frame();
+    return { ...this.frame(), route };
   }
   frame() {
     const d = this.data,

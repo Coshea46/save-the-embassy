@@ -197,6 +197,7 @@ export async function runAction(
       throw new Error("Replay integrity failure");
     await tx`insert into embassy.finishes values(${id},${finish.sequence},${finish.idempotency_key},${json(response)}::text::jsonb)`;
     await tx`update embassy.runs set finished_at=clock_timestamp() where id=${id}`;
+    await project(tx, meta.workshop_id, owner, member.display_name, true);
   }
   await tx`update embassy.runs set seen_at=clock_timestamp() where id=${id}`;
   return response;

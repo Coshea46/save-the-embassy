@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import { randomBytes, randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
+import { rest } from "@embassy/contracts";
 import { floor, newWorker, Practice } from "./session.mjs";
 import {
   checkedUrl,
@@ -34,10 +35,12 @@ const leaderboard = process.env.EMBASSY_LEADERBOARD_URL
 let session = new Practice(42),
   bridge,
   busy = false,
-  serial = 0;
+  serial = 0,
+  route = [];
 const frame = () => ({
   ...session.frame(),
   revision: serial,
+  route,
   floor,
   connected: Boolean(service),
 });
@@ -52,6 +55,7 @@ async function resetAgent() {
   bridge = await newWorker();
 }
 async function operation(path, body) {
+  route = [];
   if (path === "/practice") {
     const next = new Practice(body.seed ?? undefined, body.thresholds);
     await resetAgent();
@@ -59,36 +63,62 @@ async function operation(path, body) {
   } else if (path === "/agent") await resetAgent();
   else if (path === "/connect") {
     const mock = body.mode === "rehearsal";
+    let base = service;
+    let workshop = mock ? randomUUID() : body.workshop;
+    let player;
+    if (body.mode === "import") {
+      let imported;
+      try {
+        imported = JSON.parse(body.credentials);
+        player = rest.register.response.parse({
+          participant_id: imported.participant_id,
+          access_token: imported.access_token,
+        });
+        workshop = imported.workshop_id;
+        base = checkedUrl(imported.api_url);
+      } catch {
+        throw new Error(
+          "Paste the complete credentials copied from the workshop website.",
+        );
+      }
+      if (service && base !== service)
+        throw new Error(
+          "These credentials belong to another competition server.",
+        );
+    }
     if (
       !mock &&
-      (!service ||
-        !/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(body.workshop))
+      (!base ||
+        !/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(workshop))
     )
-      throw new Error(
-        "Supply an official API URL at launch and a valid workshop ID.",
-      );
-    const workshop = mock ? randomUUID() : body.workshop;
+      throw new Error("Supply an official API URL and a valid workshop ID.");
     const store = mock
       ? { load: async () => ({}), save: async () => {} }
-      : credentialStore(service, workshop);
+      : credentialStore(base, workshop);
     const next = new Official(
-      mock ? mockTransport() : remoteTransport(service),
+      mock ? mockTransport() : remoteTransport(base),
       store,
       workshop,
       mock,
-      leaderboard ?? service + "/workshops/" + workshop + "/leaderboard",
+      leaderboard ?? base + "/board/" + workshop,
     );
     await resetAgent();
     await next.connect(
       body.name || "Desk officer",
       mock ? "rehearsal" : body.code || "",
+      player,
     );
     session = next;
+  } else if (path === "/attempt") {
+    if (!(session instanceof Official))
+      throw new Error("Join an official workshop first.");
+    await resetAgent();
+    await session.anotherAttempt();
   } else if (path === "/step") {
     if (body.revision !== serial) return;
     if (!bridge) bridge = await newWorker();
     if (["playing", "verifying"].includes(session.frame().status))
-      await session.advance(bridge);
+      route = (await session.advance(bridge)).route ?? [];
   } else throw new Error("Unknown operation");
   serial++;
 }

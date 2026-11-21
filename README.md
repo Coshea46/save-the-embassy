@@ -135,7 +135,7 @@ export EMBASSY_PYTHON="$("$HOME/.local/bin/uv" python find 3.12)"
 5. Open **http://127.0.0.1:4173** in your browser, or the address printed by the launcher. Select **Run agent**. Click a document on the floor, radar or queue to inspect its deadline and travel cost. Select **Follow agent** for a closer view.
 6. Open [apps/game/python/agent.py](apps/game/python/agent.py). Ask Codex to change its scheduling rule, save the file, then click **Restart → Run agent**. Restart creates a fresh Python process and reuses the seed. **Shift settings** accepts a chosen seed or a blank field for a random one.
 7. Use **Shift journal → History** to see what completed or expired. Compare the score and survival clock on the same seed. The [workshop guide](docs/WORKSHOP.md) includes prompts and a faster multi-seed experiment.
-8. To enter an official round, get the API address, leaderboard URL, workshop ID and join code from the organiser. Follow [Join an official shift](docs/WORKSHOP.md#join-an-official-shift). **Competition → Local rehearsal** exercises this flow offline and earns an unranked score.
+8. To enter an official round, open the organiser’s invitation, register your player name, then select **Copy game credentials**. In the local game choose **Competition → Joined on the website**, paste and select **Join or resume → Run agent**. Follow [Join an official shift](docs/WORKSHOP.md#join-an-official-shift). **Competition → Local rehearsal** exercises this flow offline and earns an unranked score.
 
 Stop the launcher with **Ctrl+C** in the terminal. Return to this folder and run **npm start** next time.
 
@@ -152,6 +152,6 @@ Stop the launcher with **Ctrl+C** in the terminal. Return to this folder and run
 | Browser refuses a launch request | Open the exact printed `127.0.0.1` address. Reload the tab after restarting Node. |
 | Official workshop is greyed out | Start the launcher with the organiser's API URL as described in the workshop guide. Practice is available immediately. |
 
-[Simulation rules](docs/SIMULATION.md) · [Architecture](docs/ARCHITECTURE.md) · [REST contracts](docs/API.md) · [Catalogue audit](apps/game/qa/catalogue-audit.json) · [MIT licence](LICENSE)
+[Organiser deployment and environment variables](docs/PLATFORM.md) · [Simulation rules](docs/SIMULATION.md) · [Architecture](docs/ARCHITECTURE.md) · [REST contracts](docs/API.md) · [Catalogue audit](apps/game/qa/catalogue-audit.json) · [MIT licence](LICENSE)
 
 Installation references: [VS Code for Linux](https://code.visualstudio.com/docs/setup/linux), [Homebrew](https://brew.sh), [Node.js](https://nodejs.org/en/download), [WinGet](https://learn.microsoft.com/windows/package-manager/winget/install), [Codex extension](https://marketplace.visualstudio.com/items?itemName=openai.chatgpt).

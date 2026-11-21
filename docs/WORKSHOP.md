@@ -44,7 +44,9 @@ The first command measures **your Python agent** using the full catalogue. The s
 
 ## Join an official shift
 
-Get four details from your organiser: API base URL, public leaderboard URL, workshop UUID and join code. Stop your local launcher with Ctrl+C. In **PowerShell**, run:
+With the game already running, open the organiser’s invitation link, choose your nickname and select **Join competition → Copy game credentials**. In the local game choose **Competition → Joined on the website**, paste, then select **Join or resume → Run agent**. Use the same invitation and credentials after a disconnect. Your verified score links directly to the public board. Keep the copied credentials private.
+
+For registration entirely inside the game, get these details from your organiser: API base URL, public leaderboard URL, workshop UUID and join code. Stop your local launcher with Ctrl+C. In **PowerShell**, run:
 
 ```powershell
 $env:EMBASSY_API_URL = Read-Host "Paste the organiser's API base URL"
@@ -62,9 +64,9 @@ npm start
 ```
 
 1. Open the printed local address and select **Competition → Official workshop**. Enter the nickname to publish, workshop ID and join code. Select **Join or resume**, then **Run agent**.
-2. The server assigns the scenario and owns the clock, score and deadlines. The official map updates at accepted decision boundaries. Server pacing messages are normal. A local pause does not extend the competition's submission window.
+2. The server assigns the scenario and owns the clock, score and deadlines. After each accepted decision the map replays the tiles actually travelled. Scores and visible reports update at the server’s decision boundaries. Server pacing messages are normal. A local pause does not extend the competition's submission window.
 3. On a dropped connection, use **Retry**. The launcher journals each pending request and resends the same identifier. After a launcher restart, join the same workshop to resume the same participant and run. Python class memory starts fresh after a process restart.
-4. Wait for **Score verified** after the server's finish receipt. Open **Central leaderboard** for the standings. The local rehearsal is always marked unranked.
+4. Wait for **Score verified** after the server's finish receipt. Open **Central leaderboard** for the standings. If the organiser enabled multiple attempts, choose **Start another official attempt** after verification. The leaderboard keeps your best eligible result. The local rehearsal is always marked unranked.
 
 The launcher stores the participant token and pending request in your user profile under `.embassy-dispatch`. Use one running launcher per workshop and keep that folder private. Only the configured competition server receives your participant token.
 

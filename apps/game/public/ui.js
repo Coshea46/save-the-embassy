@@ -141,7 +141,7 @@ function buttons() {
   el("settings").disabled = locked;
   el("settings").hidden = !practice;
   el("speed").disabled = !practice;
-  for (const id of ["officialTab", "practiceTab", "again"])
+  for (const id of ["officialTab", "practiceTab", "again", "attempt"])
     el(id).disabled = locked;
 }
 function connection(message) {
@@ -239,6 +239,7 @@ function render(next) {
     el("callout").hidden = true;
   }
   el("terminal").hidden = !terminal();
+  el("attempt").hidden = !next.verified;
   if (terminal()) {
     running = false;
     el("terminalTitle").textContent =
@@ -330,6 +331,7 @@ async function command(path, body) {
 el("play").onclick = () => (running ? stop() : run());
 el("restart").onclick = () =>
   command("/practice", { seed: state.seed, thresholds });
+el("attempt").onclick = () => command("/attempt", {});
 el("again").onclick = () =>
   command("/practice", { seed: state.seed ?? 42, thresholds });
 el("camera").onclick = () => {
@@ -364,18 +366,30 @@ el("practiceTab").onclick = () => {
     command("/practice", { seed: 42, thresholds });
 };
 function joinFields() {
-  const mock = el("connection").value === "rehearsal";
-  el("workshop").required = !mock;
-  el("code").required = !mock;
-  for (const id of ["workshop", "code"]) el(id).parentElement.hidden = mock;
-  el("joinHelp").textContent = mock
-    ? "Exercise the official protocol locally. Rehearsal scores are unranked."
-    : "Use your organiser’s workshop ID and join code. Reconnecting resumes the registered run.";
+  const mode = el("connection").value;
+  for (const id of ["name", "workshop", "code", "credentials"]) {
+    const show =
+      id === "credentials"
+        ? mode === "import"
+        : id === "name"
+          ? mode !== "import"
+          : mode === "official";
+    el(id).required = show;
+    el(id).parentElement.hidden = !show;
+  }
+  el("joinHelp").textContent = {
+    import:
+      "On the organiser’s website, join and choose Copy game credentials. Paste them below to start or resume.",
+    rehearsal:
+      "Exercise the official protocol locally. Rehearsal scores are unranked.",
+    official:
+      "Use your organiser’s workshop ID and join code. Reconnecting resumes the registered run.",
+  }[mode];
 }
 el("officialTab").onclick = () => {
   stop();
   el("connection").options[0].disabled = !state.connected;
-  el("connection").value = state.connected ? "official" : "rehearsal";
+  el("connection").value = state.connected ? "official" : "import";
   joinFields();
   el("join").showModal();
 };
@@ -383,7 +397,10 @@ el("connection").onchange = joinFields;
 el("joinForm").onsubmit = (e) => {
   e.preventDefault();
   el("join").close();
+  const credentials = el("credentials").value;
+  el("credentials").value = "";
   command("/connect", {
+    credentials,
     mode: el("connection").value,
     workshop: el("workshop").value.trim(),
     code:

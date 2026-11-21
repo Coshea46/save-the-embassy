@@ -177,7 +177,7 @@ async function board() {
     serverOffset = Date.parse(b.server_time) - Date.now();
     isFinal = b.final;
     clock();
-    document.title = b.title + " · Embassy Arcade";
+    document.title = b.title + " · Embassy Dispatch";
     by("title").textContent = b.title;
     by("prize").textContent = b.prize;
     by("notice").textContent = "";

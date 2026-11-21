@@ -65,8 +65,9 @@ export async function project(
   workshop: string,
   participant: string,
   display: string,
+  notifyFinish = false,
 ) {
-  // The caller holds the member lock. Only write actual changes to the WAL stream.
+  // The caller holds the member lock. A finish changes public status even when the score stays level.
   const [best] =
     await tx`select score,survival_ticks from embassy.best where workshop_id=${workshop} and participant_id=${participant}`;
   if (!best) {
@@ -75,5 +76,5 @@ export async function project(
   }
   await tx`insert into public.embassy_standings as p values (${workshop},${display},${best.score},${best.survival_ticks})
     on conflict(workshop_id,display_name) do update set score=excluded.score,survival_ticks=excluded.survival_ticks
-    where (p.score,p.survival_ticks) is distinct from (excluded.score,excluded.survival_ticks)`;
+    where ${notifyFinish} or (p.score,p.survival_ticks) is distinct from (excluded.score,excluded.survival_ticks)`;
 }

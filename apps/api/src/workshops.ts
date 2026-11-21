@@ -1,7 +1,7 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { z } from "zod";
 import { createScenario } from "@embassy/simulation";
-import { sampleCatalogue } from "@embassy/tasks";
+import { fullCatalogue } from "@embassy/tasks";
 import type { Catalogue } from "@embassy/contracts";
 import {
   code,
@@ -40,7 +40,7 @@ export async function createWorkshop(
   tx: Tx,
   actor: string,
   raw: unknown,
-  catalogue: Catalogue = sampleCatalogue,
+  catalogue: Catalogue = fullCatalogue,
 ) {
   const w = settings.parse(raw),
     id = randomUUID(),

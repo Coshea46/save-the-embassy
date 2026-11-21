@@ -54,6 +54,7 @@
                 <div class="overline">Shift report</div>
                 <h2 id="terminalTitle"></h2>
                 <p id="terminalText"></p>
+                <button id="attempt" hidden>Start another official attempt</button>
                 <button id="again">Restart shift</button>
               </div>
             </div>
@@ -197,10 +198,12 @@
             >Connection
             <select id="connection">
               <option value="official">Official workshop</option>
+              <option value="import">Joined on the website</option>
               <option value="rehearsal">Local rehearsal</option>
             </select></label
           >
           <p id="joinHelp"></p>
+          <label hidden>Game credentials<input id="credentials" type="password" autocomplete="off" /></label>
           <label
             >Display name
             <input

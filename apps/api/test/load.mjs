@@ -131,6 +131,9 @@ export async function measure(f, { size = 150, realtime } = {}) {
         await call(base + "/runs", { idempotency_key: randomUUID() }, u.auth)
       ).data;
     });
+    assert.equal(users[0].run.manifest.catalogue_version, "dispatch.1");
+    for (const user of users)
+      assert.deepEqual(user.run.observation, users[0].run.observation);
     if (viewers.length) await viewers[1].close();
     await burst("pacing rejection", async (u) => {
       u.choice = {
@@ -189,6 +192,7 @@ export async function measure(f, { size = 150, realtime } = {}) {
     )[0];
     const wall = (performance.now() - start) / 1000;
     return {
+      manifest: users[0].run.manifest,
       participants: size,
       wall_seconds: +wall.toFixed(2),
       requests: times.length,

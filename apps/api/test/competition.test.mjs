@@ -103,6 +103,8 @@ test("competition over HTTP with separate Postgres transactions", async (t) => {
       assert.equal((await q("/runs/" + run, undefined, bob.auth)).status, 403);
       assert.equal((await q(base + "/runs", key(), alice.auth)).status, 409);
       const [p] = await admin`select scenario,catalogue from embassy.scenarios`;
+      assert.equal(p.catalogue.version, "dispatch.1");
+      assert.equal(p.catalogue.definitions.length, 600);
       assert.equal(typeof p.scenario.seed, "number");
       assert.equal(p.scenario.manifest.catalogue_version, p.catalogue.version);
       assert.ok(!JSON.stringify(opening).includes('"seed"'));

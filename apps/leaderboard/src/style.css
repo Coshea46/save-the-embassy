@@ -1,13 +1,13 @@
 :root {
   color-scheme: dark;
-  font-family: "Barlow", system-ui, sans-serif;
-  background: #101e2a;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: #162e25;
   color: #e5ece9;
-  --ink: #111f2c;
-  --panel: #162a38;
-  --line: #37505c;
-  --gold: #ffd17e;
-  --mint: #8fd6bf;
+  --ink: #203a32;
+  --panel: #203f34;
+  --line: #4a6657;
+  --gold: #eed294;
+  --mint: #b9d4ae;
 }
 * {
   box-sizing: border-box;
@@ -37,19 +37,14 @@ header {
   border-bottom: 1px solid var(--line);
 }
 .brand {
-  font: 900 1.1rem/1 monospace;
-  letter-spacing: 0.05em;
-  color: #f6eed4;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: 600 1.4rem Georgia, serif;
+  color: #faf6db;
 }
-.brand i {
-  background: var(--gold);
-  color: var(--ink);
-  font-style: normal;
-  padding: 6px;
-}
-.brand b {
-  color: var(--mint);
-}
+.brand img { image-rendering: pixelated; }
+
 a {
   color: var(--mint);
   text-decoration: none;
@@ -70,11 +65,11 @@ main {
 .poster {
   display: grid;
   grid-template-columns: 1fr 1.05fr;
-  background: #183a50;
-  border: 1px solid #597782;
+  background: #294d40;
+  border: 1px solid #687e6e;
   overflow: hidden;
   align-items: end;
-  box-shadow: 0 5px 0 #08151f;
+  box-shadow: 0 5px 0 #11261d;
 }
 .poster > div {
   padding: clamp(20px, 3vw, 44px);
@@ -108,7 +103,7 @@ p {
 }
 h1,
 h2 {
-  font-family: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  font-family: Georgia, serif;
   letter-spacing: -0.045em;
   line-height: 0.99;
 }
@@ -265,7 +260,7 @@ label {
 }
 input,
 select {
-  background: #0f202d;
+  background: #192e26;
   color: #fff;
   border: 1px solid #526d77;
   border-radius: 3px;
