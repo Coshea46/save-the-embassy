@@ -1,3 +1,5 @@
-# Workshop leaderboard
+# Competition website
 
-The platform session owns this directory. Use the public leaderboard contract in @embassy/contracts and the publication rules in [API.md](../../docs/API.md) for the standings, organiser dashboard and projector view.
+The API serves this Vite workspace on the same origin. Build from the repository root with `npm run build`. The registration page is at `/join`, standings at `/board/:workshopId`, the fullscreen display at `/projector/:workshopId` and the organiser desk at `/organiser`.
+
+[Local setup, deployment and Realtime rehearsals](../../docs/PLATFORM.md)
