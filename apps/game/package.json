@@ -6,7 +6,8 @@
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
+    "@embassy/contracts": "0.1.0",
     "@embassy/simulation": "0.1.0",
-    "@embassy/contracts": "0.1.0"
+    "@embassy/tasks": "0.1.0"
   }
 }

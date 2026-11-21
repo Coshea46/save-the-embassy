@@ -1,0 +1,6005 @@
+{
+  "version": "dispatch.1",
+  "definitions": [
+    {
+      "id": "maintenance_boiler_diary",
+      "title": "Boiler diary",
+      "description": "The heating timer still observes the summer recess. Reinstate the occupied timetable.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_lift_bell",
+      "title": "Lift bell",
+      "description": "The goods lift announces arrival one floor early. Refer the bell circuit for service.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_airlock_whistle",
+      "title": "Airlock whistle",
+      "description": "A supply duct whistles during every press statement. Seat the loose inspection cover.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_pipe_legend",
+      "title": "Pipe legend",
+      "description": "Both return lines are labelled OUT. Trace the maintenance drawings and correct the tags.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_condensate_lake",
+      "title": "Condensate lake",
+      "description": "The dehumidifier drains into its own packaging. Fit its collection tray.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_meter_eclipse",
+      "title": "Meter eclipse",
+      "description": "A shelf conceals the water meter. Move the shelf before the reading is due.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_filter_holiday",
+      "title": "Filter holiday",
+      "description": "A replacement filter remains in its shipping sleeve. Commission it for the afternoon shift.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_clockwork_frost",
+      "title": "Clockwork frost",
+      "description": "The frost sensor is mounted above a radiator. Arrange a representative measurement.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_painted_gauge",
+      "title": "Painted gauge",
+      "description": "The last repaint included the pressure dial. Request a legible replacement.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_tool_census",
+      "title": "Tool census",
+      "description": "The calibrated torque wrench went out with the ordinary spanners. Trace its sign-out.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_drip_percussion",
+      "title": "Drip percussion",
+      "description": "Staff have timed meetings to a dripping valve. Book a repair before the bucket fills.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_service_gap",
+      "title": "Service gap",
+      "description": "A shelving unit blocks the inspection hatch. Restore the required access space.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_spare_belt",
+      "title": "Spare belt",
+      "description": "The spare fan belt fits a machine retired in 1989. Reconcile the parts cupboard.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_false_daylight",
+      "title": "False daylight",
+      "description": "The lighting sensor faces its own indicator. Reposition the sensor for commissioning.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_work_order_loop",
+      "title": "Work order loop",
+      "description": "Two contractors are waiting for each other to authorise the same repair. Assign the job.",
+      "category": "maintenance",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_mat_migration",
+      "title": "Mat migration",
+      "description": "The entrance mat has travelled beyond its recess. Secure the backing before visitors arrive.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_latch_etiquette",
+      "title": "Latch etiquette",
+      "description": "The front door requires a formal shoulder charge. Call the fitter to realign the latch.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_umbrella_runoff",
+      "title": "Umbrella runoff",
+      "description": "Water from the umbrella stand runs across the queue. Move the drip tray under the stand.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_flag_pulley",
+      "title": "Flag pulley",
+      "description": "The halyard squeaks through the entire anthem. Book the pulley for lubrication.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_sill_garden",
+      "title": "Sill garden",
+      "description": "A birch seedling has taken root in the window drain. Clear the drainage channel.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_bell_silence",
+      "title": "Bell silence",
+      "description": "The desk bell's clapper is in lost property. Reunite the two items.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_shifting_threshold",
+      "title": "Shifting threshold",
+      "description": "The brass threshold rocks under rolling cases. Arrange a flush refit.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_map_tilt",
+      "title": "Map tilt",
+      "description": "The wall map now shows Helsinki sliding downhill. Fit a second hanging point.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_letterbox_chatter",
+      "title": "Letterbox chatter",
+      "description": "A loose letter flap interrupts the interpreter. Replace the perished buffer.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_seat_wobble",
+      "title": "Seat wobble",
+      "description": "The visitors' bench has acquired a rocking function. Level its feet.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_rain_indoors",
+      "title": "Rain indoors",
+      "description": "The vestibule leaks only when the outer door opens. Inspect the seal above the hinge.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_blind_spot",
+      "title": "Blind spot",
+      "description": "A broken blind cord leaves afternoon visitors facing direct sun. Replace the cord assembly.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_floor_arrow",
+      "title": "Floor arrow",
+      "description": "A temporary flooring patch points visitors into a cupboard. Restore the directional strip.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_ramp_lip",
+      "title": "Ramp lip",
+      "description": "A delivery trolley catches at the ramp joint. Mark the fault and arrange a smooth transition.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_glass_confusion",
+      "title": "Glass confusion",
+      "description": "The visibility band has peeled off the glazed door. Restore it at eye level.",
+      "category": "maintenance",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_drawer_arrears",
+      "title": "Drawer arrears",
+      "description": "The desk drawer will only close on alternate Tuesdays. Free the bent runner.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_chair_downgrade",
+      "title": "Chair downgrade",
+      "description": "The chair descends one centimetre per briefing. Swap out the failed gas lift.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_cable_ridge",
+      "title": "Cable ridge",
+      "description": "An extension lead has formed a ridge beneath the carpet. Route it through the desk channel.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_portrait_slump",
+      "title": "Portrait slump",
+      "description": "The ambassador's predecessor is hanging at an undiplomatic angle. Replace the picture hook.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_window_veto",
+      "title": "Window veto",
+      "description": "The meeting window refuses to stay open. Inspect its worn restrictor.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_partition_drift",
+      "title": "Partition drift",
+      "description": "A mobile partition rolls during negotiations. Service its wheel locks.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_lamp_pool",
+      "title": "Lamp pool",
+      "description": "A desk lamp only illuminates its own base. Tighten the adjustable joint.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_whiteboard_tide",
+      "title": "Whiteboard tide",
+      "description": "The board's loose rail deposits pens on signed documents. Refix the tray.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_acoustic_vacancy",
+      "title": "Acoustic vacancy",
+      "description": "A ceiling panel has left its grid. Arrange reinstatement over the empty workstation.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_cupboard_collision",
+      "title": "Cupboard collision",
+      "description": "Two cabinet doors cannot open independently. Reset the hinge stops.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_blistered_veneer",
+      "title": "Blistered veneer",
+      "description": "The meeting table lifts carbon copies as it sheds varnish. Cover and schedule refinishing.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_socket_label",
+      "title": "Socket label",
+      "description": "The switched outlet marked projector operates the floor lamp. Correct the room diagram.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_skirting_curl",
+      "title": "Skirting curl",
+      "description": "A loose length of skirting snags briefcases. Book a fix before the next delegation.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_desk_seam",
+      "title": "Desk seam",
+      "description": "The conference table opens a gap down its centre. Reconnect the leaf catches.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_silent_pendulum",
+      "title": "Silent pendulum",
+      "description": "The wall clock stopped during the budget discussion. Inspect the movement and reset the time.",
+      "category": "maintenance",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_tap_encore",
+      "title": "Tap encore",
+      "description": "The tap delivers a second cup after being closed. Inspect its cartridge.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_freezer_seal",
+      "title": "Freezer seal",
+      "description": "A frost ribbon marks the freezer's leaking gasket. Arrange a seal replacement.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_extractor_rattle",
+      "title": "Extractor rattle",
+      "description": "The extractor cover vibrates at speaking pitch. Secure its mountings.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_splashback_slip",
+      "title": "Splashback slip",
+      "description": "A splashback tile has detached intact. Isolate the counter for retiling.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_sink_queue",
+      "title": "Sink queue",
+      "description": "The second sink empties into the first. Request a drainage inspection.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_soap_reserve",
+      "title": "Soap reserve",
+      "description": "The dispenser pump cannot reach the bottom of its reservoir. Fit the correct tube.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_wandering_trolley",
+      "title": "Wandering trolley",
+      "description": "The tea trolley veers into the dishwasher. Replace its mismatched castor.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_shelf_bow",
+      "title": "Shelf bow",
+      "description": "A crockery shelf bows beneath the presentation plates. Redistribute the load for repair.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_fridge_posture",
+      "title": "Fridge posture",
+      "description": "The refrigerator door opens by itself. Level the feet and check the closure.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_scale_crust",
+      "title": "Scale crust",
+      "description": "The hot water dispenser produces mineral flakes. Schedule a descale cycle.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_hood_light",
+      "title": "Hood light",
+      "description": "The cooker hood lamp shines inside the cupboard. Reseat its displaced housing.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_bin_hinge",
+      "title": "Bin hinge",
+      "description": "The pedal bin closes before rubbish can enter. Replace the return linkage.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_drawer_steam",
+      "title": "Drawer steam",
+      "description": "Steam from the washer enters the cutlery drawer. Repair the door seal.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_tile_grout",
+      "title": "Tile grout",
+      "description": "Cleaning records show a widening gap behind the sink. Schedule the grout repair.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_pan_rail",
+      "title": "Pan rail",
+      "description": "The hanging rail rotates when a pan is removed. Secure its brackets.",
+      "category": "maintenance",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_shelf_coordinates",
+      "title": "Shelf coordinates",
+      "description": "The rolling shelves stop between aisle numbers. Recalibrate their position indicators.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_silverfish_ledger",
+      "title": "Silverfish ledger",
+      "description": "Fresh insect traces appear inside an empty box. Quarantine the shelf for conservation.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_binding_dust",
+      "title": "Binding dust",
+      "description": "Dust from the vent falls on open registers. Install a clean diffuser.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_humidity_spike",
+      "title": "Humidity spike",
+      "description": "The humidity chart rises every cleaning shift. Identify the source beside the records.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_crate_splinter",
+      "title": "Crate splinter",
+      "description": "Transport crates are catching map sleeves on exposed wood. Line the interiors.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_flat_file_slope",
+      "title": "Flat file slope",
+      "description": "Map drawers slide out under their own weight. Level the cabinet.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_rug_crease",
+      "title": "Rug crease",
+      "description": "The book trolley repeatedly stops at a rug ridge. Refit the floor covering.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_faded_lux_card",
+      "title": "Faded lux card",
+      "description": "The light exposure card has itself faded beyond reading. Replace the monitoring strip.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_rusted_staple",
+      "title": "Rusted staple",
+      "description": "Corrosion has spread from a box staple to a shelf. Transfer the contents to a clean box.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_stuck_ladder",
+      "title": "Stuck ladder",
+      "description": "The rolling ladder remains locked over shelf C. Service its brake.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_weather_strip",
+      "title": "Weather strip",
+      "description": "Street dust outlines the archive window frame. Renew the deteriorated seal.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_swollen_door",
+      "title": "Swollen door",
+      "description": "The archive door jams on humid days. Record clearance measurements for the joiner.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_bent_cradle",
+      "title": "Bent cradle",
+      "description": "A reading cradle tips bound volumes forward. Replace its distorted support.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_page_suction",
+      "title": "Page suction",
+      "description": "The ventilation inlet attracts loose cataloguing slips. Fit the approved grille.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_box_floodline",
+      "title": "Box floodline",
+      "description": "A damp mark crosses the lowest row of cartons. Move the records for inspection.",
+      "category": "maintenance",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_bench_burr",
+      "title": "Bench burr",
+      "description": "A birch bench has developed a raised splinter. Close the seat for sanding.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_bucket_breach",
+      "title": "Bucket breach",
+      "description": "The wooden bucket loses water between tap and bench. Refit its lower hoop.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_thermometer_fog",
+      "title": "Thermometer fog",
+      "description": "Condensation obscures the temperature dial. Install a sealed instrument.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_peg_rotation",
+      "title": "Peg rotation",
+      "description": "A robe peg turns until the robe drops. Secure it to the backing board.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_door_sweep",
+      "title": "Door sweep",
+      "description": "The changing-room sweep collects towels instead of sealing the gap. Adjust its height.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_ducking_drain",
+      "title": "Ducking drain",
+      "description": "A drain cover tips when stepped on. Isolate the spot for reseating.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_timer_spring",
+      "title": "Timer spring",
+      "description": "The mechanical session timer rings immediately. Replace its worn spring.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_stone_ledger",
+      "title": "Stone ledger",
+      "description": "The heater stone inspection date is illegible. Locate the service record.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_mirror_mist",
+      "title": "Mirror mist",
+      "description": "The changing-room mirror remains opaque after ventilation. Inspect its backing unit.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_steam_gap",
+      "title": "Steam gap",
+      "description": "Steam escapes into the linen store. Repair the interconnecting door seal.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_slat_spacing",
+      "title": "Slat spacing",
+      "description": "A replacement footrest traps the cleaning brush. Match the original slat spacing.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_lamp_shade",
+      "title": "Lamp shade",
+      "description": "The sauna light guard has warped towards the fitting. Arrange a heat-rated replacement.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_towel_rack",
+      "title": "Towel rack",
+      "description": "The towel warmer's brackets have pulled away from the wall. Set up a temporary rail.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_shower_scale",
+      "title": "Shower scale",
+      "description": "The rinse shower sprays the noticeboard. Descale and realign its head.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "maintenance_drying_line",
+      "title": "Drying line",
+      "description": "The retractable linen line no longer retracts. Replace its spring cassette.",
+      "category": "maintenance",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_carbon_majority",
+      "title": "Carbon majority",
+      "description": "The carbon copy bears more signatures than the original. Establish which version was approved.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_leap_invoice",
+      "title": "Leap invoice",
+      "description": "Accounts received an invoice dated 30 February. Request a valid issue date.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_circular_authority",
+      "title": "Circular authority",
+      "description": "The acting deputy has delegated approval back to herself. Identify an authorised signatory.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_staple_standard",
+      "title": "Staple standard",
+      "description": "A procurement specification orders staples by the kilogram. Confirm the intended box count.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_minute_silence",
+      "title": "Minute silence",
+      "description": "The minutes contain the tea break but omit the vote. Reconstruct the resolution from notes.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_double_rent",
+      "title": "Double rent",
+      "description": "Two cost centres claim the same lease payment. Reconcile the ledger entry.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_lost_denominator",
+      "title": "Lost denominator",
+      "description": "The quarterly utilisation figure reads 114 percent. Check the room capacity used.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_currency_column",
+      "title": "Currency column",
+      "description": "A travel claim adds euros directly to pounds. Recalculate using the recorded rates.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_receipt_origami",
+      "title": "Receipt origami",
+      "description": "The taxi receipt was folded into a swan. Recover its total for reimbursement.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_phantom_post",
+      "title": "Phantom post",
+      "description": "An empty position has submitted a timesheet. Correct the payroll roster.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_annual_tuesday",
+      "title": "Annual Tuesday",
+      "description": "A recurring calendar entry schedules the audit every Tuesday forever. Restore its annual interval.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_cover_letter",
+      "title": "Cover letter",
+      "description": "An application consists solely of a beautifully typeset cover sheet. Request the missing form.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_split_order",
+      "title": "Split order",
+      "description": "The furniture order lists six left desk legs. Confirm the intended assemblies.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_consent_edition",
+      "title": "Consent edition",
+      "description": "The printer tray contains last year's consent form. Replace the stock before appointments.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_vanishing_decimal",
+      "title": "Vanishing decimal",
+      "description": "A misplaced decimal purchased a century of window cleaning. Correct the requisition.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_late_early_bird",
+      "title": "Late early bird",
+      "description": "A conference claim requests the early rate after registration closed. Obtain the actual quote.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_green_ink",
+      "title": "Green ink",
+      "description": "An approval stamp transferred onto the facing page. Identify the authorised request.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_name_field",
+      "title": "Name field",
+      "description": "The payroll file treats a hyphen as a subtraction sign. Restore the employee's surname.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_exchange_reversal",
+      "title": "Exchange reversal",
+      "description": "The budget spreadsheet inverted the conversion rate. Reissue the forecast.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_meeting_overlap",
+      "title": "Meeting overlap",
+      "description": "A negotiator is booked to chair two simultaneous meetings. Obtain a revised timetable.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_leave_balance",
+      "title": "Leave balance",
+      "description": "A half-day absence was recorded as half a year. Amend the leave register.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_mileage_sea",
+      "title": "Mileage sea",
+      "description": "A mileage claim includes the ferry crossing as driving. Separate the fare from road travel.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_unowned_invoice",
+      "title": "Unowned invoice",
+      "description": "An invoice has circulated through every department without a purchase reference. Trace the request.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_refund_circle",
+      "title": "Refund circle",
+      "description": "A refund was posted as a fresh expense. Reverse the duplicate charge.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_frozen_quarter",
+      "title": "Frozen quarter",
+      "description": "The monthly dashboard still reports March. Reconnect the current reporting sheet.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_unsigned_mandate",
+      "title": "Unsigned mandate",
+      "description": "The bank mandate reached dispatch with an empty signature field. Recall the envelope.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_address_labels",
+      "title": "Address labels",
+      "description": "Return labels name a building vacated two years ago. Print the current address.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_committee_quorum",
+      "title": "Committee quorum",
+      "description": "The attendance list counts the interpreter twice. Recheck the recorded quorum.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_stationery_forecast",
+      "title": "Stationery forecast",
+      "description": "A formula projects consumption of one eraser per citizen. Restore the staff headcount.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_travel_surname",
+      "title": "Travel surname",
+      "description": "A booking uses the delegate's familiar name. Match the reservation to the travel document.",
+      "category": "administration",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_index_inversion",
+      "title": "Index inversion",
+      "description": "Records under Turku were filed under the letter U. Restore the place-name index.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_accession_twins",
+      "title": "Accession twins",
+      "description": "Two unrelated donations share one accession number. Issue distinct catalogue references.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_retention_alarm",
+      "title": "Retention alarm",
+      "description": "A disposal notice includes a file under active review. Suspend the listed transfer.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_orphan_appendix",
+      "title": "Orphan appendix",
+      "description": "Appendix C arrived without a parent report. Match its circulation code.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_microfilm_reversal",
+      "title": "Microfilm reversal",
+      "description": "The reel leader identifies its last frame as page one. Correct the viewing notes.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_missing_folio",
+      "title": "Missing folio",
+      "description": "The signed register jumps from page 18 to 20. Locate the separately scanned leaf.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_redaction_layer",
+      "title": "Redaction layer",
+      "description": "The release copy still contains revision comments. Request the cleared publication copy.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_duplicate_accession",
+      "title": "Duplicate accession",
+      "description": "A returned loan was logged as a new acquisition. Link it to its original record.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_glossary_drift",
+      "title": "Glossary drift",
+      "description": "The glossary assigns two departments the same abbreviation. Record the approved distinction.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_copy_count",
+      "title": "Copy count",
+      "description": "The transmittal names five enclosures but the folder holds four. Trace the missing annex.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_embargo_sticker",
+      "title": "Embargo sticker",
+      "description": "The release date has transferred onto the wrong file jacket. Verify both embargo records.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_pencil_census",
+      "title": "Pencil census",
+      "description": "An inventory counts pencil annotations as separate documents. Consolidate the entries.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_drawer_crosswalk",
+      "title": "Drawer crosswalk",
+      "description": "Cabinet numbers changed during a move. Update the catalogue location crosswalk.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_map_scale",
+      "title": "Map scale",
+      "description": "A reduced photocopy retains the original scale statement. Add the correct reproduction note.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_register_splice",
+      "title": "Register splice",
+      "description": "A scan combines the end of one register with another's title page. Separate the records.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_donation_clause",
+      "title": "Donation clause",
+      "description": "A donor's access conditions remain inside the shipping envelope. Attach them to the record.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_date_ambiguity",
+      "title": "Date ambiguity",
+      "description": "An overseas list uses month-first dates without a legend. Confirm its convention.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_missing_verso",
+      "title": "Missing verso",
+      "description": "The digitised treaty contains only the front of each leaf. Queue the reverse sides.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_faded_ribbon",
+      "title": "Faded ribbon",
+      "description": "A typewritten inventory is too faint for the scanner. Arrange conservation imaging.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_alphabet_dispute",
+      "title": "Alphabet dispute",
+      "description": "The filing plan puts Å before A. Document the approved local sorting order.",
+      "category": "administration",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_appointment_echo",
+      "title": "Appointment echo",
+      "description": "One visa slot generated six confirmation slips. Contact the affected visitors.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_queue_rollover",
+      "title": "Queue rollover",
+      "description": "The ticket roll resumed at yesterday's final number. Reconcile the desk display.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_courier_initials",
+      "title": "Courier initials",
+      "description": "A delivery receipt carries only a drawing of a hat. Identify the receiving officer.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_blank_envelope",
+      "title": "Blank envelope",
+      "description": "A sealed outgoing envelope has no destination. Match it to the dispatch manifest.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_change_tin",
+      "title": "Change tin",
+      "description": "The cash tin and collection sheet differ by one commemorative token. Recount valid currency.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_language_box",
+      "title": "Language box",
+      "description": "Every language option on the intake sheet is ticked by default. Replace the faulty print run.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_photo_sizing",
+      "title": "Photo sizing",
+      "description": "The example photo was printed at poster scale. Post an actual-size guide.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_lost_reference",
+      "title": "Lost reference",
+      "description": "A visitor has the right appointment under an obsolete reference. Link the booking records.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_return_window",
+      "title": "Return window",
+      "description": "The public notice describes yesterday as the next collection day. Revise the dated notice.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_receipt_number",
+      "title": "Receipt number",
+      "description": "The receipt book skips a numbered sheet. Document the void before closing.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_courier_capacity",
+      "title": "Courier capacity",
+      "description": "The pickup manifest lists a crate as a standard letter. Book the proper collection.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_counter_sign",
+      "title": "Counter sign",
+      "description": "The enquiries desk displays the translation for deliveries. Swap the two counter cards.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_duplicate_oath",
+      "title": "Duplicate oath",
+      "description": "The appointment schedule has one applicant taking the same oath twice. Release the extra slot.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_quiet_hour",
+      "title": "Quiet hour",
+      "description": "Walk-in hours overlap the desk's scheduled maintenance. Publish the temporary hours.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_postmark_mix",
+      "title": "Postmark mix",
+      "description": "Incoming correspondence received the outgoing dispatch stamp. Correct the tracking entries.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_photo_consent",
+      "title": "Photo consent",
+      "description": "Event badges lack the requested photography preference. Add the preferences from registration.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_errant_seal",
+      "title": "Errant seal",
+      "description": "A sample certificate has received the live office seal. Enter it in the void register.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_return_slip",
+      "title": "Return slip",
+      "description": "The acknowledgement slip asks visitors to retain both halves. Supply a perforated corrected copy.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_stamp_duty",
+      "title": "Stamp duty",
+      "description": "Postage stamps were counted as visa fee vouchers. Separate the two inventories.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "administration_delivery_date",
+      "title": "Delivery date",
+      "description": "The consignment note confuses booking date with arrival. Confirm the actual delivery slot.",
+      "category": "administration",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_rack_summer",
+      "title": "Rack summer",
+      "description": "The rack inlet thermometer is attached to the exhaust. Restore meaningful temperature monitoring.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_backup_postcard",
+      "title": "Backup postcard",
+      "description": "The nightly backup produces a success email and an empty archive. Escalate the failed restore check.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_expired_certificate",
+      "title": "Expired certificate",
+      "description": "The staff portal greets users with an expiry notice. Request renewal through IT.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_clock_island",
+      "title": "Clock island",
+      "description": "The server clock has drifted from the attendance terminal. Restore approved time synchronisation.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_port_census",
+      "title": "Port census",
+      "description": "The patch panel map describes an earlier renovation. Reconcile the physical labels.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_queue_tide",
+      "title": "Queue tide",
+      "description": "A retired print server still receives current jobs. Remove its obsolete queue listing.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_battery_memoir",
+      "title": "Battery memoir",
+      "description": "The UPS reports a replacement battery older than the unit. Verify the service record.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_fan_chorus",
+      "title": "Fan chorus",
+      "description": "A chassis fan has changed pitch since the morning round. Arrange a hardware inspection.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_capacity_cliff",
+      "title": "Capacity cliff",
+      "description": "A log partition is approaching capacity. Apply the approved retention schedule.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_tape_destination",
+      "title": "Tape destination",
+      "description": "The off-site backup case is labelled for internal post. Correct the collection instructions.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_cable_strain",
+      "title": "Cable strain",
+      "description": "A hanging bundle pulls on the network cabinet sockets. Restore its support bar.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_maintenance_banner",
+      "title": "Maintenance banner",
+      "description": "The portal continues to announce maintenance completed last week. Retire the expired notice.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_asset_conflict",
+      "title": "Asset conflict",
+      "description": "Two replacement laptops share an asset tag. Reconcile the device inventory.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_restore_owner",
+      "title": "Restore owner",
+      "description": "An archive restore request names a departed approver. Locate the current data owner.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_retired_sensor",
+      "title": "Retired sensor",
+      "description": "The dashboard averages a disconnected sensor's zero reading. Remove the retired channel.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_cooling_rota",
+      "title": "Cooling rota",
+      "description": "A cooling inspection and rack delivery occupy the same service window. Separate the bookings.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_status_inversion",
+      "title": "Status inversion",
+      "description": "The monitoring display shows healthy systems in incident red. Restore the agreed colour legend.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_quota_petition",
+      "title": "Quota petition",
+      "description": "A shared drive filled with duplicate training footage. Arrange approved archival storage.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_patch_deferral",
+      "title": "Patch deferral",
+      "description": "A maintenance deferral has outlived its review date. Obtain a fresh maintenance window.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_alert_avalanche",
+      "title": "Alert avalanche",
+      "description": "One approved restart generated hundreds of identical notifications. Group the incident records.",
+      "category": "it",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_upside_down_slides",
+      "title": "Upside-down slides",
+      "description": "The projector has applied its ceiling profile to a tabletop unit. Restore the correct orientation.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_keyboard_border",
+      "title": "Keyboard border",
+      "description": "The loan keyboard produces punctuation from another layout. Select the matching input language.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_looping_welcome",
+      "title": "Looping welcome",
+      "description": "The induction deck restarts before slide two. Disable the stray rehearsal timing.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_muted_minutes",
+      "title": "Muted minutes",
+      "description": "The transcription microphone records the projector fan. Select the conference microphone.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_calendar_longitude",
+      "title": "Calendar longitude",
+      "description": "The remote briefing appears at Helsinki time on a London schedule. Correct the event zone.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_mail_alias",
+      "title": "Mail alias",
+      "description": "The supplies alias includes a former contractor. Request a membership review.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_screen_disclosure",
+      "title": "Screen disclosure",
+      "description": "A shared presentation contains a private speaker-notes window. Select the audience display.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_missing_glyph",
+      "title": "Missing glyph",
+      "description": "The letterhead font renders Finnish names with empty squares. Install the approved typeface.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_false_invoice",
+      "title": "False invoice",
+      "description": "An unexpected invoice arrived from a near-match supplier address. Route it to the reporting desk.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_stale_permissions",
+      "title": "Stale permissions",
+      "description": "A transferred employee still appears on a restricted folder list. Request an access review.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_loaner_reset",
+      "title": "Loaner reset",
+      "description": "A returned laptop opens the previous user's session. Withdraw it for approved reprovisioning.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_unsigned_installer",
+      "title": "Unsigned installer",
+      "description": "A staff member received an unsolicited update prompt. Refer the prompt to support.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_recovery_envelope",
+      "title": "Recovery envelope",
+      "description": "The sealed recovery packet is missing its custody label. Reconcile it with the register.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_lost_authenticator",
+      "title": "Lost authenticator",
+      "description": "A staff member reported a missing authentication device. Start the approved recovery process.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_scanner_address",
+      "title": "Scanner address",
+      "description": "The scanner sends documents to an obsolete distribution list. Correct the destination preset.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_caption_language",
+      "title": "Caption language",
+      "description": "Live captions interpret Finnish speech as English. Select the correct meeting language.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_thread_storm",
+      "title": "Thread storm",
+      "description": "An automatic reply is exchanging out-of-office messages with itself. Escalate the mail loop.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_display_scale",
+      "title": "Display scale",
+      "description": "The forms application places its submit button beyond the kiosk display. Restore the supported scale.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_audio_delay",
+      "title": "Audio delay",
+      "description": "The remote interpreter hears the room twice. Remove the duplicate conference audio feed.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_contact_merge",
+      "title": "Contact merge",
+      "description": "The address book combined two consuls with the same surname. Restore separate contacts.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_print_margin",
+      "title": "Print margin",
+      "description": "The PDF driver clips the final signature box. Reinstate the approved paper size.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_offline_draft",
+      "title": "Offline draft",
+      "description": "The collaborative agenda has diverged into two offline copies. Ask the owner to reconcile changes.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_spurious_survey",
+      "title": "Spurious survey",
+      "description": "A message requests staff credentials for a stationery survey. Submit it to the security mailbox.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_meeting_owner",
+      "title": "Meeting owner",
+      "description": "The only organiser of the weekly call has left the mission. Transfer its administration.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_consent_pop_up",
+      "title": "Consent pop-up",
+      "description": "The reception slideshow displays a vendor consent banner. Switch to the approved offline deck.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_sticky_shortcut",
+      "title": "Sticky shortcut",
+      "description": "An accessibility shortcut activates during every presentation. Review settings with the presenter.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_video_crop",
+      "title": "Video crop",
+      "description": "The camera's automatic framing consistently excludes the interpreter. Set an inclusive framing preset.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_forgotten_recorder",
+      "title": "Forgotten recorder",
+      "description": "The meeting recording continued through the lunch break. Refer the file for privacy review.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_sync_conflict",
+      "title": "Sync conflict",
+      "description": "A folder now contains nine competing final budgets. Identify the authoritative copy.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_wrong_duplex",
+      "title": "Wrong duplex",
+      "description": "The booklet printer puts alternate pages upside down. Correct the binding-edge preset.",
+      "category": "it",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_visitor_tablet",
+      "title": "Visitor tablet",
+      "description": "The sign-in tablet shows the previous visitor's details. Remove it from use for review.",
+      "category": "it",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_queue_screen",
+      "title": "Queue screen",
+      "description": "The waiting-room display shows staff diagnostic messages. Restore the public view.",
+      "category": "it",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_badge_barcode",
+      "title": "Badge barcode",
+      "description": "The badge printer scales every barcode beyond its reader's tolerance. Reset its template.",
+      "category": "it",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_ticket_tones",
+      "title": "Ticket tones",
+      "description": "The queue system announces the correct number in the wrong language. Repair the language mapping.",
+      "category": "it",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_guest_network",
+      "title": "Guest network",
+      "description": "The printed guest network card names a retired service. Replace the counter stock.",
+      "category": "it",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_consent_timeout",
+      "title": "Consent timeout",
+      "description": "The public form times out during its accessibility instructions. Arrange an assisted session.",
+      "category": "it",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_usb_hand_in",
+      "title": "USB hand-in",
+      "description": "A visitor found removable storage in the lobby. Record the unopened item for IT collection.",
+      "category": "it",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_scanner_streak",
+      "title": "Scanner streak",
+      "description": "Passport scans carry a vertical line through every photograph. Clean the scan glass.",
+      "category": "it",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_public_contacts",
+      "title": "Public contacts",
+      "description": "The visitor directory includes an internal duty extension. Request a corrected public export.",
+      "category": "it",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_tablet_rotation",
+      "title": "Tablet rotation",
+      "description": "The mounted tablet switches to portrait when its stand is touched. Lock its display orientation.",
+      "category": "it",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_checksum_discrepancy",
+      "title": "Checksum discrepancy",
+      "description": "A preservation copy differs from its recorded checksum. Hold it for verification.",
+      "category": "it",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_vanished_thumbnails",
+      "title": "Vanished thumbnails",
+      "description": "The image index shows blank previews although masters remain intact. Rebuild the derivative queue.",
+      "category": "it",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_format_sunset",
+      "title": "Format sunset",
+      "description": "An obsolete reader is the only route to a digital collection. Schedule preservation conversion.",
+      "category": "it",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_transcription_accent",
+      "title": "Transcription accent",
+      "description": "Optical recognition reads every ä as a. Mark the affected batch for language-aware review.",
+      "category": "it",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_duplicate_ingest",
+      "title": "Duplicate ingest",
+      "description": "The archive importer has processed the same transfer twice. Reconcile the accession manifests.",
+      "category": "it",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_index_lag",
+      "title": "Index lag",
+      "description": "Search omits material catalogued after the storage migration. Queue the missing index updates.",
+      "category": "it",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_page_sequence",
+      "title": "Page sequence",
+      "description": "Digitised pages sort as one, ten, then two. Normalise the sequence metadata.",
+      "category": "it",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_colour_profile",
+      "title": "Colour profile",
+      "description": "Scanning software gives white paper a turquoise cast. Load the calibrated profile.",
+      "category": "it",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_archive_mirror",
+      "title": "Archive mirror",
+      "description": "The secondary catalogue remains one edition behind. Check its scheduled replication.",
+      "category": "it",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "it_licence_expiry",
+      "title": "Licence expiry",
+      "description": "The archive viewer licence expires during a booked research visit. Arrange continuity of access.",
+      "category": "it",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_flag_order",
+      "title": "Flag order",
+      "description": "The host flag occupies the guest's designated stand. Check the approved arrangement.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_motorcade_count",
+      "title": "Motorcade count",
+      "description": "The arrivals sheet provides three parking slots for four vehicles. Confirm the revised allocation.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_greeting_line",
+      "title": "Greeting line",
+      "description": "A visiting interpreter appears on both sides of the receiving line. Assign one position.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_title_card",
+      "title": "Title card",
+      "description": "The welcome card uses the delegate's previous ministerial title. Issue a corrected card.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_anthem_edit",
+      "title": "Anthem edit",
+      "description": "The rehearsal recording ends halfway through the final phrase. Obtain the complete approved track.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_gift_receipt",
+      "title": "Gift receipt",
+      "description": "A presentation gift has arrived without its ceremonial acknowledgement. Prepare the register entry.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_carpet_turn",
+      "title": "Carpet turn",
+      "description": "The ceremonial runner leads the delegation past the reception desk. Amend the arrival layout.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_portrait_order",
+      "title": "Portrait order",
+      "description": "The official photograph places the acting host behind a floral screen. Reset the floor marks.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_pronunciation_note",
+      "title": "Pronunciation note",
+      "description": "The announcer has two incompatible phonetic spellings. Confirm the guest's preference.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_arrival_interval",
+      "title": "Arrival interval",
+      "description": "Two delegations have been promised a private welcome at the same time. Stagger the greeting slots.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_press_boundary",
+      "title": "Press boundary",
+      "description": "The press positions overlap the guests' greeting marks. Reissue the floor plan.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_welcome_language",
+      "title": "Welcome language",
+      "description": "The recorded greeting addresses the previous delegation. Select the current language track.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_wet_umbrellas",
+      "title": "Wet umbrellas",
+      "description": "The coat-check plan has no provision for ceremonial umbrellas. Assign numbered stands.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_guest_book_ribbon",
+      "title": "Guest book ribbon",
+      "description": "The guest book opens at a private dedication. Mark a clean signing page.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_escort_gap",
+      "title": "Escort gap",
+      "description": "The arrivals roster ends one escort short. Assign a host to the final guest.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_floral_height",
+      "title": "Floral height",
+      "description": "A ceremonial bouquet conceals the national emblems. Lower its plinth.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_lapels_reversed",
+      "title": "Lapels reversed",
+      "description": "Host and guest lapel pins were boxed under exchanged labels. Repack the welcome sets.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_advance_party",
+      "title": "Advance party",
+      "description": "The advance party's badges read farewell delegation. Issue the arrival batch.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_accreditation_colour",
+      "title": "Accreditation colour",
+      "description": "Observer badges match the voting delegation's colour. Apply the agreed distinction.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_interpreter_sightline",
+      "title": "Interpreter sightline",
+      "description": "The arrival lectern obscures the sign-language interpreter. Adjust the marked position.",
+      "category": "protocol",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_seating_arithmetic",
+      "title": "Seating arithmetic",
+      "description": "The seating chart places two ministers in the same chair. Reconcile the precedence list.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_treaty_pens",
+      "title": "Treaty pens",
+      "description": "The signing pens contain different ink colours from the archival specification. Prepare a matched pair.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_nameplate_case",
+      "title": "Nameplate case",
+      "description": "An honorific has been mistaken for a surname. Correct the bilingual nameplate.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_toast_sequence",
+      "title": "Toast sequence",
+      "description": "The rehearsal agenda invites the reply before the opening toast. Reorder the cue cards.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_parallel_texts",
+      "title": "Parallel texts",
+      "description": "The two signing copies open at different articles. Align the marked pages.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_talk_duration",
+      "title": "Talk duration",
+      "description": "The programme reserves time for remarks but none for interpretation. Revise the running order.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_protocol_pronouns",
+      "title": "Protocol pronouns",
+      "description": "A draft introduction uses outdated forms of address. Confirm the guest's stated preference.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_gift_declaration",
+      "title": "Gift declaration",
+      "description": "A ceremonial bowl lacks its valuation note. Attach the declaration before acceptance.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_observer_vote",
+      "title": "Observer vote",
+      "description": "The chair's briefing allocates a ballot to an observer. Amend the voting list.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_chairmanship",
+      "title": "Chairmanship",
+      "description": "The welcome script assigns the chair to last month's rotating host. Correct the introduction.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_programme_swap",
+      "title": "Programme swap",
+      "description": "The short courtesy call has received the state-visit programme. Distribute the agreed version.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_table_axis",
+      "title": "Table axis",
+      "description": "The table layout leaves simultaneous interpreters facing a wall. Rotate their stations.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_photo_release",
+      "title": "Photo release",
+      "description": "The joint photograph is scheduled before consent has been collected. Obtain the release forms.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_signature_spacing",
+      "title": "Signature spacing",
+      "description": "One treaty copy leaves no room for the second signature. Prepare the authorised layout.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_delegate_accent",
+      "title": "Delegate accent",
+      "description": "The engraved presentation plaque omits a diacritic. Arrange a corrected inscription.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_podium_pairing",
+      "title": "Podium pairing",
+      "description": "The two lecterns display the same national crest. Install the guest's approved emblem.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_time_signal",
+      "title": "Time signal",
+      "description": "The speaker's time cards use a colour code the visitor cannot distinguish. Supply numbered cards.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_private_interval",
+      "title": "Private interval",
+      "description": "The public agenda includes an interval reserved for private consultation. Amend the public copy.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_welcome_length",
+      "title": "Welcome length",
+      "description": "An introduction takes longer than the keynote allocation. Agree an abbreviated biography.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_farewell_dossier",
+      "title": "Farewell dossier",
+      "description": "The departure briefing contains arrival talking points. Replace the packet.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_language_precedence",
+      "title": "Language precedence",
+      "description": "Two parallel agenda editions number their items differently. Align the references.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_acknowledgement_list",
+      "title": "Acknowledgement list",
+      "description": "The closing remarks omit the volunteer interpreters. Add the agreed acknowledgement.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_credential_order",
+      "title": "Credential order",
+      "description": "The envelope set puts the covering note behind its enclosures. Assemble it for formal presentation.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_delegate_count",
+      "title": "Delegate count",
+      "description": "An additional technical adviser has no place setting. Confirm seating with both delegations.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_crest_orientation",
+      "title": "Crest orientation",
+      "description": "The embossed stationery was fed backwards. Reprint the invitation with the crest upright.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_press_spelling",
+      "title": "Press spelling",
+      "description": "The media sheet and guest list disagree on a surname. Confirm spelling with the delegation office.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_bilateral_banner",
+      "title": "Bilateral banner",
+      "description": "A banner for a three-party meeting describes it as bilateral. Authorise corrected wording.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_speech_cards",
+      "title": "Speech cards",
+      "description": "The host's closing lines are in the interpreter's packet. Reassemble both speaking sets.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_raised_dais",
+      "title": "Raised dais",
+      "description": "The accessible lectern is missing from the ceremony plan. Incorporate the requested arrangement.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_gift_duplicate",
+      "title": "Gift duplicate",
+      "description": "The farewell gift repeats last year's presentation. Check the gifts register for an alternative.",
+      "category": "protocol",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_toast_glass",
+      "title": "Toast glass",
+      "description": "The non-alcoholic toast glasses are indistinguishable at service. Agree a discreet service mark.",
+      "category": "protocol",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_table_flags",
+      "title": "Table flags",
+      "description": "The miniature flags are arranged by dish rather than delegation. Match them to the seating plan.",
+      "category": "protocol",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_courses_crossing",
+      "title": "Courses crossing",
+      "description": "The interpreters' meal is scheduled during their working session. Arrange staggered service.",
+      "category": "protocol",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_menu_translation",
+      "title": "Menu translation",
+      "description": "The translated menu describes a garnish as the main speaker. Correct the printed description.",
+      "category": "protocol",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_coffee_sequence",
+      "title": "Coffee sequence",
+      "description": "The service sheet calls staff across the signing photograph. Move the coffee interval.",
+      "category": "protocol",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_place_setting",
+      "title": "Place setting",
+      "description": "The guest of honour requested a left-handed setting. Correct the demonstration cover.",
+      "category": "protocol",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_gift_hamper",
+      "title": "Gift hamper",
+      "description": "A welcome hamper contains an item outside the visitor's declared dietary preferences. Substitute it.",
+      "category": "protocol",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_linen_colours",
+      "title": "Linen colours",
+      "description": "The table linen matches a retired event identity. Release the agreed linen set.",
+      "category": "protocol",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_toast_temperature",
+      "title": "Toast temperature",
+      "description": "The welcome drinks are staged in the hot cabinet. Move them to the proper service point.",
+      "category": "protocol",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_name_biscuits",
+      "title": "Name biscuits",
+      "description": "Two personalised place biscuits have been exchanged. Match them against the seating cards.",
+      "category": "protocol",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_precedent_search",
+      "title": "Precedent search",
+      "description": "The protocol file cites a visit that was cancelled. Locate a completed precedent.",
+      "category": "protocol",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_seal_impression",
+      "title": "Seal impression",
+      "description": "The exhibit captions identify a facsimile as an original seal. Correct the attribution.",
+      "category": "protocol",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_loan_condition",
+      "title": "Loan condition",
+      "description": "The ceremonial chain is cleared for display but not for wearing. Confirm the loan conditions.",
+      "category": "protocol",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_historic_title",
+      "title": "Historic title",
+      "description": "A commemorative programme applies a modern title to a former officeholder. Check the period wording.",
+      "category": "protocol",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "protocol_treaty_anniversary",
+      "title": "Treaty anniversary",
+      "description": "Two proposed anniversary dates refer to signature and ratification. Identify the intended observance.",
+      "category": "protocol",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_decaf_diplomacy",
+      "title": "Decaf diplomacy",
+      "description": "The decaffeinated pot has lost its identifying collar. Verify the brew before service.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_rye_ration",
+      "title": "Rye ration",
+      "description": "The bread order arrived as flour. Arrange a ready-to-serve replacement.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_cinnamon_spiral",
+      "title": "Cinnamon spiral",
+      "description": "The cinnamon bun tray contains a single continuous bun. Portion it before the break.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_berry_identity",
+      "title": "Berry identity",
+      "description": "Two unlabelled berry purées have identical colours. Check the batch sheets.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_tea_countdown",
+      "title": "Tea countdown",
+      "description": "The tea urn boils precisely when the visiting group leaves. Reset the preparation schedule.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_coffee_grind",
+      "title": "Coffee grind",
+      "description": "The grinder is set for espresso while the filter machine awaits grounds. Prepare a matching batch.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_thaw_register",
+      "title": "Thaw register",
+      "description": "The breakfast berries lack a recorded thaw time. Refer the batch to the catering lead.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_milk_inventory",
+      "title": "Milk inventory",
+      "description": "Oat drink and dairy cartons share one handwritten jug label. Separate and identify both.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_soup_ladle",
+      "title": "Soup ladle",
+      "description": "The ladle supplied for the reception does not fit inside the soup urn. Exchange it.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_sugar_architecture",
+      "title": "Sugar architecture",
+      "description": "Humidity has turned the sugar bowl into one structural cube. Refill it from sealed stock.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_salt_substitution",
+      "title": "Salt substitution",
+      "description": "The pastry bench received coarse salt in the sugar tub. Hold the batch and check the labels.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_missing_lids",
+      "title": "Missing lids",
+      "description": "The takeaway cups and lids have different diameters. Match the service stock.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_toast_backlog",
+      "title": "Toast backlog",
+      "description": "Six breakfast trays are waiting for a two-slot toaster. Reschedule the service batches.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_filter_folds",
+      "title": "Filter folds",
+      "description": "A stack of nested filters has stopped the coffee from draining. Restart with a single filter.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_cold_centre",
+      "title": "Cold centre",
+      "description": "The reheating log records the cabinet temperature instead of the dish. Ask catering to verify the batch.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_herb_bouquet",
+      "title": "Herb bouquet",
+      "description": "The centrepiece herbs were mistakenly reserved for soup. Reconcile the garnish order.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_cutlery_balance",
+      "title": "Cutlery balance",
+      "description": "Forty knives have arrived with four forks. Correct the service count.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_pot_induction",
+      "title": "Pot induction",
+      "description": "The visiting cook's pot is incompatible with the hob. Provide compatible cookware.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_jam_seals",
+      "title": "Jam seals",
+      "description": "A delivery of preserve jars has loose lids. Segregate the consignment for inspection.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_ice_sculpture",
+      "title": "Ice sculpture",
+      "description": "The reception ice sculpture is being stored above the bread. Allocate a suitable tray.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_espresso_pause",
+      "title": "Espresso pause",
+      "description": "The machine is requesting a cleaning cycle during coffee service. Bring the standby pot into use.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_open_date",
+      "title": "Open date",
+      "description": "The cream carries a delivery date but no opening date. Verify it before release.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_tray_incline",
+      "title": "Tray incline",
+      "description": "Canapés slide towards the guest of honour on the display stand. Level the presentation surface.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_pea_soup_day",
+      "title": "Pea soup day",
+      "description": "Thursday's pea soup has arrived on a Wednesday itinerary. Confirm the meal schedule.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_spice_translation",
+      "title": "Spice translation",
+      "description": "The supplier's spice label has two conflicting translations. Check the ingredient specification.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_mustard_mix",
+      "title": "Mustard mix",
+      "description": "A tasting set lists the mild mustard beneath the hottest jar. Correct the tasting order.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_knife_count",
+      "title": "Knife count",
+      "description": "The prep sheet returns one utensil fewer than it issued. Complete the kitchen handover.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_crumb_trail",
+      "title": "Crumb trail",
+      "description": "The gluten-free tray shares a crumb-covered cutting board. Notify catering and prepare a clean service.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_coffee_tokens",
+      "title": "Coffee tokens",
+      "description": "The staff machine accepts tokens retired at the last refurbishment. Set up a temporary pour-over.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_pantry_rotation",
+      "title": "Pantry rotation",
+      "description": "New stock is hiding older cartons from view. Rotate the shelf by use date.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_fermentation_clock",
+      "title": "Fermentation clock",
+      "description": "The dough proofing timer was set for the return train. Verify the batch schedule.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_napkin_lint",
+      "title": "Napkin lint",
+      "description": "The dark serving trays are collecting fibres from new napkins. Issue washed service linen.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_butter_bricks",
+      "title": "Butter bricks",
+      "description": "The butter for spreading arrived straight from frozen storage. Adjust the preparation order.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_tall_teapot",
+      "title": "Tall teapot",
+      "description": "The filled teapot will not clear the trolley shelf. Reassign the service vessel.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_saucer_census",
+      "title": "Saucer census",
+      "description": "The cups have all been set out with pastry plates. Recover the missing saucers.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_pitcher_markings",
+      "title": "Pitcher markings",
+      "description": "The cordial instructions use litres while the jug shows cups. Supply a metric measure.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_steam_labels",
+      "title": "Steam labels",
+      "description": "The hot cabinet has softened every buffet label. Replace them with freestanding cards.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_water_choice",
+      "title": "Water choice",
+      "description": "Both carafes are marked sparkling although one is still. Confirm contents and relabel.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_delivery_split",
+      "title": "Delivery split",
+      "description": "The sandwich filling arrived at the kitchen and the bread at reception. Reunite the order.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_pantry_key",
+      "title": "Pantry key",
+      "description": "The dry goods cupboard key is sealed inside the flour delivery paperwork. Locate the receiving copy.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_soup_tureen",
+      "title": "Soup tureen",
+      "description": "The soup trolley is loaded with the lid but no tureen. Collect the vessel from wash-up.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_blunt_slicer",
+      "title": "Blunt slicer",
+      "description": "The loaf slicer compresses bread into a single slab. Switch to the approved spare.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_berry_stain",
+      "title": "Berry stain",
+      "description": "Lingonberry cordial obscures the allergen chart. Put up a clean copy.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_portion_chart",
+      "title": "Portion chart",
+      "description": "The lunch chart counts serving spoons as diners. Recalculate the quantities.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_coffee_return",
+      "title": "Coffee return",
+      "description": "A returned hot flask contains iced water. Check the remaining flasks before replenishment.",
+      "category": "food",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_biscuit_podium",
+      "title": "Biscuit podium",
+      "description": "The welcome biscuits occupy the signing cushion. Move them to the refreshment table.",
+      "category": "food",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_outside_cake",
+      "title": "Outside cake",
+      "description": "A celebratory cake arrived without ingredient information. Refer it to catering before service.",
+      "category": "food",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_thermos_exchange",
+      "title": "Thermos exchange",
+      "description": "A visitor left with the staff tea flask. Arrange an exchange through the desk.",
+      "category": "food",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_lunch_tickets",
+      "title": "Lunch tickets",
+      "description": "The meal tickets name a buffet moved to another floor. Direct guests to the revised service.",
+      "category": "food",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_sampling_queue",
+      "title": "Sampling queue",
+      "description": "The rye tasting queue has merged with visa appointments. Separate the two waiting areas.",
+      "category": "food",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_working_lunch",
+      "title": "Working lunch",
+      "description": "The briefing schedules lunch during a closed-document session. Agree a suitable meal break.",
+      "category": "food",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_pastry_ledger",
+      "title": "Pastry ledger",
+      "description": "The meeting order counts pastries by box while catering counts individual pieces. Confirm portions.",
+      "category": "food",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_creamer_ring",
+      "title": "Creamer ring",
+      "description": "A leaking milk pot has reached the unsigned agenda. Remove the tray for replacement.",
+      "category": "food",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_cup_allocation",
+      "title": "Cup allocation",
+      "description": "The boardroom coffee order includes cups for remote attendees. Adjust the physical cover count.",
+      "category": "food",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "food_sandwich_map",
+      "title": "Sandwich map",
+      "description": "The named lunch bags were delivered without their seating list. Match orders to dietary requests.",
+      "category": "food",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_duplicate_lanyard",
+      "title": "Duplicate lanyard",
+      "description": "Two visitors have the same numbered lanyard. Reconcile issue records at the desk.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_unclaimed_case",
+      "title": "Unclaimed case",
+      "description": "A case remains after its delegation has departed. Notify the duty officer for assessment.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_guide_mismatch",
+      "title": "Guide mismatch",
+      "description": "A tour guide has received a contractor badge. Exchange it against the booking.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_missing_escort",
+      "title": "Missing escort",
+      "description": "A contractor has arrived before the assigned escort. Arrange supervised check-in.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_camera_consent",
+      "title": "Camera consent",
+      "description": "A film crew's permit covers the exterior only. Clarify the approved filming area.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_badge_shadow",
+      "title": "Badge shadow",
+      "description": "A returned badge is still listed as active. Ask the duty desk to close its record.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_tail_of_queue",
+      "title": "Tail of queue",
+      "description": "The visitor line extends across a marked exit. Reposition the waiting area.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_courier_seal",
+      "title": "Courier seal",
+      "description": "A courier has reported a damaged parcel seal. Record its condition at handover.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_name_mismatch",
+      "title": "Name mismatch",
+      "description": "The appointment lists a group organiser instead of the individual visitor. Verify the booking.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_pram_route",
+      "title": "Pram route",
+      "description": "The approved visitor route cannot accommodate a booked pram group. Arrange an accessible escort.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_lost_spectacles",
+      "title": "Lost spectacles",
+      "description": "Two visitors claim identical glasses cases. Verify identifying details through lost property.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_assistance_dog",
+      "title": "Assistance dog",
+      "description": "The arrivals list omits a registered assistance animal. Notify the assigned host.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_visitor_count",
+      "title": "Visitor count",
+      "description": "The departing group is one person larger than the sign-in list. Reconcile the group's records.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_badge_glare",
+      "title": "Badge glare",
+      "description": "The glossy visitor sleeves conceal names under the desk lights. Issue readable holders.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_key_envelope",
+      "title": "Key envelope",
+      "description": "The shift handover includes an unnumbered key envelope. Trace its custody record.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_tour_reschedule",
+      "title": "Tour reschedule",
+      "description": "A school group arrived on its original visit date. Contact the education host.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_delivery_overlap",
+      "title": "Delivery overlap",
+      "description": "The public tour and catering delivery share the same arrival slot. Coordinate separate receptions.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_unlisted_interpreter",
+      "title": "Unlisted interpreter",
+      "description": "A guest's interpreter is missing from the approved visit list. Contact the sponsoring officer.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_forgotten_checkout",
+      "title": "Forgotten checkout",
+      "description": "The register shows an overnight visitor who left yesterday. Confirm departure with the host.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_bag_tag_twins",
+      "title": "Bag tag twins",
+      "description": "Two stored bags carry the same claim number. Resolve the tags with their owners.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_wardrobe_scope",
+      "title": "Wardrobe scope",
+      "description": "A visitor has checked a bicycle into the cloakroom. Arrange an appropriate storage location.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_escorted_return",
+      "title": "Escorted return",
+      "description": "A former visitor has come back for a notebook. Contact the original host for collection.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_crowd_counter",
+      "title": "Crowd counter",
+      "description": "The people counter records the revolving display as a visitor. Reconcile the actual occupancy.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_quiet_arrival",
+      "title": "Quiet arrival",
+      "description": "A guest requested discreet check-in but appears on the public welcome board. Remove the entry.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_children_s_badges",
+      "title": "Children's badges",
+      "description": "A school packet contains adult contractor passes. Issue the appropriate group badges.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_mobility_booking",
+      "title": "Mobility booking",
+      "description": "A wheelchair transfer is booked at the wrong entrance. Coordinate the correct arrival point.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_press_overflow",
+      "title": "Press overflow",
+      "description": "Additional journalists arrived beyond the accredited count. Refer them to the press liaison.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_property_release",
+      "title": "Property release",
+      "description": "A collection authorisation lacks the item's reference number. Match it before release.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_duty_telephone",
+      "title": "Duty telephone",
+      "description": "The public counter card gives the former shift lead's number. Display the current contact.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_vest_inventory",
+      "title": "Vest inventory",
+      "description": "Two volunteer marshals have no identifiable vests. Allocate items from the event store.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_weather_shelter",
+      "title": "Weather shelter",
+      "description": "An outdoor waiting group requires an approved sheltered space. Coordinate with the host.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_badge_printer_ribbon",
+      "title": "Badge printer ribbon",
+      "description": "Temporary passes emerge without a visible expiry date. Suspend issue until legible.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_host_absent",
+      "title": "Host absent",
+      "description": "A sponsor is on leave during a booked visit. Assign another authorised contact.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_packing_list",
+      "title": "Packing list",
+      "description": "A crate's delivery note names equipment absent from the booking. Confirm before acceptance.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_group_consent",
+      "title": "Group consent",
+      "description": "The tour photography list and coloured badges disagree. Confirm the opt-outs privately.",
+      "category": "security",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_after_hours_list",
+      "title": "After-hours list",
+      "description": "The after-hours roster still lists last month's contractors. Obtain a current authorisation list.",
+      "category": "security",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_incident_handoff",
+      "title": "Incident handoff",
+      "description": "Both shift supervisors believe the other filed the visitor report. Assign its owner.",
+      "category": "security",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_privacy_sweep",
+      "title": "Privacy sweep",
+      "description": "A confidential seating list remains on the meeting table after a public event. Return it to custody.",
+      "category": "security",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_contact_tree",
+      "title": "Contact tree",
+      "description": "Two extensions on the event contact tree ring the same empty desk. Validate the duty roster.",
+      "category": "security",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_visitor_feedback",
+      "title": "Visitor feedback",
+      "description": "A feedback form publicly displays the previous respondent's contact details. Withdraw the stack.",
+      "category": "security",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_exercise_notice",
+      "title": "Exercise notice",
+      "description": "An old drill notice remains on the staff board. Replace it with the current schedule.",
+      "category": "security",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_key_register",
+      "title": "Key register",
+      "description": "A meeting-room key was returned to the wrong numbered hook. Reconcile the register.",
+      "category": "security",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_guest_access_end",
+      "title": "Guest access end",
+      "description": "A visiting fellow's access request extends beyond the placement. Obtain the correct end date.",
+      "category": "security",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_outdated_portrait",
+      "title": "Outdated portrait",
+      "description": "The escort briefing includes a photograph of the previous delegation leader. Refresh the packet.",
+      "category": "security",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_duty_relief",
+      "title": "Duty relief",
+      "description": "The scheduled lunch cover was assigned to a remote colleague. Arrange on-site relief.",
+      "category": "security",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_reading_permit",
+      "title": "Reading permit",
+      "description": "The reading-room permit covers a different collection. Check scope with the archivist.",
+      "category": "security",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_exhibit_seal",
+      "title": "Exhibit seal",
+      "description": "A display case inspection mark has loosened during cleaning. Request a witnessed check.",
+      "category": "security",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_loan_witness",
+      "title": "Loan witness",
+      "description": "The loan-return sheet lacks the receiving witness. Complete the custody record.",
+      "category": "security",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_reader_locker",
+      "title": "Reader locker",
+      "description": "A locker remains occupied after its pass was surrendered. Contact the registered reader.",
+      "category": "security",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_copy_permission",
+      "title": "Copy permission",
+      "description": "A visitor requested copies beyond the donor's access terms. Refer the request for review.",
+      "category": "security",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_service_identity",
+      "title": "Service identity",
+      "description": "A maintenance booking names a company without its attending technician. Verify the work order.",
+      "category": "security",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_sign_out_gap",
+      "title": "Sign-out gap",
+      "description": "The equipment log shows a returned case with no receiving initials. Confirm the handover.",
+      "category": "security",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_site_induction",
+      "title": "Site induction",
+      "description": "A contractor briefing describes a superseded assembly point. Issue the current induction sheet.",
+      "category": "security",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_loan_radio",
+      "title": "Loan radio",
+      "description": "A loan radio is still assigned to a completed event. Arrange its recorded return.",
+      "category": "security",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "security_escort_timetable",
+      "title": "Escort timetable",
+      "description": "The service contractor is booked beyond the escort's shift. Arrange documented relief.",
+      "category": "security",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_l_yly_rota",
+      "title": "Löyly rota",
+      "description": "Three delegations have reserved the first steam of the day. Reconcile the sauna rota.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_birch_bundle",
+      "title": "Birch bundle",
+      "description": "The demonstration birch whisk is still in the educational display. Arrange a suitable fresh bundle.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_sauna_glossary",
+      "title": "Sauna glossary",
+      "description": "The visitor guide translates löyly as ordinary fog. Ask the cultural officer to revise it.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_cooling_interval",
+      "title": "Cooling interval",
+      "description": "The hosted session omits its scheduled cooling break. Restore the interval on the programme.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_towel_arithmetic",
+      "title": "Towel arithmetic",
+      "description": "The booking counts guests individually but towels by delegation. Correct the linen order.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_silent_session",
+      "title": "Silent session",
+      "description": "A guided commentary is booked during the advertised quiet sauna hour. Separate the sessions.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_stone_souvenir",
+      "title": "Stone souvenir",
+      "description": "A visitor requests a heater stone as a souvenir. Arrange a suitable keepsake instead.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_steam_etiquette",
+      "title": "Steam etiquette",
+      "description": "The welcome leaflet invites visitors to use the drinking jug as a ladle. Clarify the equipment.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_felt_hats",
+      "title": "Felt hats",
+      "description": "The labelled sauna hats are displayed inside out. Restore the exhibitors' labels.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_sauna_scale",
+      "title": "Sauna scale",
+      "description": "The demonstration thermometer is marked in Fahrenheit beside a Celsius guide. Align the teaching aids.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_scent_request",
+      "title": "Scent request",
+      "description": "A fragrance-free booking overlaps the scented demonstration. Move the demonstration slot.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_wood_sample",
+      "title": "Wood sample",
+      "description": "The sauna timber exhibit lists spruce beneath its alder sample. Check the specimen labels.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_ice_dip",
+      "title": "Ice dip",
+      "description": "The itinerary advertises a lake dip in a building without a lake. Confirm the actual cooling facilities.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_round_timer",
+      "title": "Round timer",
+      "description": "A wall card mistakes the clock for a compulsory endurance target. Replace it with the approved guide.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_changing_labels",
+      "title": "Changing labels",
+      "description": "The private booking's changing cubicles still carry public-event labels. Restore the reserved signs.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_loan_sandals",
+      "title": "Loan sandals",
+      "description": "The footwear loan box contains demonstration miniatures. Supply wearable pairs.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_linen_return",
+      "title": "Linen return",
+      "description": "Fresh linen is being placed in the used-towel chest. Correct the bilingual markings.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_sauna_story",
+      "title": "Sauna story",
+      "description": "The audio guide begins with the conclusion of its oral history. Restore the chapter order.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_gift_ladle",
+      "title": "Gift ladle",
+      "description": "A ceremonial presentation ladle has entered ordinary service. Return it to its display mount.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_bench_tour",
+      "title": "Bench tour",
+      "description": "The architecture tour is scheduled inside an occupied private session. Rebook its inspection.",
+      "category": "culture",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_vappu_caps",
+      "title": "Vappu caps",
+      "description": "The May Day display has received chef hats instead of student caps. Contact the exhibition lender.",
+      "category": "culture",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_midsummer_sun",
+      "title": "Midsummer sun",
+      "description": "The midsummer poster gives sunset times for the host city under a Helsinki heading. Correct the caption.",
+      "category": "culture",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_independence_candles",
+      "title": "Independence candles",
+      "description": "The window display has received a single candle for each pair. Complete the sets.",
+      "category": "culture",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_language_greeting",
+      "title": "Language greeting",
+      "description": "The greeting board offers Finnish twice and omits the approved Swedish version. Restore both texts.",
+      "category": "culture",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_kantele_strings",
+      "title": "Kantele strings",
+      "description": "The instrument demonstration is booked before its tuning appointment. Move the sound check.",
+      "category": "culture",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_dance_floor",
+      "title": "Dance floor",
+      "description": "The folk dance rehearsal has been allocated the seated waiting area. Arrange clear floor space.",
+      "category": "culture",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_sisu_subtitle",
+      "title": "Sisu subtitle",
+      "description": "The exhibition subtitle renders sisu as a type of soup. Request the translator's correction.",
+      "category": "culture",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_design_tags",
+      "title": "Design tags",
+      "description": "The visitor display attributes handmade pottery to its packing company. Restore the makers' credits.",
+      "category": "culture",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_rally_route",
+      "title": "Rally route",
+      "description": "The cultural rally route ends at an exhibition closed for installation. Revise the final stop.",
+      "category": "culture",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_library_loans",
+      "title": "Library loans",
+      "description": "The pop-up Finnish library has membership cards but no return date slips. Prepare the loan packets.",
+      "category": "culture",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_runeberg_labels",
+      "title": "Runeberg labels",
+      "description": "The pastry display credits the wrong namesake. Correct the Runeberg torte caption.",
+      "category": "culture",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_porridge_almond",
+      "title": "Porridge almond",
+      "description": "The festive porridge tradition is described without its ingredient notice. Update the tasting card.",
+      "category": "culture",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_karelian_tasting",
+      "title": "Karelian tasting",
+      "description": "The tasting sheet pairs rice pies with the jam intended for pancakes. Reassemble the sample trays.",
+      "category": "culture",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_salmiakki_scale",
+      "title": "Salmiakki scale",
+      "description": "The tasting flight begins with the strongest salty liquorice. Restore the introductory order.",
+      "category": "culture",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_coffee_break",
+      "title": "Coffee break",
+      "description": "The hosted kahvitauko has been listed as a working agenda item with no refreshments. Coordinate service.",
+      "category": "culture",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_cloudberry_jars",
+      "title": "Cloudberry jars",
+      "description": "The cultural display promises cloudberries beside jars of gooseberries. Verify the shipment.",
+      "category": "culture",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_bread_roots",
+      "title": "Bread roots",
+      "description": "The sourdough demonstration starter carries no baker's attribution. Obtain the contributor's credit.",
+      "category": "culture",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_blueberry_lesson",
+      "title": "Blueberry lesson",
+      "description": "The bilberry exhibit uses a photograph of cultivated blueberries. Replace the illustration.",
+      "category": "culture",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_seasonal_soup",
+      "title": "Seasonal soup",
+      "description": "The summer soup demonstration is using the winter pantry list. Obtain the intended ingredients.",
+      "category": "culture",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_pulla_braid",
+      "title": "Pulla braid",
+      "description": "The demonstration handout omits the middle strand from its diagram. Correct the braiding sequence.",
+      "category": "culture",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_epic_fragments",
+      "title": "Epic fragments",
+      "description": "The Kalevala reading cards have been shuffled out of sequence. Restore the programme order.",
+      "category": "culture",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_dialect_track",
+      "title": "Dialect track",
+      "description": "An oral history recording has been catalogued under the interviewer's dialect. Correct its metadata.",
+      "category": "culture",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_textile_direction",
+      "title": "Textile direction",
+      "description": "The woven wall hanging is displayed with the maker's mark upside down. Consult the hanging notes.",
+      "category": "culture",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_folk_costume_loan",
+      "title": "Folk costume loan",
+      "description": "Two regional costume belts returned in one case. Identify their respective ensembles.",
+      "category": "culture",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_composer_credit",
+      "title": "Composer credit",
+      "description": "A recital note credits the arranger as composer. Check the deposited score.",
+      "category": "culture",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_postcard_coast",
+      "title": "Postcard coast",
+      "description": "The archipelago exhibit caption describes an inland lake. Check the photographer's location notes.",
+      "category": "culture",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_festival_year",
+      "title": "Festival year",
+      "description": "A film programme places two annual festivals in the same year. Verify the dates in the archive.",
+      "category": "culture",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_poetry_pause",
+      "title": "Poetry pause",
+      "description": "A bilingual poem lost its stanza breaks during scanning. Restore the published layout.",
+      "category": "culture",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_craft_pattern",
+      "title": "Craft pattern",
+      "description": "The mitten chart has been reproduced as a mirror image. Correct the teaching copy.",
+      "category": "culture",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "culture_design_chronology",
+      "title": "Design chronology",
+      "description": "A chair prototype appears after its production model on the timeline. Check the original design dates.",
+      "category": "culture",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_frame_budget",
+      "title": "Frame budget",
+      "description": "The director's slideshow targets 240 frames per second and has consumed the animation budget. Restore slide timings.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_patch_notes",
+      "title": "Patch notes",
+      "description": "The weekly policy update describes all changes as balance adjustments. Request the actual amendments.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_unskippable_briefing",
+      "title": "Unskippable briefing",
+      "description": "The induction presentation restarts its opening cinematic whenever anyone takes notes. Disable the restart cue.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_boss_music",
+      "title": "Boss music",
+      "description": "The chair's entry triggers a final-boss soundtrack. Restore the standard meeting chime.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_meeting_speedrun",
+      "title": "Meeting speedrun",
+      "description": "A delegate claims a record after skipping all actionable agenda items. Verify the completion criteria.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_critical_hit",
+      "title": "Critical hit",
+      "description": "The stationery spreadsheet assigns critical-hit probabilities to hole punches. Restore its procurement columns.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_fast_travel",
+      "title": "Fast travel",
+      "description": "The room booking system offers fast travel to Helsinki. Add the actual connection instructions.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_save_slot",
+      "title": "Save slot",
+      "description": "All staff appraisals were saved under Player One. Recover their individual review records.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_dialogue_wheel",
+      "title": "Dialogue wheel",
+      "description": "The meeting questionnaire offers only praise, trade or duel. Reinstate the approved response options.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_loot_allocation",
+      "title": "Loot allocation",
+      "description": "The equipment request form rewards random office supplies. Restore item-specific ordering.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_achievement_toast",
+      "title": "Achievement toast",
+      "description": "A presentation awards an achievement for each slide transition. Disable the overlay.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_fog_of_war",
+      "title": "Fog of war",
+      "description": "The project dashboard conceals all tasks outside the manager's immediate vicinity. Restore team visibility.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_skill_tree",
+      "title": "Skill tree",
+      "description": "The induction portal requires advanced laminating before email access. Correct the training prerequisites.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_season_pass",
+      "title": "Season pass",
+      "description": "The stationery cupboard demands a season pass to issue pencils. Reinstate the ordinary requisition process.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_boss_phase",
+      "title": "Boss phase",
+      "description": "The budget review has acquired a second health bar. Identify the duplicate approval round.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_unranked_minutes",
+      "title": "Unranked minutes",
+      "description": "The minutes are labelled casual and therefore vanish after the meeting. Enable ordinary retention.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_screen_shake",
+      "title": "Screen shake",
+      "description": "The projector shakes the image whenever the speaker stresses a point. Disable the game profile.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_quest_dialogue",
+      "title": "Quest dialogue",
+      "description": "The briefing script asks every speaker to repeat the last line until accepted. Restore the linear script.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_emote_approval",
+      "title": "Emote approval",
+      "description": "Purchase requests are being authorised by dance animation. Obtain the recorded sign-offs.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_daily_streak",
+      "title": "Daily streak",
+      "description": "Staff are logging in on leave to preserve a photocopying streak. Remove the gamified reminder.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_spectator_mode",
+      "title": "Spectator mode",
+      "description": "A presenter can watch their own slides but cannot advance them. Restore presenter controls.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_practice_lobby",
+      "title": "Practice lobby",
+      "description": "The annual review is still marked as a warm-up round. Issue the official review link.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_blue_shell",
+      "title": "Blue shell",
+      "description": "The last agenda item repeatedly displaces the first. Correct the racing-themed sort rule.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_controller_drift",
+      "title": "Controller drift",
+      "description": "The shared presentation cursor moves slowly towards the exit poll. Replace the loan controller.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_crafting_recipe",
+      "title": "Crafting recipe",
+      "description": "The procurement wiki suggests combining three chairs to make a desk. Restore the furniture catalogue.",
+      "category": "gaming",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_npc_queue",
+      "title": "NPC queue",
+      "description": "Visitors saw a walk-through video and now wait for a glowing quest marker. Post the actual check-in directions.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_photo_mode",
+      "title": "Photo mode",
+      "description": "The lobby camera is displaying a cinematic letterbox over the queue numbers. Restore the public display.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_respawn_sign",
+      "title": "Respawn sign",
+      "description": "The exit door now directs visitors to respawn at reception. Replace the convention signage.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_cosplay_credentials",
+      "title": "Cosplay credentials",
+      "description": "A convincing costume has been mistaken for staff uniform. Issue an event visitor badge.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_trivia_gate",
+      "title": "Trivia gate",
+      "description": "The welcome kiosk asks for a speedrunning record before issuing a ticket. Restore walk-in registration.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_sticker_rarity",
+      "title": "Sticker rarity",
+      "description": "Badge collectors have removed all the supposedly rare purple passes. Recount the desk stock.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_loading_tip",
+      "title": "Loading tip",
+      "description": "The reception screen advises visitors to save before approaching the consul. Restore the appointment notice.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_streamer_queue",
+      "title": "Streamer queue",
+      "description": "One streaming audience has registered as forty separate tour groups. Confirm physical attendance.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_invisible_wall",
+      "title": "Invisible wall",
+      "description": "Convention visitors believe a glass partition marks an unfinished level. Restore the visibility decals.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_side_quest",
+      "title": "Side quest",
+      "description": "Lost property has been rebranded as optional side content. Reinstate the collection signage.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_fan_wiki",
+      "title": "Fan wiki",
+      "description": "The queue screen quotes a fan wiki for embassy opening hours. Connect the approved timetable.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_pixel_passport",
+      "title": "Pixel passport",
+      "description": "A visitor submitted a hand-drawn eight-bit portrait for an event badge. Request the required photograph.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_silent_disco",
+      "title": "Silent disco",
+      "description": "Wireless headsets are receiving a rhythm-game tutorial instead of the tour. Select the guide channel.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_lobby_leaderboard",
+      "title": "Lobby leaderboard",
+      "description": "The waiting display ranks guests by hat size. Restore chronological ticket order.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_checkpoint_flag",
+      "title": "Checkpoint flag",
+      "description": "Attendees keep touching the ceremonial flag to save their place. Install a clear queue marker.",
+      "category": "gaming",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_console_smoke",
+      "title": "Console smoke",
+      "description": "A donated legacy console is overheating during a next-generation game demo. Withdraw it for inspection.",
+      "category": "gaming",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_render_farm",
+      "title": "Render farm",
+      "description": "The building display controller is rendering an imaginary horse in exceptional detail. Restore its signage workload.",
+      "category": "gaming",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_rgb_overtime",
+      "title": "RGB overtime",
+      "description": "The rack lights celebrate every completed backup with a rainbow parade. Restore the status-light convention.",
+      "category": "gaming",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_arcade_tokens",
+      "title": "Arcade tokens",
+      "description": "The service meter was filled with arcade tokens after a retro event. Reconcile the metering record.",
+      "category": "gaming",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_haptic_fan",
+      "title": "Haptic fan",
+      "description": "A demo controller vibrates whenever the building fan engages. Separate the exhibit controls.",
+      "category": "gaming",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_collision_mesh",
+      "title": "Collision mesh",
+      "description": "The maintenance floor plan marks a real wall as downloadable content. Restore the survey layer.",
+      "category": "gaming",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_cartridge_day",
+      "title": "Cartridge day",
+      "description": "The retro exhibition has booked a digital-only console for cartridge demonstrations. Reassign the equipment.",
+      "category": "gaming",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_cable_boss",
+      "title": "Cable boss",
+      "description": "An arcade cabinet shipped with a lead shorter than its plinth. Revise the exhibit placement.",
+      "category": "gaming",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_patch_marathon",
+      "title": "Patch marathon",
+      "description": "The demo console scheduled its largest update during the workshop. Arrange an offline demonstration.",
+      "category": "gaming",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_crt_geometry",
+      "title": "CRT geometry",
+      "description": "The retro monitor stretches the Finnish flag into a square. Restore its display geometry.",
+      "category": "gaming",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_potion_bottles",
+      "title": "Potion bottles",
+      "description": "The game-night menu labels all fruit juice as health potion. Add the actual ingredients.",
+      "category": "gaming",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_energy_bar",
+      "title": "Energy bar",
+      "description": "A catering delivery of cereal bars has been logged as interface components. Transfer it to food stock.",
+      "category": "gaming",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_cake_rumour",
+      "title": "Cake rumour",
+      "description": "A game-night clue has convinced attendees the booked cake is fictional. Confirm the collection receipt.",
+      "category": "gaming",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_coffee_firmware",
+      "title": "Coffee firmware",
+      "description": "An enthusiast installed a hobby operating system on the coffee brewer. Arrange a replacement brewer.",
+      "category": "gaming",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_ration_inventory",
+      "title": "Ration inventory",
+      "description": "The buffet menu displays remaining lives instead of remaining portions. Reinstate the catering tally.",
+      "category": "gaming",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_pixel_toast",
+      "title": "Pixel toast",
+      "description": "The novelty toaster brands a pause symbol on every VIP slice. Use the ordinary service toaster.",
+      "category": "gaming",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_loot_crate_lunch",
+      "title": "Loot crate lunch",
+      "description": "Lunch boxes conceal their fillings until opened. Label them from the packing list.",
+      "category": "gaming",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_soup_controller",
+      "title": "Soup controller",
+      "description": "A rhythm controller is advancing the soup dispenser's demo sequence. Return it to serving mode.",
+      "category": "gaming",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_speedrun_noodles",
+      "title": "Speedrun noodles",
+      "description": "Contest rules award points for ordering instant noodles before water is available. Amend the activity.",
+      "category": "gaming",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_cookie_settings",
+      "title": "Cookie settings",
+      "description": "The biscuit stall now asks visitors to accept essential cookies. Provide a plain ingredient notice.",
+      "category": "gaming",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_lore_master",
+      "title": "Lore master",
+      "description": "An exhibit credits a tournament commentator as the original developer. Check the deposited credits.",
+      "category": "gaming",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_fan_translation",
+      "title": "Fan translation",
+      "description": "A fan translation has replaced the licensed game manual in the exhibit. Restore the catalogued edition.",
+      "category": "gaming",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_save_battery",
+      "title": "Save battery",
+      "description": "A donated cartridge's saved exhibition progress is at risk. Request a preservation assessment.",
+      "category": "gaming",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_sprite_attribution",
+      "title": "Sprite attribution",
+      "description": "A credit board names the person who scanned the sprites as their artist. Restore the original credit.",
+      "category": "gaming",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_spoiler_labels",
+      "title": "Spoiler labels",
+      "description": "The exhibit labels reveal puzzle solutions before the playable station. Move the commentary to the exit.",
+      "category": "gaming",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_strategy_guide",
+      "title": "Strategy guide",
+      "description": "A map marked secret level was filed as a building extension. Return it to the games collection.",
+      "category": "gaming",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_demo_reel",
+      "title": "Demo reel",
+      "description": "The game history reel consists entirely of title screens. Locate the recorded play excerpts.",
+      "category": "gaming",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_edition_dispute",
+      "title": "Edition dispute",
+      "description": "The boxed collector's edition contains the standard manual. Update the loan condition record.",
+      "category": "gaming",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_high_score_initials",
+      "title": "High score initials",
+      "description": "A historic score table was expanded into guessed full names. Restore the documented initials.",
+      "category": "gaming",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_cartridge_region",
+      "title": "Cartridge region",
+      "description": "The exhibit machine cannot read the donated regional release. Match it with a compatible display unit.",
+      "category": "gaming",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_steam_platform",
+      "title": "Steam platform",
+      "description": "A ticket for the sauna has been routed to a videogame storefront. Return it to facilities.",
+      "category": "gaming",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_cooldown_timer",
+      "title": "Cooldown timer",
+      "description": "A wellness app interprets the sauna break as a spell cooldown. Correct the participant schedule.",
+      "category": "gaming",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_leaderboard_towel",
+      "title": "Leaderboard towel",
+      "description": "The event high-score table has been embroidered on a towel needed for display. Move it to the dry gallery.",
+      "category": "gaming",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_virtual_steam",
+      "title": "Virtual steam",
+      "description": "A headset demo has replaced the actual sauna booking instructions. Restore the physical arrival guide.",
+      "category": "gaming",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "gaming_speed_boost",
+      "title": "Speed boost",
+      "description": "Novelty racing arrows on the changing-room floor imply a sprint event. Replace them with walking directions.",
+      "category": "gaming",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_printer_leave",
+      "title": "Printer leave",
+      "description": "The printer has requested annual leave in its own output tray. Route the request and arrange cover.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_calendar_gravity",
+      "title": "Calendar gravity",
+      "description": "All meetings have settled at the bottom of the calendar. Redistribute the appointments by time.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_chair_election",
+      "title": "Chair election",
+      "description": "The conference chairs have elected an empty seat as spokesperson. Establish a usable seating plan.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_stationery_orbit",
+      "title": "Stationery orbit",
+      "description": "Three paper clips are circling the desk lamp. Move the signing papers outside their orbit.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_minute_hand",
+      "title": "Minute hand",
+      "description": "The minute hand has submitted its own minutes. Reconcile the clock's account with the chair's.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_desk_tide",
+      "title": "Desk tide",
+      "description": "The desks move ten centimetres north each lunch break. Restore the seating grid.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_rubber_stamp",
+      "title": "Rubber stamp",
+      "description": "An approval stamp now rejects the concept of ink. Find the spare and refer the dispute.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_budget_echo",
+      "title": "Budget echo",
+      "description": "The forecast repeats each figure a little more optimistically. Recover the first reading.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_monday_surplus",
+      "title": "Monday surplus",
+      "description": "The shared calendar contains two consecutive Mondays. Confirm which one hosts the briefing.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_polite_shredder",
+      "title": "Polite shredder",
+      "description": "The shredder thanks each page individually before considering it. Reassign the disposal backlog.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_agenda_flock",
+      "title": "Agenda flock",
+      "description": "The agenda sheets have formed a migrating flock by the window. Recover the signed lead copy.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_gravity_waiver",
+      "title": "Gravity waiver",
+      "description": "A filing tray has applied for exemption from gravity. Secure the contents pending review.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_invisible_inkstand",
+      "title": "Invisible inkstand",
+      "description": "The inkstand is visible only in the meeting minutes. Verify its last physical location.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_carbon_witness",
+      "title": "Carbon witness",
+      "description": "A carbon copy insists it attended the original meeting. Resolve the attendance entry.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_paperweight_vacancy",
+      "title": "Paperweight vacancy",
+      "description": "The paperweight has floated to the ceiling and left its post unfilled. Secure the loose correspondence.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_future_reply",
+      "title": "Future reply",
+      "description": "The office received a reply to a letter still being drafted. Check the reference before dispatch.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_forecast_indoors",
+      "title": "Forecast indoors",
+      "description": "A cloud has formed over the quarterly forecast. Move the papers to a dry desk.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_stapler_nesting",
+      "title": "Stapler nesting",
+      "description": "The stapler has lined a drawer with shredded memos. Relocate the live purchasing forms.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_translation_echo",
+      "title": "Translation echo",
+      "description": "The interpreting booth repeats each sentence in progressively more formal Finnish. Reset the register.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_diplomatic_pause",
+      "title": "Diplomatic pause",
+      "description": "A pause in negotiations has occupied the room beyond its booking. Reassign the following meeting.",
+      "category": "surreal",
+      "rooms": [
+        "office"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_mechanical_courier",
+      "title": "Mechanical courier",
+      "description": "A robot vacuum has collected the outgoing diplomatic pouch. Recover it at the reception desk.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_visitor_reflection",
+      "title": "Visitor reflection",
+      "description": "The visitor counter includes every reflection in the polished floor. Establish a count of physical arrivals.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_queue_ribbon",
+      "title": "Queue ribbon",
+      "description": "The queue barrier has joined its own queue. Restore a route from entrance to counter.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_umbrella_weather",
+      "title": "Umbrella weather",
+      "description": "One umbrella continues to rain after being brought inside. Assign it a separate drip tray.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_invisible_appointment",
+      "title": "Invisible appointment",
+      "description": "An empty chair has produced a valid appointment ticket. Confirm the visitor's attendance.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_welcome_mat",
+      "title": "Welcome mat",
+      "description": "The welcome mat insists on greeting departures too. Turn it towards incoming traffic.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_bell_reply",
+      "title": "Bell reply",
+      "description": "The reception bell answers itself from lost property. Identify which bell actually requested assistance.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_coat_exchange",
+      "title": "Coat exchange",
+      "description": "The coat stand has checked in a visiting tree. Confirm the ownership of its scarf.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_map_migration",
+      "title": "Map migration",
+      "description": "The city map now places the embassy inside its own legend. Supply a usable street map.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_ticket_tomorrow",
+      "title": "Ticket tomorrow",
+      "description": "The queue machine issues numbers valid only yesterday. Establish the current sequence by hand.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_door_applause",
+      "title": "Door applause",
+      "description": "The automatic doors applaud visitors who leave promptly. Disable the unsolicited ceremony.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_wax_witness",
+      "title": "Wax witness",
+      "description": "A wax exhibit has been issued a temporary visitor badge. Recover the pass for circulation.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_cloud_luggage",
+      "title": "Cloud luggage",
+      "description": "A visiting cloud wishes to check a suitcase of drizzle. Assign a covered storage point.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_desk_horizon",
+      "title": "Desk horizon",
+      "description": "The end of the reception counter recedes as visitors approach it. Move check-in to the near corner.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_borrowed_shadow",
+      "title": "Borrowed shadow",
+      "description": "A visitor reports leaving with the wrong shadow. Compare the handover descriptions.",
+      "category": "surreal",
+      "rooms": [
+        "reception"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_tea_negotiations",
+      "title": "Tea negotiations",
+      "description": "The tea bags refuse to steep collectively. Arrange individual brewing appointments.",
+      "category": "surreal",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_cup_echo",
+      "title": "Cup echo",
+      "description": "An empty coffee cup still sounds full when carried. Verify the actual serving count.",
+      "category": "surreal",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_polite_kettle",
+      "title": "Polite kettle",
+      "description": "The kettle waits for a written invitation before boiling. Issue the kitchen's standard instruction.",
+      "category": "surreal",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_soup_longitude",
+      "title": "Soup longitude",
+      "description": "The soup surface shows a navigable chart of the Baltic. Preserve the menu card for comparison.",
+      "category": "surreal",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_fork_merger",
+      "title": "Fork merger",
+      "description": "Four teaspoons have combined into an unbudgeted serving fork. Amend the utensil inventory.",
+      "category": "surreal",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_butter_forecast",
+      "title": "Butter forecast",
+      "description": "The butter curls predict rain over the dessert table. Relocate the uncovered pastries.",
+      "category": "surreal",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_sandwich_parity",
+      "title": "Sandwich parity",
+      "description": "Cutting the last sandwich in half produced two whole sandwiches. Reconcile the portion sheet.",
+      "category": "surreal",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_ice_minutes",
+      "title": "Ice minutes",
+      "description": "The ice cubes contain tiny legible copies of yesterday's minutes. Withdraw the tray from service.",
+      "category": "surreal",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_dishwasher_ovation",
+      "title": "Dishwasher ovation",
+      "description": "The dishwasher demands an encore after each cycle. Return the clean plates to circulation.",
+      "category": "surreal",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_jam_referendum",
+      "title": "Jam referendum",
+      "description": "The preserve jars have voted to be stored alphabetically by ambition. Restore batch rotation.",
+      "category": "surreal",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_canteen_moon",
+      "title": "Canteen moon",
+      "description": "A bread roll is orbiting the soup tureen. Clear its service radius.",
+      "category": "surreal",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_bottomless_mug",
+      "title": "Bottomless mug",
+      "description": "The refill station has been serving one cup since breakfast. Close the outstanding transaction.",
+      "category": "surreal",
+      "rooms": [
+        "kitchen"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_footnote_escape",
+      "title": "Footnote escape",
+      "description": "A footnote has detached from its source and joined the map index. Restore its citation.",
+      "category": "surreal",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_atlas_omission",
+      "title": "Atlas omission",
+      "description": "The reference atlas has omitted Finland pending evidence of existence. Supply a corroborating volume.",
+      "category": "surreal",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_shelf_whisper",
+      "title": "Shelf whisper",
+      "description": "A shelf recites confidential titles during public tours. Move the tour stop while the matter is reviewed.",
+      "category": "surreal",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_misfiled_century",
+      "title": "Misfiled century",
+      "description": "A cardboard box contains a small but complete nineteenth century. Check the accession scope.",
+      "category": "surreal",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_librarian_bookmark",
+      "title": "Librarian bookmark",
+      "description": "A bookmark insists on choosing what everyone reads next. Return it to its assigned volume.",
+      "category": "surreal",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_index_of_indexes",
+      "title": "Index of indexes",
+      "description": "The index of indexes lists only itself. Recover the collection references from the shelf list.",
+      "category": "surreal",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_negative_page",
+      "title": "Negative page",
+      "description": "A volume contains a page numbered minus one. Record its position without renumbering the original.",
+      "category": "surreal",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_map_rain",
+      "title": "Map rain",
+      "description": "A rainfall map has become wet along its contour lines. Arrange a dry conservation surface.",
+      "category": "surreal",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_future_dust",
+      "title": "Future dust",
+      "description": "Tomorrow's dust has settled on today's accession register. Record its arrival out of sequence.",
+      "category": "surreal",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_margin_dispute",
+      "title": "Margin dispute",
+      "description": "Two handwritten margins are arguing across a treaty page. Prepare a neutral transcription.",
+      "category": "surreal",
+      "rooms": [
+        "archive"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_pipe_telegram",
+      "title": "Pipe telegram",
+      "description": "The radiator is tapping out a leave request. Log the message and inspect the valve.",
+      "category": "surreal",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_tool_shadow",
+      "title": "Tool shadow",
+      "description": "A spanner's shadow remains on the board while the spanner is on loan. Correct the inventory count.",
+      "category": "surreal",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_clock_reserve",
+      "title": "Clock reserve",
+      "description": "The spare clock is storing unused minutes beneath its cover. Reconcile them with facilities.",
+      "category": "surreal",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_lift_indecision",
+      "title": "Lift indecision",
+      "description": "The service lift requests a second opinion on every floor. Arrange an attended delivery.",
+      "category": "surreal",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_boiler_biography",
+      "title": "Boiler biography",
+      "description": "The boiler log now recounts the unit's childhood. Restore the temperature column.",
+      "category": "surreal",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_socket_queue",
+      "title": "Socket queue",
+      "description": "The extension sockets have numbered themselves by seniority. Identify the correct service outlet.",
+      "category": "surreal",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_light_invoice",
+      "title": "Light invoice",
+      "description": "The corridor lighting has billed the sun for overtime. Forward the disputed line to facilities.",
+      "category": "surreal",
+      "rooms": [
+        "plant"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_steam_signature",
+      "title": "Steam signature",
+      "description": "The steam has signed the guest book before the guests arrived. Preserve a dry signing page.",
+      "category": "surreal",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_bench_memory",
+      "title": "Bench memory",
+      "description": "The bench recites the last visitor's shopping list. Withdraw the seat during the private booking.",
+      "category": "surreal",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_cold_reservation",
+      "title": "Cold reservation",
+      "description": "Someone has reserved the idea of cold in the warming room. Clarify the actual facilities requested.",
+      "category": "surreal",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_towel_topology",
+      "title": "Towel topology",
+      "description": "A folded towel now has one continuous side. Provide a conventional spare for the guest.",
+      "category": "surreal",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_sauna_echo",
+      "title": "Sauna echo",
+      "description": "An echo remains inside after the private booking has ended. Account for it before the next session.",
+      "category": "surreal",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    },
+    {
+      "id": "surreal_ladle_tide",
+      "title": "Ladle tide",
+      "description": "The water in the ladle observes Helsinki harbour tides. Record a stable measure at the bucket.",
+      "category": "surreal",
+      "rooms": [
+        "sauna"
+      ],
+      "weight": 1
+    }
+  ]
+}

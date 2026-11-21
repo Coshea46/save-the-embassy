@@ -7,8 +7,10 @@ from contextlib import redirect_stdout
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-with redirect_stdout(sys.stderr):
-    from agent import EmbassyAgent
+def EmbassyAgent():
+    # Import inside the request so a syntax/import error reaches the browser.
+    from agent import EmbassyAgent as Agent
+    return Agent()
 
 
 def handle(agent, request, loop):

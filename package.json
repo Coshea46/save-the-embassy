@@ -15,10 +15,14 @@
     "typecheck": "tsc -b --force",
     "lint": "eslint .",
     "test": "npm run build && node --test tests/*.test.mjs",
-    "test:python": "python -m unittest discover -s apps/game/python -p test_*.py",
+    "test:python": "node apps/game/python-tests.mjs",
     "demo": "npm run build && node apps/game/demo.mjs",
     "benchmark": "npm run build && node tools/benchmark/cli.mjs",
-    "fairness": "npm run build && node tools/fairness/cli.mjs"
+    "fairness": "npm run build && node tools/fairness/cli.mjs",
+    "start": "npm run build && node apps/game/server.mjs",
+    "doctor": "node apps/game/doctor.mjs",
+    "audit:catalogue": "npm run build && node apps/game/catalogue-audit.mjs",
+    "agent:benchmark": "npm run build && node apps/game/benchmark.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
