@@ -1,0 +1,120 @@
+{
+  "manifest": {
+    "scenario_id": "b46f4689-7fd2-4e7b-ae44-d5901facfb56",
+    "ruleset_version": "embassy.1",
+    "catalogue_version": "dispatch.1"
+  },
+  "participants": 150,
+  "wall_seconds": 20.38,
+  "requests": 1201,
+  "requests_per_wall_second": 58.9,
+  "expected_pacing_rejections": 150,
+  "unexpected_http_errors": 0,
+  "api": {
+    "count": 1201,
+    "p50_ms": 199.6,
+    "p95_ms": 725.7,
+    "p99_ms": 870.3,
+    "max_ms": 880.1
+  },
+  "phases": [
+    {
+      "name": "register",
+      "requests": 150,
+      "requests_per_s": 717.7,
+      "count": 150,
+      "p50_ms": 153.3,
+      "p95_ms": 199.7,
+      "p99_ms": 202.4,
+      "max_ms": 202.6
+    },
+    {
+      "name": "join",
+      "requests": 150,
+      "requests_per_s": 760.5,
+      "count": 150,
+      "p50_ms": 129.4,
+      "p95_ms": 185.5,
+      "p99_ms": 186.9,
+      "max_ms": 188.9
+    },
+    {
+      "name": "start",
+      "requests": 150,
+      "requests_per_s": 251.9,
+      "count": 150,
+      "p50_ms": 381.5,
+      "p95_ms": 576.9,
+      "p99_ms": 583,
+      "max_ms": 583.3
+    },
+    {
+      "name": "pacing rejection",
+      "requests": 150,
+      "requests_per_s": 390.7,
+      "count": 150,
+      "p50_ms": 234.2,
+      "p95_ms": 365.4,
+      "p99_ms": 375.2,
+      "max_ms": 375.3
+    },
+    {
+      "name": "simultaneous decision and exact retry",
+      "requests": 300,
+      "requests_per_s": 333.6,
+      "count": 300,
+      "p50_ms": 513.5,
+      "p95_ms": 867,
+      "p99_ms": 877.7,
+      "max_ms": 880.1
+    },
+    {
+      "name": "recovery after lost responses",
+      "requests": 150,
+      "requests_per_s": 385.3,
+      "count": 150,
+      "p50_ms": 248.3,
+      "p95_ms": 374.1,
+      "p99_ms": 383.9,
+      "max_ms": 383.9
+    },
+    {
+      "name": "public snapshot reconnect",
+      "requests": 150,
+      "requests_per_s": 1434.2,
+      "count": 150,
+      "p50_ms": 64.8,
+      "p95_ms": 95.3,
+      "p99_ms": 99,
+      "max_ms": 100
+    }
+  ],
+  "database": {
+    "standings_query": {
+      "count": 50,
+      "p50_ms": 0.8,
+      "p95_ms": 1.6,
+      "p99_ms": 3.1,
+      "max_ms": 3.1
+    },
+    "xact_commit": 4163,
+    "xact_rollback": 156,
+    "blks_read": 320,
+    "blks_hit": 309828,
+    "deadlocks": 0
+  },
+  "realtime": {
+    "connected_viewers": 2,
+    "commit_to_delivery": {
+      "count": 150,
+      "p50_ms": 42,
+      "p95_ms": 473,
+      "p99_ms": 521,
+      "max_ms": 522
+    },
+    "missed_by_offline_viewer": 150,
+    "recovered_snapshot_rows": 150
+  },
+  "decision_rows": 150,
+  "unique_runs": 150
+}

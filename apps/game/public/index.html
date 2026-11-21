@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="launch" content="LAUNCH_TOKEN" />
+    <title>Embassy Dispatch · Save the Embassy</title>
+    <link rel="icon" href="/crest.png" />
+    <link rel="stylesheet" href="/style.css" />
+    <script type="module" src="/ui.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <img src="/crest.png" width="36" height="36" alt="" /><strong
+          >Embassy Dispatch</strong
+        >
+      </div>
+      <nav aria-label="Game modes">
+        <button id="practiceTab" aria-current="page">Practice</button
+        ><button id="officialTab">Competition</button>
+      </nav>
+      <span class="station"><i></i> Local station</span>
+    </header>
+    <main>
+      <div class="mast">
+        <div>
+          <div class="overline">
+            <span class="rule"></span> Finnish mission &nbsp;/&nbsp; operations
+          </div>
+          <h1>Duty station<span>.</span></h1>
+        </div>
+        <div class="modegroup">
+          <span id="modeTag" class="tag">Practice shift</span
+          ><span id="seedTag" class="mono">Seed 42</span>
+        </div>
+      </div>
+      <div class="layout">
+        <section class="scene panel">
+          <div class="heading">
+            <h2><span class="square"></span> Embassy floor</h2>
+            <button class="small" id="camera">Follow agent</button>
+          </div>
+          <div class="field">
+            <canvas
+              id="map"
+              width="520"
+              height="314"
+              aria-label="Embassy floor with six labelled rooms, agent and incident locations"
+            ></canvas>
+            <div id="callout" hidden></div>
+            <div id="terminal" hidden role="status">
+              <div>
+                <div class="overline">Shift report</div>
+                <h2 id="terminalTitle"></h2>
+                <p id="terminalText"></p>
+                <button id="attempt" hidden>Start another official attempt</button>
+                <button id="again">Restart shift</button>
+              </div>
+            </div>
+          </div>
+          <div class="hud">
+            <div><label>Score</label><strong id="score">0000</strong></div>
+            <div>
+              <label>Shift clock</label><strong id="clock">00:00</strong>
+            </div>
+            <div>
+              <label>Completed</label><strong id="completed">00</strong>
+            </div>
+            <div><label>Open</label><strong id="open">00</strong></div>
+          </div>
+          <div class="controls">
+            <button id="play" class="primary">Run agent</button
+            ><button id="restart">Restart</button
+            ><label class="speed"
+              >Speed
+              <select id="speed">
+                <option value="1">1×</option>
+                <option value="2">2×</option>
+                <option value="4" selected>4×</option>
+                <option value="8">8×</option>
+              </select></label
+            ><button id="settings" class="small">Shift settings</button>
+          </div>
+        </section>
+        <aside class="rail">
+          <section class="panel tracking">
+            <div class="heading">
+              <h2><span class="square"></span> Station radar</h2>
+              <span class="mono dim">MAP / 01</span>
+            </div>
+            <canvas
+              id="mini"
+              width="190"
+              height="110"
+              aria-label="Minimap. Select a document to inspect it."
+            ></canvas>
+            <div class="legend">
+              <span><b class="pip"></b> Agent</span
+              ><span><img src="/paper.png" alt="" /> Report</span
+              ><span><b class="alert">!</b> Urgent</span>
+            </div>
+          </section>
+          <section class="panel dispatch">
+            <div class="heading">
+              <h2><span class="square orange"></span> Dispatch desk</h2>
+            </div>
+            <div class="dispatchbody">
+              <div class="overline" id="detailtype">Incoming report</div>
+              <h3 id="detailtitle">Awaiting dispatch</h3>
+              <p id="detaildesc"></p>
+              <div class="facts" id="facts"></div>
+            </div>
+          </section>
+        </aside>
+      </div>
+      <div id="network" role="status" hidden></div>
+      <div id="errors" role="alert" hidden></div>
+      <div class="lower">
+        <section class="panel">
+          <div class="heading">
+            <h2><span class="square"></span> Report queue</h2>
+            <span class="mono dim" id="queueCount"></span>
+          </div>
+          <div id="queue"></div>
+        </section>
+        <section class="panel">
+          <div class="heading">
+            <h2><span class="square"></span> Shift journal</h2>
+            <select aria-label="Journal view" id="journalMode">
+              <option>Decisions</option>
+              <option>History</option>
+            </select>
+          </div>
+          <div id="journal"></div>
+        </section>
+      </div>
+      <footer>
+        <span>Save the Embassy</span
+        ><span>OpenAI Student Collective workshop</span>
+      </footer>
+    </main>
+    <dialog id="config">
+      <form id="configForm">
+        <div class="heading">
+          <h2>Practice settings</h2>
+          <button type="button" class="close">Close</button>
+        </div>
+        <div class="formbody">
+          <label
+            >Seed
+            <input
+              id="seed"
+              type="number"
+              min="0"
+              max="4294967295"
+              placeholder="Random"
+          /></label>
+          <p>
+            Use the same seed to compare two agents. Leave it blank for a random
+            shift.
+          </p>
+          <fieldset>
+            <legend>Slack thresholds in seconds</legend>
+            <label
+              >Critical
+              <input
+                id="critical"
+                type="number"
+                min="0"
+                value="5"
+                required /></label
+            ><label
+              >Very urgent
+              <input
+                id="very"
+                type="number"
+                min="1"
+                value="15"
+                required /></label
+            ><label
+              >Urgent
+              <input id="urgent" type="number" min="2" value="30" required
+            /></label>
+          </fieldset>
+          <button class="primary">Start fresh shift</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="join">
+      <form id="joinForm">
+        <div class="heading">
+          <h2>Competition desk</h2>
+          <button type="button" class="close">Close</button>
+        </div>
+        <div class="formbody">
+          <label
+            >Connection
+            <select id="connection">
+              <option value="official">Official workshop</option>
+              <option value="import">Joined on the website</option>
+              <option value="rehearsal">Local rehearsal</option>
+            </select></label
+          >
+          <p id="joinHelp"></p>
+          <label hidden>Game credentials<input id="credentials" type="password" autocomplete="off" /></label>
+          <label
+            >Display name
+            <input
+              id="name"
+              maxlength="32"
+              value="Desk officer"
+              required /></label
+          ><label
+            >Workshop ID
+            <input id="workshop" placeholder="From your organiser" /></label
+          ><label
+            >Join code
+            <input
+              id="code"
+              placeholder="From your organiser"
+              type="password" /></label
+          ><button class="primary">Join or resume</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>

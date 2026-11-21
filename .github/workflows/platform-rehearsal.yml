@@ -1,0 +1,68 @@
+name: Competition rehearsal
+on:
+  pull_request:
+    paths:
+      - 'apps/game/**'
+      - 'packages/tasks/**'
+      - 'apps/api/**'
+      - 'apps/leaderboard/**'
+      - 'supabase/**'
+      - 'packages/simulation/**'
+      - 'packages/contracts/**'
+      - 'package*.json'
+      - '.github/workflows/platform-rehearsal.yml'
+permissions:
+  contents: read
+jobs:
+  realtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci && npm run build
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 3.2.0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install playwright==1.62.0
+      - name: Build deployment image
+        run: docker build -f Dockerfile.platform -t embassy-platform:test .
+      - name: Start disposable Supabase
+        run: supabase start -x studio,logflare,vector,supavisor,edge-runtime,mailpit,postgres-meta,imgproxy
+      - name: Exercise committed score updates and recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          supabase status -o env > "$RUNNER_TEMP/embassy-stack.env"
+          source "$RUNNER_TEMP/embassy-stack.env"
+          export DATABASE_URL="$DB_URL" SUPABASE_URL="$API_URL"
+          export SUPABASE_PUBLISHABLE_KEY="${ANON_KEY:-${PUBLISHABLE_KEY}}"
+          export PUBLIC_ORIGIN="http://127.0.0.1:8080" ORGANISER_USERNAME=director
+          TEST_ORGANISER_PASSWORD=$(openssl rand -hex 24)
+          export TEST_ORGANISER_PASSWORD
+          ORGANISER_PASSWORD_HASH=$(printf '%s' "$TEST_ORGANISER_PASSWORD" | node apps/api/password-hash.mjs)
+          export ORGANISER_PASSWORD_HASH
+          docker run -d --name embassy-api --network host \
+            -e DATABASE_URL -e PUBLIC_ORIGIN -e SUPABASE_URL -e SUPABASE_PUBLISHABLE_KEY \
+            -e ORGANISER_USERNAME -e ORGANISER_PASSWORD_HASH embassy-platform:test
+          node apps/game/server.mjs &
+          game_pid=$!
+          trap 'kill "$game_pid" || true; docker rm -f embassy-api >/dev/null' EXIT
+          curl -fsS --retry 15 --retry-connrefused --retry-delay 1 "$PUBLIC_ORIGIN/health/ready"
+          node apps/api/test/local-stack.mjs | tee "$RUNNER_TEMP/embassy-measurements.json"
+          export CHROMIUM_PATH="$(command -v google-chrome)"
+          export EMBASSY_QA_DIR="$RUNNER_TEMP/browser-workshop"
+          python apps/api/test/browser_workshop.py | tee "$RUNNER_TEMP/browser-result.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: competition-rehearsal
+          path: |
+            ${{ runner.temp }}/embassy-measurements.json
+            ${{ runner.temp }}/browser-result.json
+            ${{ runner.temp }}/browser-workshop

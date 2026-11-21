@@ -31,3 +31,6 @@ export function loadCatalogue(raw: unknown, full = false): Catalogue {
   return catalogue;
 }
 export const sampleCatalogue = loadCatalogue(sample);
+
+import dispatch from "./dispatch-1.json" with { type: "json" };
+export const fullCatalogue = loadCatalogue(dispatch, true);

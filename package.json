@@ -8,17 +8,26 @@
   "workspaces": [
     "packages/*",
     "apps/game",
-    "apps/api"
+    "apps/api",
+    "apps/leaderboard"
   ],
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && npm run build -w apps/leaderboard",
     "typecheck": "tsc -b --force",
     "lint": "eslint .",
     "test": "npm run build && node --test tests/*.test.mjs",
-    "test:python": "python -m unittest discover -s apps/game/python -p test_*.py",
+    "test:python": "node apps/game/python-tests.mjs",
     "demo": "npm run build && node apps/game/demo.mjs",
     "benchmark": "npm run build && node tools/benchmark/cli.mjs",
-    "fairness": "npm run build && node tools/fairness/cli.mjs"
+    "fairness": "npm run build && node tools/fairness/cli.mjs",
+    "start": "npm run build && node apps/game/server.mjs",
+    "doctor": "node apps/game/doctor.mjs",
+    "audit:catalogue": "npm run build && node apps/game/catalogue-audit.mjs",
+    "agent:benchmark": "npm run build && node apps/game/benchmark.mjs",
+    "start:platform": "node apps/api/dist/server.js",
+    "test:platform": "npm run build && node --test apps/api/test/*.test.mjs",
+    "load:platform": "node apps/api/test/load.mjs",
+    "load:realtime": "node apps/api/test/local-stack.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
