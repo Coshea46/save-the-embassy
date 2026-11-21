@@ -11,6 +11,7 @@ COPY --from=build /app/packages ./packages
 COPY --from=build /app/apps/api/package.json ./apps/api/package.json
 COPY --from=build /app/apps/api/dist ./apps/api/dist
 COPY --from=build /app/apps/leaderboard/dist ./apps/leaderboard/dist
+COPY supabase/prod-ca-2021.crt /app/certs/supabase-prod-ca-2021.crt
 USER node
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||8080)+'/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
