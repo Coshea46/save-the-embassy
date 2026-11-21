@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: embassy-competition
+    runtime: docker
+    dockerfilePath: ./Dockerfile.platform
+    plan: free
+    autoDeployTrigger: "off"
+    healthCheckPath: /health/ready
+    envVars:
+      - key: PUBLIC_ORIGIN
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: ORGANISER_USERNAME
+        sync: false
+      - key: ORGANISER_PASSWORD_HASH
+        sync: false

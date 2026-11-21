@@ -30,6 +30,8 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      - if: runner.os == 'Linux'
+        run: npm run test:platform
       - run: npm run test:python
       - run: npm run build
       - run: npm run demo

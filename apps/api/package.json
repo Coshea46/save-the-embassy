@@ -7,6 +7,16 @@
   "types": "./dist/index.d.ts",
   "dependencies": {
     "@embassy/contracts": "0.1.0",
-    "@embassy/simulation": "0.1.0"
+    "@embassy/simulation": "0.1.0",
+    "@embassy/tasks": "0.1.0",
+    "express": "5.3.0",
+    "postgres": "4.1.1",
+    "zod": "4.1.12"
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "2.99.2",
+    "@types/express": "5.0.6",
+    "@types/node": "22.20.5",
+    "embedded-postgres": "18.7.0-beta.19"
   }
 }

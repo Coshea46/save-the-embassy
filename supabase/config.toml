@@ -1,0 +1,19 @@
+project_id = "save-the-embassy"
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+[realtime]
+enabled = true
+[studio]
+enabled = false
+[storage]
+enabled = false
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:8080"
+enable_signup = false

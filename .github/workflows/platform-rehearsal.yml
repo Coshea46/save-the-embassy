@@ -1,0 +1,51 @@
+name: Competition rehearsal
+on:
+  pull_request:
+    paths:
+      - 'apps/api/**'
+      - 'apps/leaderboard/**'
+      - 'supabase/**'
+      - 'packages/simulation/**'
+      - 'packages/contracts/**'
+      - 'package*.json'
+      - '.github/workflows/platform-rehearsal.yml'
+permissions:
+  contents: read
+jobs:
+  realtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci && npm run build
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 3.2.0
+      - name: Start disposable Supabase
+        run: supabase start -x studio,logflare,vector,supavisor,edge-runtime,mailpit,postgres-meta,imgproxy
+      - name: Exercise committed score updates and recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          supabase status -o env > "$RUNNER_TEMP/embassy-stack.env"
+          source "$RUNNER_TEMP/embassy-stack.env"
+          export DATABASE_URL="$DB_URL" SUPABASE_URL="$API_URL"
+          export SUPABASE_PUBLISHABLE_KEY="${ANON_KEY:-${PUBLISHABLE_KEY}}"
+          export PUBLIC_ORIGIN="http://127.0.0.1:8080" ORGANISER_USERNAME=director
+          TEST_ORGANISER_PASSWORD=$(openssl rand -hex 24)
+          export TEST_ORGANISER_PASSWORD
+          ORGANISER_PASSWORD_HASH=$(printf '%s' "$TEST_ORGANISER_PASSWORD" | node apps/api/password-hash.mjs)
+          export ORGANISER_PASSWORD_HASH
+          node apps/api/dist/server.js &
+          server_pid=$!
+          trap 'kill "$server_pid" || true' EXIT
+          curl -fsS --retry 15 --retry-connrefused --retry-delay 1 "$PUBLIC_ORIGIN/health/ready"
+          node apps/api/test/local-stack.mjs | tee "$RUNNER_TEMP/embassy-measurements.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: competition-rehearsal
+          path: ${{ runner.temp }}/embassy-measurements.json
