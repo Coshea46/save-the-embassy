@@ -55,17 +55,30 @@ def rehearse(browser, screenshots):
     game.locator("#credentials").fill(credentials)
     game.get_by_role("button", name="Join or resume").click()
     expect(game.locator("#modeTag")).to_have_text("Official shift")
-    game.locator("#play").click()
 
     # The public observer has no participant or organiser session.
     public = browser.new_context(viewport={"width": 1440, "height": 950})
     board = public.new_page()
+    scored_notifications = []
+
+    def read_frame(frame):
+        if isinstance(frame, str) and "postgres_changes" in frame:
+            msg = json.loads(frame)
+            # Phoenix v2 carries [join_ref, ref, topic, event, payload].
+            if isinstance(msg, list) and msg[3] == "postgres_changes":
+                row = msg[4]["data"]["record"]
+                if row.get("display_name") == "Aurora" and row.get("score", 0) > 0:
+                    scored_notifications.append(row["score"])
+
+    board.on("websocket", lambda ws: ws.on("framereceived", read_frame))
     board.goto(API + "/board/" + workshop)
     expect(board.locator("#ranks")).to_contain_text("Aurora")
     expect(board.locator("#sync")).to_contain_text("Live", timeout=60000)
+    game.locator("#play").click()
     organiser.locator("#round").click()
     expect(organiser.locator("#round")).to_be_disabled()
     expect(board.locator(".score")).not_to_have_text("0", timeout=90000)
+    assert scored_notifications, "Browser did not receive the scored WAL event"
     public.set_offline(True)
     public.set_offline(False)
     board.reload()

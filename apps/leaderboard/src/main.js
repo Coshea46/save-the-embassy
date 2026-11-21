@@ -270,20 +270,57 @@ async function board() {
     },
     subscribe: (update, onState) => {
       if (!client) return () => {};
-      const ch = client
-        .channel("board-" + id)
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "embassy_standings",
-            filter: "workshop_id=eq." + id,
-          },
-          update,
-        )
-        .subscribe(onState);
-      return () => client.removeChannel(ch);
+      let channel,
+        retry,
+        stopped = false,
+        failures = 0;
+      function connect() {
+        if (stopped) return;
+        const current = client.channel("board-" + id);
+        channel = current;
+        current
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "embassy_standings",
+              filter: "workshop_id=eq." + id,
+            },
+            update,
+          )
+          .on("system", {}, (message) => {
+            if (
+              channel === current &&
+              message.extension === "postgres_changes" &&
+              message.status === "ok"
+            ) {
+              failures = 0;
+              onState("SUBSCRIBED");
+            }
+          })
+          .subscribe((status) => {
+            if (stopped || channel !== current) return;
+            onState(status);
+            if (status === "SUBSCRIBED") failures = 0;
+            if (["CHANNEL_ERROR", "TIMED_OUT", "CLOSED"].includes(status)) {
+              channel = null;
+              void client.removeChannel(current).finally(() => {
+                if (!stopped)
+                  retry = setTimeout(
+                    connect,
+                    Math.min(8000, 500 * 2 ** Math.min(failures++, 4)),
+                  );
+              });
+            }
+          });
+      }
+      connect();
+      return () => {
+        stopped = true;
+        clearTimeout(retry);
+        if (channel) void client.removeChannel(channel);
+      };
     },
   });
   const timer = setInterval(() => {

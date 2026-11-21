@@ -81,4 +81,12 @@ test("local Python plays the pinned production scenario through REST, reconnects
     saved.status.observation,
     new Simulation(scenario, fullCatalogue).observe(),
   );
+  await db.admin`update embassy.runs set started_at=started_at-interval '6 minutes' where id=${saved.status.run_id}`;
+  const wait = { choose: () => null };
+  while (client.frame().status === "playing") await client.advance(wait);
+  const closed = await client.advance(wait);
+  assert.equal(closed.status, "closed");
+  assert.equal(closed.verified, true);
+  const board = await db.request("/workshops/" + w.id + "/leaderboard");
+  assert.equal(board.data.entries[0].score, end.metrics.score);
 });

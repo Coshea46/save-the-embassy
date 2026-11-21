@@ -31,6 +31,8 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install playwright==1.62.0
+      - name: Build deployment image
+        run: docker build -f Dockerfile.platform -t embassy-platform:test .
       - name: Start disposable Supabase
         run: supabase start -x studio,logflare,vector,supavisor,edge-runtime,mailpit,postgres-meta,imgproxy
       - name: Exercise committed score updates and recovery
@@ -46,11 +48,12 @@ jobs:
           export TEST_ORGANISER_PASSWORD
           ORGANISER_PASSWORD_HASH=$(printf '%s' "$TEST_ORGANISER_PASSWORD" | node apps/api/password-hash.mjs)
           export ORGANISER_PASSWORD_HASH
-          node apps/api/dist/server.js &
-          server_pid=$!
+          docker run -d --name embassy-api --network host \
+            -e DATABASE_URL -e PUBLIC_ORIGIN -e SUPABASE_URL -e SUPABASE_PUBLISHABLE_KEY \
+            -e ORGANISER_USERNAME -e ORGANISER_PASSWORD_HASH embassy-platform:test
           node apps/game/server.mjs &
           game_pid=$!
-          trap 'kill "$server_pid" "$game_pid" || true' EXIT
+          trap 'kill "$game_pid" || true; docker rm -f embassy-api >/dev/null' EXIT
           curl -fsS --retry 15 --retry-connrefused --retry-delay 1 "$PUBLIC_ORIGIN/health/ready"
           node apps/api/test/local-stack.mjs | tee "$RUNNER_TEMP/embassy-measurements.json"
           export CHROMIUM_PATH="$(command -v google-chrome)"
