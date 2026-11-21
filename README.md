@@ -80,7 +80,8 @@ Continue with **Node.js on Linux** below.
 Open **Terminal** and run:
 
 ```sh
-sudo dnf install -y git python3 curl
+sudo dnf install -y git python3
+command -v curl || sudo dnf install -y curl
 case "$(uname -m)" in x86_64) code_arch=x64 ;; aarch64) code_arch=arm64 ;; esac
 curl -fL "https://update.code.visualstudio.com/latest/linux-rpm-${code_arch}/stable" -o /tmp/embassy-code.rpm
 sudo dnf install -y /tmp/embassy-code.rpm

@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { pathToFileURL } from "node:url";
 import { setTimeout as sleep } from "node:timers/promises";
 import { createClient } from "@supabase/supabase-js";
+import { subscribeStandings } from "../../leaderboard/src/live.js";
 import { fixture } from "./fixture.mjs";
 
 function stats(values) {
@@ -29,40 +30,30 @@ function viewer(url, key, workshop) {
   const client = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
-  let state = "",
-    channel;
+  let stop;
   const delivered = new Map();
   async function connect() {
-    state = "";
-    channel = client
-      .channel("load-" + randomUUID())
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "embassy_standings",
-          filter: "workshop_id=eq." + workshop,
-        },
-        (e) => {
-          if (e.new.score > 0 && !delivered.has(e.new.display_name))
-            delivered.set(
-              e.new.display_name,
-              Date.now() - Date.parse(e.commit_timestamp),
-            );
-        },
-      )
-      .on("system", {}, (event) => {
-        if (event.status === "error") console.error("Realtime:", event.message);
-      })
-      .subscribe((s, error) => {
-        if (error) console.error("Subscription", s, error.message);
-        state = s;
-      });
-    await waitFor(() => state === "SUBSCRIBED");
+    let ready = false;
+    stop = subscribeStandings(
+      client,
+      workshop,
+      (e) => {
+        if (e.new.score > 0 && !delivered.has(e.new.display_name))
+          delivered.set(
+            e.new.display_name,
+            Date.now() - Date.parse(e.commit_timestamp),
+          );
+      },
+      (status) => {
+        ready = status === "SUBSCRIBED";
+      },
+      "UPDATE",
+    );
+    await waitFor(() => ready);
   }
   async function close() {
-    if (channel) await client.removeChannel(channel);
+    await stop?.();
+    stop = undefined;
     client.realtime.disconnect();
   }
   return { connect, close, delivered };

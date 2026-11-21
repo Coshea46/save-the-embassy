@@ -1,0 +1,34 @@
+name: Clean Linux student setup
+on: pull_request
+permissions:
+  contents: read
+jobs:
+  setup:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { image: 'ubuntu:24.04', section: 'Ubuntu or Debian' }
+          - { image: 'debian:trixie', section: 'Ubuntu or Debian' }
+          - { image: 'fedora:latest', section: 'Fedora' }
+    steps:
+      - uses: actions/checkout@v6
+      - name: Exercise README commands in a fresh distribution
+        env:
+          DISTRO: ${{ matrix.image }}
+          SECTION: ${{ matrix.section }}
+        run: |
+          git archive HEAD | docker run --rm -i -e SECTION "$DISTRO" bash -ec '
+            if command -v apt-get >/dev/null; then
+              apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y sudo python3 tar ca-certificates
+            else
+              dnf install -y sudo shadow-utils python3 tar
+            fi
+            useradd -m -s /bin/bash student
+            echo "student ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/student
+            install -d -o student -g student /home/student/game
+            tar x -C /home/student/game
+            chown -R student:student /home/student/game
+            sudo -HEu student env SECTION="$SECTION" bash -ec "cd /home/student/game && python3 .github/student-setup.py"
+          '
