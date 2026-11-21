@@ -1,0 +1,254 @@
+import { createHash, randomUUID } from "node:crypto";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+import { homedir } from "node:os";
+import { rest } from "@embassy/contracts";
+import { createScenario, Simulation, entrance } from "@embassy/simulation";
+import { fullCatalogue } from "@embassy/tasks";
+import { roomAt } from "./session.mjs";
+
+function endpoint(base, route, ids) {
+  const path = route.path.replace(/:(\w+)/g, (_, k) =>
+    encodeURIComponent(ids[k]),
+  );
+  return base.replace(/\/$/, "") + path;
+}
+
+export function checkedUrl(value) {
+  const url = new URL(value);
+  const local = ["127.0.0.1", "localhost", "[::1]"].includes(url.hostname);
+  if (
+    url.username ||
+    url.password ||
+    url.search ||
+    url.hash ||
+    !(url.protocol === "https:" || (local && url.protocol === "http:"))
+  )
+    throw new Error("Use an HTTPS service URL or HTTP on loopback.");
+  return url.href.replace(/\/$/, "");
+}
+
+export function remoteTransport(service) {
+  const base = checkedUrl(service);
+  return async (operation, ids, data, token) => {
+    const route = rest[operation];
+    const request = route.request.parse(data);
+    const response = await fetch(endpoint(base, route, ids), {
+      method: route.method,
+      redirect: "error",
+      signal: AbortSignal.timeout(12000),
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: "Bearer " + token }),
+      },
+      body: route.method === "GET" ? undefined : JSON.stringify(request),
+    });
+    if (!response.ok) {
+      const error = new Error(
+        "Competition server returned HTTP " + response.status,
+      );
+      if (response.status === 429) {
+        const raw = response.headers.get("retry-after");
+        const seconds =
+          raw && !Number.isNaN(Number(raw))
+            ? Number(raw)
+            : (Date.parse(raw) - Date.now()) / 1000;
+        error.retryAfter = Math.max(
+          1,
+          Number.isFinite(seconds) ? Math.ceil(seconds) : 2,
+        );
+      }
+      throw error;
+    }
+    return route.response.parse(await response.json());
+  };
+}
+
+export function mockTransport() {
+  const participant_id = randomUUID(),
+    run_id = randomUUID();
+  const scenario = createScenario(42, "training-room", fullCatalogue);
+  const sim = new Simulation(scenario, fullCatalogue);
+  const receipts = new Map();
+  let sequence = 0;
+  const status = () => ({
+    run_id,
+    manifest: scenario.manifest,
+    next_sequence: sequence,
+    tick: sim.metrics.survival_ticks,
+    status: sim.status,
+    metrics: sim.metrics,
+    observation: sim.status === "playing" ? sim.observe() : null,
+  });
+  return async (operation, ids, body) => {
+    const route = rest[operation];
+    route.request.parse(body);
+    let result;
+    if (operation === "register")
+      result = { participant_id, access_token: "local-rehearsal" };
+    else if (operation === "join")
+      result = { workshop_id: ids.workshop_id, participant_id };
+    else if (receipts.has(body.idempotency_key))
+      result = receipts.get(body.idempotency_key);
+    else {
+      if (operation === "decide") {
+        if (sequence !== body.sequence)
+          throw new Error("Mock sequence mismatch");
+        sim.decide(body.selected_task_id);
+        sequence++;
+      }
+      if (operation === "finish" && sim.status === "playing")
+        throw new Error("Shift still running");
+      result = status();
+      if (body.idempotency_key) receipts.set(body.idempotency_key, result);
+    }
+    return route.response.parse(result);
+  };
+}
+
+export function credentialStore(base, workshop) {
+  const dir = join(homedir(), ".embassy-dispatch");
+  const file = join(
+    dir,
+    createHash("sha256")
+      .update(base + "|" + workshop)
+      .digest("hex") + ".json",
+  );
+  return {
+    async load() {
+      try {
+        return JSON.parse(await readFile(file, "utf8"));
+      } catch (error) {
+        if (error.code === "ENOENT") return {};
+        throw error;
+      }
+    },
+    async save(state) {
+      await mkdir(dir, { recursive: true, mode: 0o700 });
+      const temp = file + "." + randomUUID();
+      await writeFile(temp, JSON.stringify(state), { mode: 0o600 });
+      await rename(temp, file);
+    },
+  };
+}
+
+export class Official {
+  constructor(transport, store, workshop, mock, leaderboard) {
+    this.call = transport;
+    this.store = store;
+    this.workshop = workshop;
+    this.mock = mock;
+    this.leaderboard = leaderboard;
+  }
+  persist() {
+    return this.store.save(this.data);
+  }
+  async connect(display_name, join_code) {
+    this.data = await this.store.load();
+    const d = this.data;
+    const ids = { workshop_id: this.workshop };
+    if (!d.access_token) {
+      Object.assign(d, await this.call("register", ids, { display_name }));
+      await this.persist();
+    }
+    if (!d.joined) {
+      await this.call("join", ids, { join_code }, d.access_token);
+      d.joined = true;
+      await this.persist();
+    }
+    d.history ??= [];
+    d.log ??= [];
+    if (!d.status) {
+      d.startKey ??= randomUUID();
+      await this.persist();
+      d.status = await this.call(
+        "start",
+        ids,
+        { idempotency_key: d.startKey },
+        d.access_token,
+      );
+    } else if (!d.pending) {
+      d.status = await this.call(
+        "status",
+        { run_id: d.status.run_id },
+        {},
+        d.access_token,
+      );
+    }
+    await this.persist();
+    return this.frame();
+  }
+  async advance(bridge) {
+    const d = this.data;
+    if (!d.pending) {
+      const playing = d.status.status === "playing";
+      const chosen = playing ? await bridge.choose(d.status.observation) : null;
+      d.pending = {
+        op: playing ? "decide" : "finish",
+        body: {
+          sequence: d.status.next_sequence,
+          idempotency_key: randomUUID(),
+          ...(playing && { selected_task_id: chosen }),
+        },
+      };
+    }
+    // Journal the exact choice before sending. A lost response reuses the same receipt.
+    await this.persist();
+    const { op, body } = d.pending;
+    const before = d.status;
+    const after = await this.call(
+      op,
+      { run_id: before.run_id },
+      body,
+      d.access_token,
+    );
+    if (op === "decide") {
+      const task = before.observation.available_tasks.find(
+        (t) => t.id === body.selected_task_id,
+      );
+      d.log.unshift({
+        tick: before.tick,
+        text: task ? "Selected " + task.title : "Wait one tick",
+      });
+      if (task && after.metrics.completed > before.metrics.completed) {
+        d.history.unshift({
+          tick: after.tick,
+          title: task.title,
+          outcome: "Completed",
+          reward: task.reward,
+        });
+        d.position = task.position;
+      }
+    } else d.finished = true;
+    d.position =
+      after.observation?.agent.position ??
+      d.position ??
+      before.observation?.agent.position;
+    d.status = after;
+    d.pending = null;
+    await this.persist();
+    return this.frame();
+  }
+  frame() {
+    const d = this.data,
+      s = d.status;
+    return {
+      mode: this.mock ? "rehearsal" : "official",
+      seed: null,
+      tick: s.tick,
+      status: s.status !== "playing" && !d.finished ? "verifying" : s.status,
+      position: s.observation?.agent.position ?? d.position ?? entrance,
+      active: null,
+      reports: (s.observation?.available_tasks ?? []).map((t) => ({
+        ...t,
+        room: roomAt(t.position),
+      })),
+      history: d.history,
+      log: d.log,
+      metrics: s.metrics,
+      decisions: s.next_sequence,
+      verified: !this.mock && d.finished === true,
+      leaderboard: this.mock ? null : this.leaderboard,
+    };
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "version": "dispatch.1",
+  "total": 600,
+  "counts": {
+    "maintenance": 90,
+    "administration": 70,
+    "it": 70,
+    "protocol": 65,
+    "food": 55,
+    "security": 55,
+    "culture": 50,
+    "gaming": 75,
+    "surreal": 70
+  },
+  "unique_ids": 600,
+  "unique_titles": 600,
+  "unique_descriptions": 600,
+  "locations": {
+    "reception": {
+      "definitions": 145,
+      "entrance_distance": 10
+    },
+    "office": {
+      "definitions": 165,
+      "entrance_distance": 4
+    },
+    "kitchen": {
+      "definitions": 102,
+      "entrance_distance": 10
+    },
+    "plant": {
+      "definitions": 57,
+      "entrance_distance": 10
+    },
+    "archive": {
+      "definitions": 85,
+      "entrance_distance": 4
+    },
+    "sauna": {
+      "definitions": 46,
+      "entrance_distance": 10
+    }
+  },
+  "sha256": "b122e0908c73445c236a0ed1211aa63ecdcad538bcc178484b45adf483114586"
+}
