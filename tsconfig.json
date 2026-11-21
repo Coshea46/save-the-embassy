@@ -1,0 +1,23 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "packages/contracts"
+    },
+    {
+      "path": "packages/tasks"
+    },
+    {
+      "path": "packages/simulation"
+    },
+    {
+      "path": "packages/strategies"
+    },
+    {
+      "path": "apps/game"
+    },
+    {
+      "path": "apps/api"
+    }
+  ]
+}

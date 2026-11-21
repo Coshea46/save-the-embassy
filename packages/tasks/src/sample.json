@@ -1,0 +1,101 @@
+{
+  "version": "sample.1",
+  "definitions": [
+    {
+      "id": "thermal",
+      "title": "PS4 thermal incident",
+      "description": "The cultural attaché promised GTA 6 would run. The console now needs a cooling break.",
+      "category": "gaming",
+      "rooms": ["office"],
+      "weight": 1
+    },
+    {
+      "id": "roomba",
+      "title": "Roomba requests clearance",
+      "description": "A floor robot has carried the visitor sign-in sheet under a cabinet.",
+      "category": "security",
+      "rooms": ["reception"],
+      "weight": 1
+    },
+    {
+      "id": "coffee",
+      "title": "Coffee machine boots to terminal",
+      "description": "The espresso dispenser now demands an Arch Linux login before serving coffee.",
+      "category": "food",
+      "rooms": ["kitchen"],
+      "weight": 1
+    },
+    {
+      "id": "sauna",
+      "title": "Ambassador misses roll call",
+      "description": "The ambassador is inside the sauna and the door handle is outside.",
+      "category": "culture",
+      "rooms": ["sauna"],
+      "weight": 1
+    },
+    {
+      "id": "boiler",
+      "title": "Boiler sings the anthem",
+      "description": "The boiler announces each pressure change with a note of the national anthem.",
+      "category": "maintenance",
+      "rooms": ["plant"],
+      "weight": 1
+    },
+    {
+      "id": "paper",
+      "title": "A form for missing forms",
+      "description": "The official request for duplicate paperwork disappeared inside its own folder.",
+      "category": "administration",
+      "rooms": ["archive"],
+      "weight": 1
+    },
+    {
+      "id": "finland",
+      "title": "Finland missing from country list",
+      "description": "The welcome kiosk has rejected the entire delegation's country of origin.",
+      "category": "it",
+      "rooms": ["reception"],
+      "weight": 1
+    },
+    {
+      "id": "flags",
+      "title": "Flags at crossed purposes",
+      "description": "A seating chart and the flags on the table put the delegates in different countries.",
+      "category": "protocol",
+      "rooms": ["office"],
+      "weight": 1
+    },
+    {
+      "id": "clock",
+      "title": "Wednesday arrives twice",
+      "description": "Two wall calendars disagree so strongly that neither meeting can begin.",
+      "category": "surreal",
+      "rooms": ["archive"],
+      "weight": 1
+    },
+    {
+      "id": "spoons",
+      "title": "Spoon census overdue",
+      "description": "The kitchen inventory lists one teaspoon as a visiting member of staff.",
+      "category": "food",
+      "rooms": ["kitchen"],
+      "weight": 1
+    },
+    {
+      "id": "steam",
+      "title": "Steam sensor wants mittens",
+      "description": "The sauna thermostat has booked its own winter clothing allowance.",
+      "category": "culture",
+      "rooms": ["sauna"],
+      "weight": 1
+    },
+    {
+      "id": "valve",
+      "title": "Radiator on diplomatic leave",
+      "description": "The radiator refuses to heat the building until someone stamps its maintenance card.",
+      "category": "maintenance",
+      "rooms": ["plant"],
+      "weight": 1
+    }
+  ]
+}

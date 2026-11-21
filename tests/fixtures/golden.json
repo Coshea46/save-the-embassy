@@ -1,0 +1,58 @@
+{
+  "seed": 42,
+  "decisions": [
+    "report-1",
+    "report-2",
+    "report-3",
+    "report-4",
+    "report-5",
+    "report-6",
+    "report-9",
+    "report-8",
+    "report-10",
+    "report-13",
+    "report-15",
+    "report-17",
+    "report-20",
+    "report-21",
+    "report-24",
+    "report-26",
+    "report-29"
+  ],
+  "terminal": {
+    "format": 1,
+    "seed": 42,
+    "manifest": {
+      "scenario_id": "practice-42",
+      "ruleset_version": "embassy.1",
+      "catalogue_version": "sample.1"
+    },
+    "tick": 360,
+    "status": "finished",
+    "position": {
+      "x": 8,
+      "y": 2
+    },
+    "cursor": 31,
+    "open": [
+      "report-28",
+      "report-29",
+      "report-30",
+      "report-31"
+    ],
+    "job": null,
+    "metrics": {
+      "score": 1445,
+      "survival_ticks": 360,
+      "completed": 16,
+      "failed": 11,
+      "travel": 180,
+      "offered_work": 329,
+      "offered_reward": 2360,
+      "work_ticks": 180,
+      "idle_ticks": 0,
+      "optional_points": 1075,
+      "mandatory_points": 370
+    }
+  }
+}

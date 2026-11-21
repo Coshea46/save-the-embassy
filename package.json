@@ -1,0 +1,30 @@
+{
+  "name": "save-the-embassy",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/game",
+    "apps/api"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b --force",
+    "lint": "eslint .",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "test:python": "python -m unittest discover -s apps/game/python -p test_*.py",
+    "demo": "npm run build && node apps/game/demo.mjs",
+    "benchmark": "npm run build && node tools/benchmark/cli.mjs",
+    "fairness": "npm run build && node tools/fairness/cli.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.15.0",
+    "globals": "16.5.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.73.0"
+  }
+}

@@ -1,0 +1,37 @@
+name: Foundation checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, node: 24, python: "3.12" }
+          - { os: windows-latest, node: 22, python: "3.11" }
+          - { os: macos-latest, node: 24, python: "3.13" }
+    runs-on: ${{ matrix.os }}
+    env:
+      EMBASSY_PYTHON: python
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run test:python
+      - run: npm run build
+      - run: npm run demo
+      - if: runner.os == 'Linux'
+        run: npm run fairness -- 1000
