@@ -71,4 +71,6 @@ node --env-file=.env apps/api/test/local-stack.mjs
 unset TEST_ORGANISER_PASSWORD
 ```
 
-The test rejects remote target URLs. It asserts exactly one decision per entrant, exact retry responses, equal final standings and delivery of every scored update to the connected observer. Commit-to-delivery timing uses the database commit timestamp and a subscriber on the same machine. See [the measured rehearsal](PLATFORM-LOAD.md).
+The test rejects remote target URLs. It asserts exactly one decision per entrant, exact retry responses, equal final standings and delivery of every scored update to the connected observer. Commit-to-delivery timing uses the database commit timestamp and a subscriber on the same machine. See [the integrated measurements and browser captures](INTEGRATION.md).
+
+For a complete six-minute round using five scheduling policies across 150 clients, run `npm run build` followed by `node apps/api/test/full-round.mjs`. It checks every final score against a replay and reports request, CPU and memory measurements.

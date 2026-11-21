@@ -151,8 +151,8 @@ Stop the launcher with **Ctrl+C** in the terminal. Return to this folder and run
 | Third-party Python dependency missing | Ordinary play needs none. If you deliberately added one, install it into the same interpreter named by `npm run doctor`. |
 | Port already in use | Stop the other launcher, or set `$env:EMBASSY_PORT="4174"` in PowerShell or `export EMBASSY_PORT=4174` on macOS/Linux, then relaunch and open the printed URL. |
 | Browser refuses a launch request | Open the exact printed `127.0.0.1` address. Reload the tab after restarting Node. |
-| Official workshop is greyed out | Start the launcher with the organiser's API URL as described in the workshop guide. Practice is available immediately. |
+| Official workshop is greyed out | Choose **Joined on the website** and paste the credentials from your invitation. The **Official workshop** option also works when the launcher has the organiser’s API URL. |
 
-[Organiser deployment and environment variables](docs/PLATFORM.md) · [Simulation rules](docs/SIMULATION.md) · [Architecture](docs/ARCHITECTURE.md) · [REST contracts](docs/API.md) · [Catalogue audit](apps/game/qa/catalogue-audit.json) · [MIT licence](LICENSE)
+[Integration results and screenshots](docs/INTEGRATION.md) · [Organiser deployment and environment variables](docs/PLATFORM.md) · [Simulation rules](docs/SIMULATION.md) · [Architecture](docs/ARCHITECTURE.md) · [REST contracts](docs/API.md) · [Catalogue audit](apps/game/qa/catalogue-audit.json) · [MIT licence](LICENSE)
 
 Installation references: [VS Code for Linux](https://code.visualstudio.com/docs/setup/linux), [Homebrew](https://brew.sh), [Node.js](https://nodejs.org/en/download), [WinGet](https://learn.microsoft.com/windows/package-manager/winget/install), [Codex extension](https://marketplace.visualstudio.com/items?itemName=openai.chatgpt).

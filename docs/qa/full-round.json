@@ -1,0 +1,43 @@
+{
+  "manifest": {
+    "scenario_id": "53203083-3f9e-46d5-9085-1b1b44b3161b",
+    "ruleset_version": "embassy.1",
+    "catalogue_version": "dispatch.1"
+  },
+  "players": 150,
+  "verified_finishes": 150,
+  "duration_s": 360,
+  "requests": 9963,
+  "pacing_responses": 4680,
+  "committed_decisions": 4680,
+  "http_p95_ms": 258.6,
+  "node_peak_sampled_rss_mib": 321.2,
+  "node_cpu_seconds": 36.49,
+  "policies": {
+    "priority": {
+      "score": 860,
+      "status": "closed",
+      "survival_ticks": 240
+    },
+    "deadline": {
+      "score": 715,
+      "status": "closed",
+      "survival_ticks": 240
+    },
+    "shortest": {
+      "score": 1030,
+      "status": "finished",
+      "survival_ticks": 360
+    },
+    "travel": {
+      "score": 1165,
+      "status": "finished",
+      "survival_ticks": 360
+    },
+    "weighted": {
+      "score": 1385,
+      "status": "finished",
+      "survival_ticks": 360
+    }
+  }
+}
