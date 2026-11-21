@@ -15,7 +15,7 @@ permissions:
   contents: read
 jobs:
   realtime:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
-      - run: python -m pip install playwright==1.60.0 && python -m playwright install --with-deps chromium
+      - run: python -m pip install playwright==1.62.0
       - name: Start disposable Supabase
         run: supabase start -x studio,logflare,vector,supavisor,edge-runtime,mailpit,postgres-meta,imgproxy
       - name: Exercise committed score updates and recovery
@@ -53,6 +53,7 @@ jobs:
           trap 'kill "$server_pid" "$game_pid" || true' EXIT
           curl -fsS --retry 15 --retry-connrefused --retry-delay 1 "$PUBLIC_ORIGIN/health/ready"
           node apps/api/test/local-stack.mjs | tee "$RUNNER_TEMP/embassy-measurements.json"
+          export CHROMIUM_PATH="$(command -v google-chrome)"
           export EMBASSY_QA_DIR="$RUNNER_TEMP/browser-workshop"
           python apps/api/test/browser_workshop.py | tee "$RUNNER_TEMP/browser-result.json"
       - uses: actions/upload-artifact@v4

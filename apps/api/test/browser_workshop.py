@@ -25,12 +25,14 @@ def rehearse(browser, screenshots):
     organiser.get_by_label("Password", exact=True).fill(os.environ["TEST_ORGANISER_PASSWORD"])
     organiser.get_by_role("button", name="Sign in").click()
     form = organiser.locator("#new")
+    form.wait_for(state="attached")
     if not form.is_visible():
         organiser.get_by_text("Create a workshop", exact=True).click()
     code = uuid4().hex[:12]
     form.get_by_label("Workshop title").fill("Midnight Helsinki")
     form.get_by_label("Join code").fill(code)
     form.get_by_role("button", name="Create workshop").click()
+    expect(organiser.locator("#notice")).to_contain_text("Workshop created")
     expect(organiser.locator("#manage h2").first).to_have_text("Midnight Helsinki")
     workshop = organiser.locator("#workshop").input_value()
     organiser.locator("#round").click()
@@ -86,7 +88,7 @@ def rehearse(browser, screenshots):
     board.goto(API + "/projector/" + workshop)
     expect(board.locator("#title")).to_have_text("Aurora")
     board.locator("#full").click()
-    board.wait_for_function("!!document.fullscreenElement")
+    expect(board.locator(":fullscreen")).to_have_count(1)
     board.screenshot(path=screenshots / "projector.jpg", quality=82)
     assert not errors, errors
     print(json.dumps(entry))
