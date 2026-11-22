@@ -2,6 +2,7 @@ name: Competition rehearsal
 on:
   pull_request:
     paths:
+      - 'agent.py'
       - 'apps/game/**'
       - 'packages/tasks/**'
       - 'apps/api/**'

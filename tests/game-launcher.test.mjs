@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { once } from "node:events";
 import { readFileSync } from "node:fs";
 import { createInterface } from "node:readline";
@@ -78,3 +78,20 @@ test(
     }
   },
 );
+
+test("setup checker and participant guides point to the root agent", () => {
+  for (const file of [
+    "README.md",
+    "docs/WORKSHOP.md",
+    "AGENTS.md",
+    "apps/game/python/AGENTS.md",
+  ]) {
+    const guide = readFileSync(file, "utf8");
+    assert.match(guide, /agent\.py/);
+    assert.doesNotMatch(guide, /apps\/game\/python\/agent\.py/);
+  }
+  const report = execFileSync(process.execPath, ["apps/game/doctor.mjs"], {
+    encoding: "utf8",
+  });
+  assert.match(report, /^OK +Participant agent — agent\.py \(repository root\)$/m);
+});

@@ -1,16 +1,30 @@
 """Private newline-delimited JSON channel to a locally launched game."""
 import asyncio
+import importlib.util
 import inspect
 import json
+import os
 import sys
 from contextlib import redirect_stdout
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-def EmbassyAgent():
-    # Import inside the request so a syntax/import error reaches the browser.
-    from agent import EmbassyAgent as Agent
-    return Agent()
+AGENT_FILE = Path(__file__).resolve().parents[4] / "agent.py"
+sys.path.insert(0, str(AGENT_FILE.parent))
+
+
+class EmbassyAgent:
+    def __init__(self):
+        # Read the source on reset, even for same-size edits within one second
+        # that Python's timestamp-based bytecode cache could otherwise miss.
+        spec = importlib.util.spec_from_file_location("agent", AGENT_FILE)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        exec(compile(AGENT_FILE.read_bytes(), str(AGENT_FILE), "exec"), module.__dict__)
+        self.choose_next_task = module.choose_next_task
+
+        if os.getenv("EMBASSY_DECISIONS") == "1":
+            from apps.game.python.decisions_example import choose_task
+            self.choose_next_task = choose_task
 
 
 def handle(agent, request, loop):

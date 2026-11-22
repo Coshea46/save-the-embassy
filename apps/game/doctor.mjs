@@ -39,8 +39,8 @@ check(
 );
 check(
   "Participant agent",
-  existsSync(new URL("./python/agent.py", import.meta.url)),
-  "apps/game/python/agent.py",
+  existsSync(new URL("../../agent.py", import.meta.url)),
+  "agent.py (repository root)",
 );
 let installed;
 try {

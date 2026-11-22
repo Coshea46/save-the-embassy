@@ -1,10 +1,10 @@
 # Your shift at the embassy
 
-Start with the [installation and launch guide](../README.md). Run the starter on seed 42 and note its score and survival time. Then open **apps/game/python/agent.py** in VS Code. This is the participant's file.
+Start with the [installation and launch guide](../README.md). Run the starter on seed 42 and note its score and survival time. Then open [agent.py](../agent.py) in VS Code. This is the participant's file.
 
 ## Make one decision
 
-The game constructs one `EmbassyAgent` for a run. It calls `choose_next_task(observation)` when the officer is free. Return an available task's `id` to walk to it and work until completion or expiry. Return `None` to wait one simulated second. A normal method or an `async def` method works. Values kept on `self` survive between decisions. Restarting the shift or reloading the agent resets them. Print statements appear in the terminal.
+The game calls `choose_next_task(observation)` when the officer is free. Return an available task's `id` to walk to it and work until completion or expiry. Return `None` to wait one simulated second. You can use `def` or `async def`. For memory, define a variable such as `previous_task_ids = set()` above the function. Values you add to it survive between decisions. Restarting the shift or reloading the agent resets them. Print statements appear in the terminal.
 
 | What Python sees | Meaning |
 | --- | --- |
@@ -21,7 +21,7 @@ On the radar, a folded document is an open report. One, two or three pulsing mar
 
 ## Ask Codex in the VS Code sidebar
 
-Start each prompt with **“Change only apps/game/python/agent.py.”**
+Start each prompt with **“Change only the root agent.py file.”**
 
 | Experiment | Paste this prompt |
 | --- | --- |
@@ -65,7 +65,7 @@ npm start
 
 1. Open the printed local address and select **Competition → Official workshop**. Enter the nickname to publish, workshop ID and join code. Select **Join or resume**, then **Run agent**.
 2. The server assigns the scenario and owns the clock, score and deadlines. After each accepted decision the map replays the tiles actually travelled. Scores and visible reports update at the server’s decision boundaries. Server pacing messages are normal. A local pause does not extend the competition's submission window.
-3. On a dropped connection, use **Retry**. The launcher journals each pending request and resends the same identifier. After a launcher restart, join the same workshop to resume the same participant and run. Python class memory starts fresh after a process restart.
+3. On a dropped connection, use **Retry**. The launcher journals each pending request and resends the same identifier. After a launcher restart, join the same workshop to resume the same participant and run. Agent memory starts fresh after a process restart.
 4. Wait for **Score verified** after the server's finish receipt. Open **Central leaderboard** for the standings. If the organiser enabled multiple attempts, choose **Start another official attempt** after verification. The leaderboard keeps your best eligible result. The local rehearsal is always marked unranked.
 
 The launcher stores the participant token and pending request in your user profile under `.embassy-dispatch`. Use one running launcher per workshop and keep that folder private. Only the configured competition server receives your participant token.
@@ -73,6 +73,18 @@ The launcher stores the participant token and pending request in your user profi
 ## Optional OpenAI Decisions strategy
 
 The starter works offline by default. The example in [decisions_example.py](../apps/game/python/decisions_example.py) sends the visible observation through Python to `POST /v1/decisions` using `gpt-6-luna`. A single structured choice question lists the current task IDs plus a wait option. A refused, invalid or failed answer uses a deterministic feasible-job policy. The SDK is optional because the example calls the documented HTTPS endpoint with Python's standard library.
+
+For a custom strategy, import `choose_task` from the example in your root `agent.py`. Call it only for decisions where you want its help, for example:
+
+```python
+from apps.game.python.decisions_example import choose_task
+
+
+def choose_next_task(observation: dict) -> str | None:
+    return choose_task(observation)
+```
+
+Leave `EMBASSY_DECISIONS` unset when running your own function. Setting it to `1` selects the bundled example for every decision, so you can try it without editing a file.
 
 API access and billing are separate from your ChatGPT subscription or workshop Plus code. To try paid calls, supply your own API key to your **local terminal**. Keep it out of agent.py, commits, screenshots and Codex prompts.
 
