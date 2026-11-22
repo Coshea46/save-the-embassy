@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { pathToFileURL } from "node:url";
 import { setTimeout as sleep } from "node:timers/promises";
 import { createClient } from "@supabase/supabase-js";
-import { subscribeStandings } from "../../leaderboard/src/live.js";
+import { subscribeStandings, watchBoard } from "../../leaderboard/src/live.js";
 import { batchLimit, rest } from "@embassy/contracts";
 import { createScenario, Simulation } from "@embassy/simulation";
 import { strategies } from "@embassy/strategies";
@@ -30,39 +30,63 @@ async function waitFor(check, timeout = 60000) {
     await sleep(50);
   }
 }
-function viewer(url, key, workshop) {
+function viewer(url, key, workshop, read) {
   const client = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
-  let stop;
+  let stop, snapshot;
   const delivered = new Map();
   const observed = new Map();
   async function connect() {
     let ready = false;
-    stop = subscribeStandings(
-      client,
-      workshop,
-      (e) => {
-        observed.set(e.new.display_name, e.new);
-        if (e.new.score > 0 && !delivered.has(e.new.display_name))
-          delivered.set(
-            e.new.display_name,
-            Date.now() - Date.parse(e.commit_timestamp),
-          );
+    snapshot = null;
+    stop = watchBoard({
+      read,
+      paint(value) {
+        snapshot = value;
       },
-      (status) => {
+      onError(error) {
+        console.error("Viewer snapshot failed", error.message);
+      },
+      setState(status) {
         ready = status === "SUBSCRIBED";
       },
-      "UPDATE",
-    );
-    await waitFor(() => ready);
+      // No periodic poll within this rehearsal. A connected viewer must
+      // reach final standings via actual WAL notifications and refetches.
+      interval: 3600000,
+      subscribe: (notify, state) =>
+        subscribeStandings(
+          client,
+          workshop,
+          (e) => {
+            observed.set(e.new.display_name, e.new);
+            if (e.new.score > 0 && !delivered.has(e.new.display_name))
+              delivered.set(
+                e.new.display_name,
+                Date.now() - Date.parse(e.commit_timestamp),
+              );
+            notify();
+          },
+          state,
+          "UPDATE",
+        ),
+    });
+    await waitFor(() => ready && snapshot);
   }
   async function close() {
-    await stop?.();
+    stop?.();
     stop = undefined;
     client.realtime.disconnect();
   }
-  return { connect, close, delivered, observed };
+  return {
+    connect,
+    close,
+    delivered,
+    observed,
+    get snapshot() {
+      return snapshot;
+    },
+  };
 }
 // Invoke only with an isolated fixture. No production DB or prior workshop is mutated.
 export async function measure(f, { size = 200, realtime } = {}) {
@@ -125,7 +149,11 @@ export async function measure(f, { size = 200, realtime } = {}) {
   try {
     if (realtime) {
       for (let i = 0; i < 2; i++) {
-        const v = viewer(realtime.url, realtime.key, w.id);
+        const v = viewer(realtime.url, realtime.key, w.id, async () => {
+          const r = await f.request(base + "/display");
+          assert.equal(r.status, 200);
+          return r.data;
+        });
         viewers.push(v);
         await v.connect();
       }
@@ -213,21 +241,16 @@ export async function measure(f, { size = 200, realtime } = {}) {
     );
     if (viewers.length) {
       await waitFor(
-        () =>
-          players.every(({ i, name }) => {
-            const row = viewers[0].observed.get(name),
-              cp = reference[i % policies.length];
-            return (
-              row?.score === cp.metrics.score && row.survival_ticks === cp.tick
-            );
-          }),
+        () => viewers[0].delivered.size === size && viewers[0].snapshot?.final,
         60000,
       );
-      assert.equal(viewers[0].delivered.size, size);
       await viewers[1].connect();
+      await waitFor(() => viewers[1].snapshot?.final);
     }
     const board = (await f.request(base + "/display")).data;
     assert.ok(board.final && board.entries.length === size);
+    for (const viewer of viewers)
+      assert.deepEqual(viewer.snapshot.entries, board.entries);
     const byName = new Map(board.entries.map((e) => [e.display_name, e]));
     for (const { i, name } of players) {
       const row = byName.get(name),
@@ -292,7 +315,18 @@ export async function measure(f, { size = 200, realtime } = {}) {
             commit_to_first_positive_score: stats([
               ...viewers[0].delivered.values(),
             ]),
-            recovered_snapshot_rows: board.entries.length,
+            connected_final_rows: viewers[0].snapshot.entries.length,
+            recovered_snapshot_rows: viewers[1].snapshot.entries.length,
+            final_scores_observed_in_raw_stream: players.filter(
+              ({ i, name }) => {
+                const row = viewers[0].observed.get(name),
+                  cp = reference[i % policies.length];
+                return (
+                  Number(row?.score) === cp.metrics.score &&
+                  Number(row?.survival_ticks) === cp.tick
+                );
+              },
+            ).length,
           }
         : null,
     };
