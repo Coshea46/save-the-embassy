@@ -1,6 +1,6 @@
 # Your shift at the embassy
 
-Start with the [installation and launch guide](../README.md). Run the starter on seed 42 and note its score and survival time. Then open [agent.py](../agent.py) in VS Code. This is the participant's file.
+Start with the [installation and launch guide](../../README.md). Run the starter on seed 42 and note its score and survival time. Then open [agent.py](../../agent.py) in VS Code. This is the participant's file.
 
 ## Make one decision
 
@@ -31,13 +31,13 @@ Start each prompt with **“Change only the root agent.py file.”**
 | Weighted score | “Combine reward per travel-and-work tick with slack and mandatory risk. Put the weights near the top so I can tune them.” |
 | Decisions API | “Read decisions_example.py. Explain how its structured choices map to task IDs, and how I can test the offline fallback.” |
 | Hybrid | “Implement a deterministic rule for obvious mandatory jobs. Call the optional Decisions policy only when two feasible alternatives are close.” |
-| Benchmark | “Run npm run agent:benchmark -- 1,7,42,2026 on my current agent, try one change, compare identical seeds, then check fresh seeds 11,39,123.” |
+| Benchmark | “Run npm --prefix .embassy run agent:benchmark -- 1,7,42,2026 on my current agent, try one change, compare identical seeds, then check fresh seeds 11,39,123.” |
 
 Save the file. Click **Restart → Run agent**. Switch the journal to **History** for the reward or expiry of each report. The multi-seed command starts a new Python process per run. In a second VS Code terminal:
 
 ```sh
-npm run agent:benchmark -- 1,7,42,2026
-npm run benchmark -- 1,7,42,2026
+npm --prefix .embassy run agent:benchmark -- 1,7,42,2026
+npm --prefix .embassy run benchmark -- 1,7,42,2026
 ```
 
 The first command measures **your Python agent** using the full catalogue. The second runs the five built-in reference policies. The foundation demo and golden replay retain the historical sample catalogue. Flavour changes leave scoring opportunities identical for matching seeds.
@@ -51,7 +51,7 @@ For registration entirely inside the game, get these details from your organiser
 ```powershell
 $env:EMBASSY_API_URL = Read-Host "Paste the organiser's API base URL"
 $env:EMBASSY_LEADERBOARD_URL = Read-Host "Paste the public leaderboard URL"
-npm.cmd start
+npm.cmd --prefix .embassy start
 ```
 
 On **macOS or Linux**, run:
@@ -60,7 +60,7 @@ On **macOS or Linux**, run:
 printf 'API base URL: '; read -r EMBASSY_API_URL
 printf 'Leaderboard URL: '; read -r EMBASSY_LEADERBOARD_URL
 export EMBASSY_API_URL EMBASSY_LEADERBOARD_URL
-npm start
+npm --prefix .embassy start
 ```
 
 1. Open the printed local address and select **Competition → Official workshop**. Enter the nickname to publish, workshop ID and join code. Select **Join or resume**, then **Run agent**.
@@ -94,7 +94,7 @@ PowerShell:
 $secret = Read-Host "OpenAI API key" -AsSecureString
 $env:OPENAI_API_KEY = [System.Net.NetworkCredential]::new("", $secret).Password
 $env:EMBASSY_DECISIONS = "1"
-npm.cmd start
+npm.cmd --prefix .embassy start
 ```
 
 macOS/Linux, run in Bash (type `bash` first if using zsh):
@@ -103,7 +103,7 @@ macOS/Linux, run in Bash (type `bash` first if using zsh):
 read -rs -p "OpenAI API key: " OPENAI_API_KEY
 echo
 export OPENAI_API_KEY EMBASSY_DECISIONS=1
-npm start
+npm --prefix .embassy start
 ```
 
 Close that terminal to end the opt-in session. To exercise only the fallback, set `EMBASSY_DECISIONS=1` in a terminal without a key. [Official Decisions reference](https://developers.openai.com/api/reference/resources/decisions/methods/create) · [API and ChatGPT billing](https://help.openai.com/en/articles/9039756-billing-settings-in-chatgpt-vs-platform)
@@ -111,15 +111,15 @@ Close that terminal to end the opt-in session. To exercise only the fallback, se
 ## Reproduce the checks
 
 ```sh
-npm ci
-npm run doctor
-npm run typecheck
-npm run lint
-npm test
-npm run test:python
-npm run build
-npm run audit:catalogue
-npm run demo
+npm --prefix .embassy ci
+npm --prefix .embassy run doctor
+npm --prefix .embassy run typecheck
+npm --prefix .embassy run lint
+npm --prefix .embassy test
+npm --prefix .embassy run test:python
+npm --prefix .embassy run build
+npm --prefix .embassy run audit:catalogue
+npm --prefix .embassy run demo
 ```
 
 The game uses the existing six navigable room types. The server racks share the maintenance station. New incident definitions live in immutable `dispatch.1`. Priority, reward, mandatory status, travel, deadline and work belong to each scheduled instance. The local difficulty band comes from its spawn stage. The audit checks each definition's metadata, the nine quotas, uniqueness and reachable locations. [Catalogue audit](../apps/game/qa/catalogue-audit.json) · [Simulation rules](SIMULATION.md) · [Official contracts](API.md)

@@ -1,6 +1,6 @@
 """Rebuild the original integer-pixel PNGs with Pillow from the compiled shared map.
 
-From the repository root: npm run build && python apps/game/art/draw.py
+From .embassy/: npm run build && python apps/game/art/draw.py
 Artwork is checked in. Playing the game requires no image libraries.
 """
 import json

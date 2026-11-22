@@ -1,14 +1,16 @@
 # Save the Finnish Embassy
 
-Give a Python agent six simulated minutes to keep a fictional Finnish embassy open. It can rescue the coffee service, investigate a wandering paperweight, or cross the entire building for a report that expires on arrival. Every walk and every second of work counts. A missed mandatory report closes the shift.
-
 **Your mission: Open [agent.py](agent.py) and build the best task-selection algorithm you can.**
+
+Give a Python agent six simulated minutes to keep a fictional Finnish embassy open. It can rescue the coffee service, investigate a wandering paperweight, or cross the entire building for a report that expires on arrival. Every walk and every second of work counts. A missed mandatory report closes the shift.
 
 When your officer is free, the game calls `choose_next_task(observation)`. You can see the officer’s position and every available task’s priority, reward, deadline, travel time and work duration. Return a task’s `id` to take it, or `None` to wait one tick. The starter picks the highest priority.
 
-Already set up? Run `npm start` and select **Run agent** at the printed address. After you edit and save **agent.py**, select **Restart → Run agent** to try your change on the same seed.
+For workshop strategy changes, edit only `agent.py`. Keep scoring, competition rules, the simulator and the leaderboard intact.
 
-![The running game with a pixel-art floor, report radar, Python decision journal and score](apps/game/qa/practice.jpg)
+Already set up? Run `npm --prefix .embassy start` and select **Run agent** at the printed address. After you edit and save **agent.py**, select **Restart → Run agent** to try your change on the same seed.
+
+![The running game with a pixel-art floor, report radar, Python decision journal and score](.embassy/apps/game/qa/practice.jpg)
 
 ## Get ready for the workshop
 
@@ -130,35 +132,42 @@ export EMBASSY_PYTHON="$("$HOME/.local/bin/uv" python find 3.12)"
    code .
    ```
 
-3. In VS Code, open **Codex** in the sidebar and choose **Sign in with ChatGPT**. Check that the installed extension is **Codex** from **OpenAI**. Open [agent.py](agent.py) in the top level of the Explorer. Try asking Codex “Improve my agent so it considers deadlines, rewards and travel time.” Review the change and save the file.
-4. In VS Code choose **Terminal → New Terminal**. From the folder containing the root `package.json`, run:
+3. In VS Code, open **Codex** in the sidebar and choose **Sign in with ChatGPT**. Check that the installed extension is **Codex** from **OpenAI**. Open [agent.py](agent.py) in the top level of the Explorer. Try asking Codex “Edit only agent.py. Help my officer reach mandatory reports before their deadlines and compare the score on the same seeds.” Review the change and save the file.
+4. In VS Code choose **Terminal → New Terminal**. From the folder containing `agent.py`, run:
 
    ```sh
-   npm ci
-   npm run doctor
-   npm start
+   npm --prefix .embassy ci
+   npm --prefix .embassy start
    ```
 
 5. Open **http://127.0.0.1:4173** in your browser, or the address printed by the launcher. Select **Run agent**. Click a document on the floor, radar or queue to inspect its deadline and travel cost. Select **Follow agent** for a closer view.
 6. To try another strategy, edit [agent.py](agent.py), save it, then click **Restart → Run agent**. Restart creates a fresh Python process and reuses the seed. **Shift settings** accepts a chosen seed or a blank field for a random one.
-7. Use **Shift journal → History** to see what completed or expired. Compare the score and survival clock on the same seed. The [workshop guide](docs/WORKSHOP.md) includes prompts and a faster multi-seed experiment.
-8. To enter an official round, open the organiser’s invitation, register your player name, then select **Copy game credentials**. In the local game choose **Competition → Joined on the website**, paste and select **Join or resume → Run agent**. Follow [Join an official shift](docs/WORKSHOP.md#join-an-official-shift). **Competition → Local rehearsal** exercises this flow offline and earns an unranked score.
+7. Use **Shift journal → History** to see what completed or expired. Compare the score and survival clock on the same seed. The [workshop guide](.embassy/docs/WORKSHOP.md) includes prompts and a faster multi-seed experiment.
+8. To enter an official round, open the organiser’s invitation, register your player name, then select **Copy game credentials**. In the local game choose **Competition → Joined on the website**, paste and select **Join or resume → Run agent**. Follow [Join an official shift](.embassy/docs/WORKSHOP.md#join-an-official-shift). **Competition → Local rehearsal** exercises this flow offline and earns an unranked score.
 
-Stop the launcher with **Ctrl+C** in the terminal. Return to this folder and run **npm start** next time.
+Stop the launcher with **Ctrl+C** in the terminal. Return to this folder and run **npm --prefix .embassy start** next time.
+
+## Benchmark your agent
+
+In a second terminal, run the same seeds before and after each edit.
+
+```sh
+npm --prefix .embassy run agent:benchmark -- 1,7,42,2026
+```
 
 ## Troubleshooting
 
 | What you see | What to do |
 | --- | --- |
-| `package.json` missing or `Missing script: start` | Open the cloned repository folder in VS Code. Check that its top level contains `apps`, `packages` and `package.json`. |
+| `package.json` missing or `Missing script: start` | Open the cloned repository folder in VS Code. Check that it contains `agent.py` and use the commands under **Fork, open and play**. |
 | `node`, `git`, `code` or `python` is unrecognised | Reopen VS Code and its terminal after installation. Run the version checks for your OS. On Linux/macOS use `python3`. |
 | Python opens the Microsoft Store | Run `py -3.12 --version`, then `$env:EMBASSY_PYTHON = (py -3.12 -c "import sys; print(sys.executable)")` in the same terminal before launch. |
 | Syntax error, missing module or agent timeout | The shift pauses. Read the error and the launcher terminal, correct the file, and choose **Reload agent → Resume**. Reload resets your agent’s memory. For a comparable practice run, choose **Restart**. |
-| Third-party Python dependency missing | Ordinary play needs none. If you deliberately added one, install it into the same interpreter named by `npm run doctor`. |
+| Third-party Python dependency missing | Ordinary play needs none. If you deliberately added one, install it into the same interpreter named by `npm --prefix .embassy run doctor`. |
 | Port already in use | Stop the other launcher, or set `$env:EMBASSY_PORT="4174"` in PowerShell or `export EMBASSY_PORT=4174` on macOS/Linux, then relaunch and open the printed URL. |
 | Browser refuses a launch request | Open the exact printed `127.0.0.1` address. Reload the tab after restarting Node. |
 | Official workshop is greyed out | Choose **Joined on the website** and paste the credentials from your invitation. The **Official workshop** option also works when the launcher has the organiser’s API URL. |
 
-[Integration results and screenshots](docs/INTEGRATION.md) · [Organiser deployment and environment variables](docs/PLATFORM.md) · [Simulation rules](docs/SIMULATION.md) · [Architecture](docs/ARCHITECTURE.md) · [REST contracts](docs/API.md) · [Catalogue audit](apps/game/qa/catalogue-audit.json) · [MIT licence](LICENSE)
+[Integration results and screenshots](.embassy/docs/INTEGRATION.md) · [Organiser deployment and environment variables](.embassy/docs/PLATFORM.md) · [Simulation rules](.embassy/docs/SIMULATION.md) · [Architecture](.embassy/docs/ARCHITECTURE.md) · [REST contracts](.embassy/docs/API.md) · [Catalogue audit](.embassy/apps/game/qa/catalogue-audit.json) · [MIT licence](.embassy/LICENSE)
 
 Installation references: [VS Code for Linux](https://code.visualstudio.com/docs/setup/linux), [Homebrew](https://brew.sh), [Node.js](https://nodejs.org/en/download), [WinGet](https://learn.microsoft.com/windows/package-manager/winget/install), [Codex extension](https://marketplace.visualstudio.com/items?itemName=openai.chatgpt).

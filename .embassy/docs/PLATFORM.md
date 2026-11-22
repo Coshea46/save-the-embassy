@@ -4,7 +4,7 @@ One Node service hosts the REST API, registration, standings, projector and orga
 
 ## Local rehearsal
 
-Use Node 22.13 or newer, npm, Docker and the Supabase CLI. Run the commands at repository root.
+Use Node 22.13 or newer, npm, Docker and the Supabase CLI. From the repository root, run `cd .embassy` once before the commands below.
 
 ```sh
 npm ci
@@ -30,10 +30,19 @@ Put the output in `ORGANISER_PASSWORD_HASH`. Start the service with `node --env-
 
 ## Production
 
-1. Choose a Supabase project dedicated to this competition. Run `supabase login` and `supabase link --project-ref YOUR_WORKSHOP_PROJECT_REF` from the repository root. Run `supabase db push --dry-run`, inspect the proposed migration, then `supabase db push`. Verify the expected migration with `supabase migration list --linked`. The schema expects the standard Supabase roles and the `supabase_realtime` publication. The Data API should expose `public` and exclude `embassy`.
+1. Choose a Supabase project dedicated to this competition. Run `supabase login` and `supabase link --project-ref YOUR_WORKSHOP_PROJECT_REF` from `.embassy/`. Run `supabase db push --dry-run`, inspect the proposed migration, then `supabase db push`. Verify the expected migration with `supabase migration list --linked`. The schema expects the standard Supabase roles and the `supabase_realtime` publication. The Data API should expose `public` and exclude `embassy`.
 2. Using a database administrator, create an application login with a randomly generated password and membership in `embassy_api`. In psql, run `CREATE ROLE embassy_web LOGIN INHERIT;`, then `\password embassy_web` at the interactive prompt and `GRANT embassy_api TO embassy_web;`. Supply the login's direct or pooler connection string in `DATABASE_URL`. With Supavisor follow the project Connect panel and replace the postgres username with the custom role while preserving the project reference. URL-encode reserved characters in credentials.
-3. Set the runtime variables below in the hosting dashboard. Build from the repository root with `docker build -f Dockerfile.platform -t embassy-platform .` and run the image behind HTTPS. On Render, choose **New → Blueprint**, connect this repository, select the approved branch and apply `render.yaml`. Set the six required values in the table. Set `PUBLIC_ORIGIN` to the service’s exact HTTPS URL and deploy the approved commit. The blueprint selects the free plan and manual deployment. A plain Node host can instead build with `npm ci && npm run build` and start with `npm run start:platform`. Keep the API and frontend on the same origin. Hosting must support a continuously running Node service and outbound PostgreSQL connections. Wake and rehearse a scale-to-zero host before the event.
+3. Set the runtime variables below in the hosting dashboard. From `.embassy/`, build with `docker build -f deploy/Dockerfile.platform -t embassy-platform .`. Set the six required values in the table. Set `PUBLIC_ORIGIN` to the service’s exact HTTPS URL and deploy the approved commit. The blueprint selects the free plan and manual deployment. A plain Node host can instead build with `npm ci && npm run build` and start with `npm run start:platform`. Keep the API and frontend on the same origin. Hosting must support a continuously running Node service and outbound PostgreSQL connections. Wake and rehearse a scale-to-zero host before the event.
 4. Test `/health/ready`, log in at `/organiser`, create a rehearsal workshop, and test registration, pace/retry, projection, moderation and final results. Project the link under **Projector**. Use a new workshop for the actual competition. Run a full rehearsal on the chosen host and room network.
+
+### Moving the existing Render Blueprint
+
+The **save-the-embassy** Blueprint manages **embassy-competition-31iy** on `main`. Blueprint auto-sync and service auto-deploy are both off. The old Blueprint reads `render.yaml` and builds `./Dockerfile.platform` with context `.`.
+
+1. Confirm the PR competition rehearsal passed. It builds the moved Dockerfile and exercises that image against disposable Supabase, including readiness, Realtime and the browser round. Merge the reviewed PR and record the SHA.
+2. On the existing Blueprint, set the file path to `.embassy/deploy/render.yaml` and keep manual sync. Generate a plan against the merged SHA. Check it targets service `srv-dc12b23l550s73d68rtg` and changes only the Dockerfile path and context. Stop if it proposes another service or any other change.
+3. Obtain organiser approval for the exact plan, then apply it. Deploy the merged SHA on the existing service if applying the plan did not already deploy it.
+4. Confirm the deploy is live, `/health/ready` returns 200, and the organiser desk and public board load. If rollout fails, keep or roll back to the last successful deployment. Restore the previous Git layout before restoring its Blueprint path and Docker settings.
 
 | Variable | Value |
 | --- | --- |

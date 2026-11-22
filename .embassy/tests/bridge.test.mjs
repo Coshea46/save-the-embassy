@@ -47,7 +47,7 @@ test("host kills timed out or malformed workers and releases their process handl
 test("a stalled participant function times out during a decision", async (t) => {
   const dir = await mkdtemp(join(tmpdir(), "embassy-agent-"));
   t.after(() => rm(dir, { recursive: true, force: true }));
-  const folder = join(dir, "apps", "game", "python", "bridge");
+  const folder = join(dir, ".embassy", "apps", "game", "python", "bridge");
   await mkdir(folder, { recursive: true });
   const script = join(folder, "worker.py");
   await copyFile(new URL("../apps/game/python/bridge/worker.py", import.meta.url), script);

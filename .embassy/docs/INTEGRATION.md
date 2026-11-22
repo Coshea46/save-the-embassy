@@ -59,7 +59,7 @@ The combined Node API and load generator consumed 36.49 CPU seconds and peaked a
 
 ## Reproduce
 
-From the repository root, run:
+From `.embassy/`, run:
 
 ```sh
 npm ci

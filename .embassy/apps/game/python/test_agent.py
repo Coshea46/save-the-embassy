@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 from bridge import worker
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[4]
 TASKS = [{"id": "1", "priority": 2}, {"id": "2", "priority": 7}]
 CHOOSE = {"op": "choose", "observation": {"available_tasks": TASKS}}
 RESET = {"op": "reset"}

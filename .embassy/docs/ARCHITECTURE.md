@@ -15,10 +15,16 @@ The game and API depend on the same compiled npm workspace, `@embassy/simulation
 
 ## Integrated runtime
 
-The participant starts the loopback game with `npm start`. On reset, the local worker loads the repository-root `agent.py` from source and keeps its `choose_next_task` function and module state for the run. The benchmark uses the same worker. It receives observations from the shared engine in practice and from the competition REST API in official mode. The launcher journals credentials, run IDs and pending decisions in the participant’s profile. Website registration and local registration both lead to the same participant protocol.
+The participant starts the loopback game from the repository root with `npm --prefix .embassy start`. On reset, the local worker loads the repository-root `agent.py` from source and keeps its `choose_next_task` function and module state for the run. The benchmark uses the same worker. It receives observations from the shared engine in practice and from the competition REST API in official mode. The launcher journals credentials, run IDs and pending decisions in the participant’s profile. Website registration and local registration both lead to the same participant protocol.
 
-The organiser runs `npm run start:platform` after building. This service serves the leaderboard, registration and organiser pages on the API origin. Every new workshop stores its own immutable scenario and complete catalogue snapshot. The bundled default is `dispatch.1` with 600 definitions. Historical runs use their stored catalogue. PostgreSQL transactions apply decisions through the shared engine and publish the public standings projection. See [API details](API.md) and [deployment](PLATFORM.md).
+The organiser runs `npm run start:platform` in `.embassy/` after building. This service serves the leaderboard, registration and organiser pages on the API origin. Every new workshop stores its own immutable scenario and complete catalogue snapshot. The bundled default is `dispatch.1` with 600 definitions. Historical runs use their stored catalogue. PostgreSQL transactions apply decisions through the shared engine and publish the public standings projection. See [API details](API.md) and [deployment](PLATFORM.md).
 
 ## Official client boundary
 
 The Python strategy sees only observationSchema data. The server owns the official seed, full schedule and checkpoint. The renderer needs only the public map, current position, visible task data and status. Official animation reconstructs the accepted route from the previous visible task, shared pathfinder and verified change in travel ticks. The decision response contains a scheduling-boundary snapshot. Practice can render every tick directly.
+
+## Workshop workspace
+
+Open the repository root in VS Code. Its Explorer settings hide the internal folders. Maintainers can open `.embassy/` directly or disable those entries in `.vscode/settings.json`. Run maintainer npm commands inside `.embassy/`, which owns the lockfile and all seven npm workspaces.
+
+For a trusted project, `.codex/config.toml` selects the root README as Codex’s fallback instruction file. Its workshop instructions apply to root strategy requests. The README also includes an explicit, file-scoped prompt for participants. The maintainer instructions in `.embassy/AGENTS.md` cover the internal workspace.

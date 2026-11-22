@@ -8,7 +8,7 @@ Do not modify the simulation engine to increase scores. Do not alter scoring for
 
 ## Repository development
 
-Read docs/ARCHITECTURE.md for the ownership table and package exports. Use npm workspaces from the repository root. Build before importing packages in Node. Commit the root lockfile with dependency changes. Run npm ci, npm run typecheck, npm run lint, npm test, npm run test:python and npm run build before submitting.
+Read docs/ARCHITECTURE.md for the ownership table and package exports. Use npm workspaces from `.embassy/`. Build before importing packages in Node. Commit the workspace lockfile with dependency changes. Run npm ci, npm run typecheck, npm run lint, npm test, npm run test:python and npm run build before submitting.
 
 All decisions go through @embassy/simulation. Keep scheduling, navigation, score and replay edits in that package. Update the ruleset identifier for behavioural changes. Keep versioned competition scenarios available for replay. A changed golden fixture needs a documented rules change. Preserve the observable Python protocol and use original assets.
 
