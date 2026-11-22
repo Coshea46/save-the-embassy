@@ -2,6 +2,12 @@
 
 Give a Python agent six simulated minutes to keep a fictional Finnish embassy open. It can rescue the coffee service, investigate a wandering paperweight, or cross the entire building for a report that expires on arrival. Every walk and every second of work counts. A missed mandatory report closes the shift.
 
+**Your mission: Open [agent.py](agent.py) and build the best task-selection algorithm you can.**
+
+When your officer is free, the game calls `choose_next_task(observation)`. You can see the officer’s position and every available task’s priority, reward, deadline, travel time and work duration. Return a task’s `id` to take it, or `None` to wait one tick. The starter picks the highest priority.
+
+Already set up? Run `npm start` and select **Run agent** at the printed address. After you edit and save **agent.py**, select **Restart → Run agent** to try your change on the same seed.
+
 ![The running game with a pixel-art floor, report radar, Python decision journal and score](apps/game/qa/practice.jpg)
 
 ## Get ready for the workshop
@@ -124,7 +130,7 @@ export EMBASSY_PYTHON="$("$HOME/.local/bin/uv" python find 3.12)"
    code .
    ```
 
-3. In VS Code, open **Codex** in the sidebar and choose **Sign in with ChatGPT**. Check that the installed extension is **Codex** from **OpenAI**. The game itself can run independently of this sign-in.
+3. In VS Code, open **Codex** in the sidebar and choose **Sign in with ChatGPT**. Check that the installed extension is **Codex** from **OpenAI**. Open [agent.py](agent.py) in the top level of the Explorer. Try asking Codex “Improve my agent so it considers deadlines, rewards and travel time.” Review the change and save the file.
 4. In VS Code choose **Terminal → New Terminal**. From the folder containing the root `package.json`, run:
 
    ```sh
@@ -134,7 +140,7 @@ export EMBASSY_PYTHON="$("$HOME/.local/bin/uv" python find 3.12)"
    ```
 
 5. Open **http://127.0.0.1:4173** in your browser, or the address printed by the launcher. Select **Run agent**. Click a document on the floor, radar or queue to inspect its deadline and travel cost. Select **Follow agent** for a closer view.
-6. Open [apps/game/python/agent.py](apps/game/python/agent.py). Ask Codex to change its scheduling rule, save the file, then click **Restart → Run agent**. Restart creates a fresh Python process and reuses the seed. **Shift settings** accepts a chosen seed or a blank field for a random one.
+6. To try another strategy, edit [agent.py](agent.py), save it, then click **Restart → Run agent**. Restart creates a fresh Python process and reuses the seed. **Shift settings** accepts a chosen seed or a blank field for a random one.
 7. Use **Shift journal → History** to see what completed or expired. Compare the score and survival clock on the same seed. The [workshop guide](docs/WORKSHOP.md) includes prompts and a faster multi-seed experiment.
 8. To enter an official round, open the organiser’s invitation, register your player name, then select **Copy game credentials**. In the local game choose **Competition → Joined on the website**, paste and select **Join or resume → Run agent**. Follow [Join an official shift](docs/WORKSHOP.md#join-an-official-shift). **Competition → Local rehearsal** exercises this flow offline and earns an unranked score.
 
@@ -147,7 +153,7 @@ Stop the launcher with **Ctrl+C** in the terminal. Return to this folder and run
 | `package.json` missing or `Missing script: start` | Open the cloned repository folder in VS Code. Check that its top level contains `apps`, `packages` and `package.json`. |
 | `node`, `git`, `code` or `python` is unrecognised | Reopen VS Code and its terminal after installation. Run the version checks for your OS. On Linux/macOS use `python3`. |
 | Python opens the Microsoft Store | Run `py -3.12 --version`, then `$env:EMBASSY_PYTHON = (py -3.12 -c "import sys; print(sys.executable)")` in the same terminal before launch. |
-| Syntax error, missing module or agent timeout | The shift pauses. Read the error and the launcher terminal, correct the file, and choose **Reload agent → Resume**. Reload resets class memory. For a comparable practice run, choose **Restart**. |
+| Syntax error, missing module or agent timeout | The shift pauses. Read the error and the launcher terminal, correct the file, and choose **Reload agent → Resume**. Reload resets your agent’s memory. For a comparable practice run, choose **Restart**. |
 | Third-party Python dependency missing | Ordinary play needs none. If you deliberately added one, install it into the same interpreter named by `npm run doctor`. |
 | Port already in use | Stop the other launcher, or set `$env:EMBASSY_PORT="4174"` in PowerShell or `export EMBASSY_PORT=4174` on macOS/Linux, then relaunch and open the printed URL. |
 | Browser refuses a launch request | Open the exact printed `127.0.0.1` address. Reload the tab after restarting Node. |

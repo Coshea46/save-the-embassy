@@ -1,5 +1,3 @@
-# Participant strategy
+# Python worker and optional strategy
 
-For a workshop scheduling request, edit `agent.py`. Keep the class name, method signature and visible-ID-or-None return contract. A strategy may remember information on the instance or use an async method. Use the observation's actual shortest travel time. The shared game owns movement, scoring and official verification.
-
-Run `npm run agent:benchmark -- 1,7,42,2026` at the repository root before and after a change. Explain one decision in plain language and compare on unseen seeds. For the visual run, save the file and click Restart. The offline default needs only the standard library. A request about the optional Decisions strategy may use the adjacent documented example.
+For workshop scheduling requests, edit the [root agent.py](../../../agent.py). Follow the participant guidance in the [root AGENTS.md](../../../AGENTS.md). The worker handles loading, reset, async decisions and protocol validation. The optional Decisions example lives here and can be imported by the root function. Run `npm run test:python` after Python changes.

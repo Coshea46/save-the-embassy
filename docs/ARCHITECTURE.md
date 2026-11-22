@@ -15,7 +15,7 @@ The game and API depend on the same compiled npm workspace, `@embassy/simulation
 
 ## Integrated runtime
 
-The participant starts the loopback game with `npm start`. Its persistent Python worker receives observations from the shared engine in practice and from the competition REST API in official mode. The launcher journals credentials, run IDs and pending decisions in the participant’s profile. Website registration and local registration both lead to the same participant protocol.
+The participant starts the loopback game with `npm start`. On reset, the local worker loads the repository-root `agent.py` from source and keeps its `choose_next_task` function and module state for the run. The benchmark uses the same worker. It receives observations from the shared engine in practice and from the competition REST API in official mode. The launcher journals credentials, run IDs and pending decisions in the participant’s profile. Website registration and local registration both lead to the same participant protocol.
 
 The organiser runs `npm run start:platform` after building. This service serves the leaderboard, registration and organiser pages on the API origin. Every new workshop stores its own immutable scenario and complete catalogue snapshot. The bundled default is `dispatch.1` with 600 definitions. Historical runs use their stored catalogue. PostgreSQL transactions apply decisions through the shared engine and publish the public standings projection. See [API details](API.md) and [deployment](PLATFORM.md).
 

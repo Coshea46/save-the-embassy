@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, writeFile, rm } from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { PythonBridge } from "../apps/game/bridge.mjs";
@@ -41,5 +41,22 @@ test("host kills timed out or malformed workers and releases their process handl
     }
   } finally {
     await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("a stalled participant function times out during a decision", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "embassy-agent-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const folder = join(dir, "apps", "game", "python", "bridge");
+  await mkdir(folder, { recursive: true });
+  const script = join(folder, "worker.py");
+  await copyFile(new URL("../apps/game/python/bridge/worker.py", import.meta.url), script);
+  await writeFile(join(dir, "agent.py"), "import time\ndef choose_next_task(obs): time.sleep(30)\n");
+  const bridge = new PythonBridge({ script, timeout: 3000 });
+  try {
+    await bridge.reset();
+    await assert.rejects(bridge.choose(new Simulation(createScenario(7)).observe()), /timeout/i);
+  } finally {
+    await bridge.close();
   }
 });
