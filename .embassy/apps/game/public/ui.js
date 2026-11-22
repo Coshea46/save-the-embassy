@@ -43,7 +43,8 @@ async function request(path, body) {
   const data = await res.json();
   if (!res.ok) {
     const e = new Error(data.error);
-    e.retryAfter = data.retryAfter;
+    e.retryMs = data.retryMs;
+    e.reason = data.reason;
     throw e;
   }
   return data;
@@ -140,7 +141,11 @@ function buttons() {
   el("restart").disabled = !practice || locked;
   el("settings").disabled = locked;
   el("settings").hidden = !practice;
-  el("speed").disabled = !practice;
+  el("speed").hidden = !practice;
+  el("fixedSpeed").hidden = practice;
+  el("fixedSpeed").textContent = state?.officialSpeed
+    ? state.officialSpeed + "× official"
+    : "Rehearsal";
   for (const id of ["officialTab", "practiceTab", "again", "attempt"])
     el(id).disabled = locked;
 }
@@ -276,7 +281,11 @@ function fail(error, retryAction) {
     n.append(retry, reload);
     if (state.mode !== "practice")
       connection(
-        "Connection paused · Last accepted score " + state.metrics.score,
+        (error.reason === "connection"
+          ? "Connection interrupted"
+          : "Run paused") +
+          " · Last accepted score " +
+          state.metrics.score,
       );
   }
   buttons();
@@ -289,14 +298,20 @@ function stop() {
 async function step() {
   if (!running || locked) return;
   locked = true;
-  let wait = delay();
+  let wait = state.mode === "official" ? 0 : delay();
   try {
     render(await request("/step", { revision: state.revision }));
   } catch (e) {
-    if (e.retryAfter) {
-      wait = e.retryAfter * 1000;
+    if (e.retryMs > 0) {
+      wait = e.retryMs;
+      const seconds = Math.ceil(wait / 100) / 10 + " s";
       connection(
-        "Server pacing · Retrying the same decision in " + e.retryAfter + " s",
+        e.reason === "simulation_pacing"
+          ? "Official " +
+              state.officialSpeed +
+              "× · Next simulation update in " +
+              seconds
+          : "Server request limit · Retrying in " + seconds,
       );
     } else fail(e);
   } finally {

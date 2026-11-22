@@ -95,6 +95,10 @@ test("competition over HTTP with separate Postgres transactions", async (t) => {
         );
       assert.equal(a.status, 200);
       assert.deepEqual(a.data, b.data);
+      assert.equal(a.headers.get("Embassy-Tick-Ms"), "250");
+      const [timing] =
+        await admin`select extract(epoch from deadline-started_at)::float seconds from embassy.runs where id=${a.data.run_id}`;
+      assert.equal(timing.seconds, 180);
       opening = a.data;
       run = opening.run_id;
       const second = await q(base + "/runs", key(), bob.auth);
@@ -131,6 +135,11 @@ test("competition over HTTP with separate Postgres transactions", async (t) => {
       const early = await submit(run, choose);
       assert.equal(early.status, 429);
       assert.ok(early.data.retry_ms > 0);
+      assert.equal(early.data.reason, "simulation_pacing");
+      assert.equal(
+        Number(early.headers.get("Retry-After")),
+        Math.ceil(early.data.retry_ms / 1000),
+      );
       assert.equal(
         (
           await q(
@@ -216,8 +225,18 @@ test("competition over HTTP with separate Postgres transactions", async (t) => {
       );
       const finish = { ...key(), sequence: state.next_sequence };
       const path = "/runs/" + run + "/finish";
+      // A slow participant can finalise during grace; replaying a committed
+      // receipt after the original deadline must still return the same result.
+      await admin`update embassy.runs set started_at=clock_timestamp()-interval '120 seconds', deadline=clock_timestamp()+interval '60 seconds' where id=${run}`;
       assert.deepEqual((await q(path, finish, alice.auth)).data, state);
+      await admin`update embassy.runs set deadline=clock_timestamp()-interval '1 second' where id=${run}`;
       assert.deepEqual((await q(path, finish, alice.auth)).data, state);
+      assert.equal(
+        (
+          await admin`select count(*)::int n from embassy.finishes where run_id=${run}`
+        )[0].n,
+        1,
+      );
       const r2 = (await q(base + "/runs", key(), alice.auth)).data;
       assert.notEqual(r2.run_id, run);
       assert.equal(

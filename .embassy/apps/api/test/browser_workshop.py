@@ -50,11 +50,14 @@ def rehearse(browser, screenshots):
 
     game = ctx.new_page()
     game.goto(GAME)
+    game.locator("#speed").select_option("8")
     game.locator("#officialTab").click()
     game.locator("#connection").select_option("import")
     game.locator("#credentials").fill(credentials)
     game.get_by_role("button", name="Join or resume").click()
     expect(game.locator("#modeTag")).to_have_text("Official shift")
+    expect(game.locator("#fixedSpeed")).to_have_text("4× official")
+    expect(game.locator("#speed")).to_be_hidden()
 
     # The public observer has no participant or organiser session.
     public = browser.new_context(viewport={"width": 1440, "height": 950})

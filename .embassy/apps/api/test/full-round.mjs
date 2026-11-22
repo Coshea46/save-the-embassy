@@ -2,17 +2,30 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
-import { Simulation } from "@embassy/simulation";
+import { createScenario, Simulation } from "@embassy/simulation";
 import { strategies } from "@embassy/strategies";
 import { fixture } from "./fixture.mjs";
 
-const size = 150;
+const size = 200;
+const seed = 42;
 const f = await fixture();
 const started = performance.now(),
   cpu = process.cpuUsage();
-const groups = Object.entries(strategies);
-const durations = [];
-let pace = 0,
+const groups = process.argv.includes("--wait-only")
+  ? [["wait", () => null]]
+  : process.argv.includes("--mandatory-only")
+    ? [
+        [
+          "mandatory",
+          (obs) => obs.available_tasks.find((t) => t.mandatory)?.id ?? null,
+        ],
+      ]
+    : Object.entries(strategies);
+const durations = [],
+  decisionTimes = [],
+  firstDecisionTimes = [];
+let rateLimits = 0,
+  pace = 0,
   accepted = 0,
   peakRss = 0;
 const sample = setInterval(() => {
@@ -21,6 +34,13 @@ const sample = setInterval(() => {
 try {
   const w = await f.workshop(),
     round = "/workshops/" + w.id;
+  // Pin a fresh snapshot in this disposable lobby for comparable runs across revisions.
+  const [{ catalogue }] =
+    await f.admin`select catalogue from embassy.scenarios`;
+  const scenarioId = randomUUID();
+  const scenario = createScenario(seed, scenarioId, catalogue);
+  await f.admin`insert into embassy.scenarios values (${scenarioId},${JSON.stringify(scenario)}::text::jsonb,${JSON.stringify(catalogue)}::text::jsonb)`;
+  await f.admin`update embassy.workshops set scenario_id=${scenarioId} where id=${w.id}`;
   async function request(path, body, headers) {
     const r = await f.request(path, body, headers);
     durations.push(r.ms);
@@ -50,8 +70,6 @@ try {
     }),
   );
   await ok("/admin" + round, { action: "end" }, f.cookie);
-  const [{ scenario, catalogue }] =
-    await f.admin`select scenario,catalogue from embassy.scenarios`;
   assert.equal(catalogue.definitions.length, 600);
   const expected = Object.fromEntries(
     groups.map(([name, choose]) => {
@@ -63,21 +81,35 @@ try {
   const results = await Promise.allSettled(
     pilots.map(async ({ name, headers, state, policy: [strategy, choose] }) => {
       const run = "/runs/" + state.run_id;
+      let nextWaitAt = 0;
       while (state.status === "playing") {
         const body = {
           sequence: state.next_sequence,
           idempotency_key: randomUUID(),
           selected_task_id: choose(state.observation),
         };
+        const submitted = performance.now();
+        if (body.selected_task_id === null && nextWaitAt > submitted)
+          await delay(Math.ceil(nextWaitAt - submitted));
         let r = await request(run + "/decisions", body, headers);
         while (r.status === 429) {
           assert.ok(r.data.retry_ms > 0);
-          pace++;
+          if (
+            r.data.reason === "rate_limit" ||
+            r.data.error === "Request limit reached"
+          )
+            rateLimits++;
+          else pace++;
           await delay(r.data.retry_ms + 10);
           r = await request(run + "/decisions", body, headers);
         }
         assert.equal(r.status, 200);
+        const elapsed = performance.now() - submitted;
+        decisionTimes.push(elapsed);
+        if (body.sequence === 0) firstDecisionTimes.push(elapsed);
         accepted++;
+        nextWaitAt =
+          performance.now() + Number(r.headers.get("Embassy-Next-Wait-Ms"));
         state = r.data;
       }
       const end = await ok(
@@ -102,20 +134,26 @@ try {
   );
   const [{ n }] = await f.admin`select count(*)::int n from embassy.decisions`;
   assert.equal(n, accepted);
-  durations.sort((a, b) => a - b);
+  function percentile(values, fraction) {
+    values.sort((a, b) => a - b);
+    return +values[Math.ceil(fraction * values.length) - 1].toFixed(1);
+  }
   const usage = process.cpuUsage(cpu);
   console.log(
     JSON.stringify(
       {
         manifest: scenario.manifest,
+        seed,
         players: size,
+        decision_p95_ms: percentile(decisionTimes, 0.95),
+        first_decision_p50_ms: percentile(firstDecisionTimes, 0.5),
         verified_finishes: board.entries.length,
         duration_s: +((performance.now() - started) / 1000).toFixed(2),
         requests: durations.length,
         pacing_responses: pace,
+        rate_limit_responses: rateLimits,
         committed_decisions: n,
-        http_p95_ms:
-          +durations[Math.ceil(0.95 * durations.length) - 1].toFixed(1),
+        http_p95_ms: percentile(durations, 0.95),
         node_peak_sampled_rss_mib: +(peakRss / 2 ** 20).toFixed(1),
         node_cpu_seconds: +((usage.user + usage.system) / 1e6).toFixed(2),
         policies: Object.fromEntries(

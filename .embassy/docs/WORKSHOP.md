@@ -68,7 +68,7 @@ npm --prefix .embassy start
 ```
 
 1. Open the printed local address and select **Competition → Official workshop**. Enter the nickname to publish, workshop ID and join code. Select **Join or resume**, then **Run agent**.
-2. The server assigns the scenario and owns the clock, score and deadlines. After each accepted decision the map replays the tiles actually travelled. Scores and visible reports update at the server’s decision boundaries. Server pacing messages are normal. A local pause does not extend the competition's submission window.
+2. The server assigns the scenario and owns the clock, score and deadlines. After each accepted decision the map replays the tiles actually travelled. Scores and visible reports update at the server’s decision boundaries. Official speed is fixed at 4×. A full six-minute simulated shift takes about 90 seconds. “Next simulation update” means the server is pacing a decision. If the connection is interrupted, choose Retry to resume the saved decision. A local pause does not extend the competition's submission window.
 3. On a dropped connection, use **Retry**. The launcher journals each pending request and resends the same identifier. After a launcher restart, join the same workshop to resume the same participant and run. Agent memory starts fresh after a process restart.
 4. Wait for **Score verified** after the server's finish receipt. Open **Central leaderboard** for the standings. If the organiser enabled multiple attempts, choose **Start another official attempt** after verification. The leaderboard keeps your best eligible result. The local rehearsal is always marked unranked.
 

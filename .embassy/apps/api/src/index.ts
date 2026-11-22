@@ -28,12 +28,30 @@ export interface RunTransaction {
   ): Promise<AcceptedDecision | null>;
   commitDecision(run: StoredRun, receipt: AcceptedDecision): Promise<void>;
 }
+export const OFFICIAL_TICK_MS = 250;
+// Preserve the absolute 1.5-simulated-tick allowance, including on the terminal tick.
+const PACE_ALLOWANCE_MS = 1.5 * OFFICIAL_TICK_MS;
+const FINISH_GRACE_MS = 90_000;
+
+export function runDeadlineMs(startMs: number, horizon: number) {
+  return startMs + horizon * OFFICIAL_TICK_MS + FINISH_GRACE_MS;
+}
+
+export function tickReadyMs(
+  startMs: number,
+  tick: number,
+  tickMs = OFFICIAL_TICK_MS,
+  allowanceMs = PACE_ALLOWANCE_MS,
+) {
+  return startMs + Math.max(0, tick * tickMs - allowanceMs);
+}
+
 export function earliestDecisionMs(
   run: StoredRun,
-  tickMs = 1000,
-  jitterMs = 1500,
+  tickMs = OFFICIAL_TICK_MS,
+  jitterMs = PACE_ALLOWANCE_MS,
 ) {
-  return run.started_ms + Math.max(0, run.checkpoint.tick * tickMs - jitterMs);
+  return tickReadyMs(run.started_ms, run.checkpoint.tick, tickMs, jitterMs);
 }
 export function applyDecision(
   run: StoredRun,

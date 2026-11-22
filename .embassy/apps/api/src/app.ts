@@ -21,7 +21,8 @@ import {
   membership,
   project,
 } from "./common.js";
-import { start, runAction } from "./runs.js";
+import { OFFICIAL_TICK_MS } from "./index.js";
+import { start, runAction, scenarioLoader } from "./runs.js";
 import { createWorkshop, manage, monitor, snapshot } from "./workshops.js";
 
 export interface Settings {
@@ -34,6 +35,8 @@ export interface Settings {
   trustProxy?: string;
 }
 const cookie = "embassy_organiser";
+// Four decisions per second, a retry for each, and room for recovery requests.
+const participantRequestsPerMinute = 600;
 const cookieToken = (req: Request) =>
   /(?:^|;\s*)embassy_organiser=([A-Za-z0-9_-]{43})(?:;|$)/.exec(
     req.get("cookie") ?? "",
@@ -45,7 +48,12 @@ async function limit(db: DB, key: string, max: number, seconds: number) {
     until_at=case when r.until_at<=clock_timestamp() then excluded.until_at else r.until_at end
     returning hits,ceil(extract(epoch from until_at-clock_timestamp())*1000)::int delay`;
   if (row!.hits > max)
-    throw new HttpError(429, "Request limit reached", Math.max(1, row!.delay));
+    throw new HttpError(
+      429,
+      "Request limit reached",
+      Math.max(1, row!.delay),
+      "rate_limit",
+    );
 }
 async function participant(db: DB, req: Request) {
   const value = /^Bearer ([A-Za-z0-9_-]{43})$/.exec(
@@ -55,10 +63,16 @@ async function participant(db: DB, req: Request) {
   const [s] =
     await db`select participant_id from embassy.sessions where token_hash=${hash(value)} and expires_at>clock_timestamp()`;
   if (!s) throw new HttpError(401, "Invalid or expired session");
-  await limit(db, "participant:" + s.participant_id, 240, 60);
+  await limit(
+    db,
+    "participant:" + s.participant_id,
+    participantRequestsPerMinute,
+    60,
+  );
   return String(s.participant_id);
 }
 export function createApp(db: DB, config: Settings) {
+  const loadScenario = scenarioLoader();
   const app = express(),
     secure = new URL(config.origin).protocol === "https:";
   if (config.trustProxy) app.set("trust proxy", config.trustProxy);
@@ -109,8 +123,17 @@ export function createApp(db: DB, config: Settings) {
     }),
   );
   app.use(async (req, _res, next) => {
-    // Room-wide NATs routinely carry all 150 entrants. Separate credentials have tighter limits.
-    await limit(db, "ip:" + req.ip, 18000, 60);
+    // A shared venue IP can carry 200 players. Budget one pacing retry per
+    // simulated tick for run traffic, including clients without wait hints.
+    const runTraffic = /^\/runs\/[^/]+(?:\/(?:decisions|finish))?\/?$/.test(
+      req.path,
+    );
+    await limit(
+      db,
+      (runTraffic ? "runs-ip:" : "ip:") + req.ip,
+      runTraffic ? 200 * participantRequestsPerMinute : 18000,
+      60,
+    );
     next();
   });
   app.post("/participants", async (req, res) => {
@@ -174,7 +197,10 @@ export function createApp(db: DB, config: Settings) {
   app.post("/workshops/:id/runs", async (req, res) => {
     const owner = await participant(db, req),
       id = uuid.parse(req.params.id);
-    res.json(await db.begin((tx) => start(tx, id, owner, req.body)));
+    res.set("Embassy-Tick-Ms", String(OFFICIAL_TICK_MS));
+    res.json(
+      await db.begin((tx) => start(tx, id, owner, req.body, loadScenario)),
+    );
   });
   app.get("/workshops/:id/me", async (req, res) => {
     const owner = await participant(db, req),
@@ -191,9 +217,14 @@ export function createApp(db: DB, config: Settings) {
     app[method](path, async (req, res) => {
       const id = uuid.parse(req.params.id),
         owner = await participant(db, req);
+      res.set("Embassy-Tick-Ms", String(OFFICIAL_TICK_MS));
       if (action === "status") rest.status.request.parse(req.query);
       res.json(
-        await db.begin((tx) => runAction(tx, action, id, owner, req.body)),
+        await db.begin((tx) =>
+          runAction(tx, action, id, owner, req.body, loadScenario, (ms) => {
+            res.set("Embassy-Next-Wait-Ms", String(ms));
+          }),
+        ),
       );
     });
   }
@@ -340,12 +371,11 @@ export function createApp(db: DB, config: Settings) {
         );
       if (problem.retryMs)
         res.set("Retry-After", String(Math.ceil(problem.retryMs / 1000)));
-      res
-        .status(problem.status)
-        .json({
-          error: problem.message,
-          ...(problem.retryMs ? { retry_ms: problem.retryMs } : {}),
-        });
+      res.status(problem.status).json({
+        error: problem.message,
+        ...(problem.reason ? { reason: problem.reason } : {}),
+        ...(problem.retryMs ? { retry_ms: problem.retryMs } : {}),
+      });
       void _next;
     },
   );

@@ -167,7 +167,11 @@ const server = createServer(async (req, res) => {
     }
     reply(res, 200, frame());
   } catch (error) {
-    reply(res, 400, { error: error.message, retryAfter: error.retryAfter });
+    reply(res, error.status ?? 400, {
+      error: error.message,
+      reason: error.reason,
+      retryMs: error.retryMs,
+    });
   }
 });
 server.on("error", (error) => {

@@ -73,7 +73,11 @@ export async function measure(f, { size = 150, realtime } = {}) {
   async function call(path, body, headers, expected = 200) {
     const r = await f.request(path, body, headers);
     times.push(r.ms);
-    if (r.status !== expected) {
+    if (
+      !(Array.isArray(expected)
+        ? expected.includes(r.status)
+        : r.status === expected)
+    ) {
       unexpected.push({ path, status: r.status });
       throw Error(
         path + " returned " + r.status + " " + JSON.stringify(r.data),
@@ -126,7 +130,8 @@ export async function measure(f, { size = 150, realtime } = {}) {
     for (const user of users)
       assert.deepEqual(user.run.observation, users[0].run.observation);
     if (viewers.length) await viewers[1].close();
-    await burst("pacing rejection", async (u) => {
+    let paced = 0;
+    await burst("first decision", async (u) => {
       u.choice = {
         sequence: 0,
         selected_task_id: u.run.observation.available_tasks[0].id,
@@ -136,9 +141,14 @@ export async function measure(f, { size = 150, realtime } = {}) {
         "/runs/" + u.run.run_id + "/decisions",
         u.choice,
         u.auth,
-        429,
+        [200, 429],
       );
-      u.ready = Date.now() + r.data.retry_ms;
+      if (r.status === 429) {
+        assert.equal(r.data.reason, "simulation_pacing");
+        assert.ok(r.data.retry_ms > 0);
+        paced++;
+      }
+      u.ready = Date.now() + (r.data.retry_ms ?? 0);
     });
     await sleep(
       Math.max(0, Math.max(...users.map((u) => u.ready)) - Date.now() + 100),
@@ -188,7 +198,7 @@ export async function measure(f, { size = 150, realtime } = {}) {
       wall_seconds: +wall.toFixed(2),
       requests: times.length,
       requests_per_wall_second: +(times.length / wall).toFixed(1),
-      expected_pacing_rejections: size,
+      expected_pacing_rejections: paced,
       unexpected_http_errors: unexpected.length,
       api: stats(times),
       phases,

@@ -14,6 +14,7 @@ export class HttpError extends Error {
     public status: number,
     message: string,
     public retryMs?: number,
+    public reason?: "simulation_pacing" | "rate_limit",
   ) {
     super(message);
   }

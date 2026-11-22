@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { setTimeout as sleep } from "node:timers/promises";
 import { homedir } from "node:os";
 import { rest } from "@embassy/contracts";
 import {
@@ -11,6 +12,14 @@ import {
 } from "@embassy/simulation";
 import { fullCatalogue } from "@embassy/tasks";
 import { roomAt } from "./session.mjs";
+
+function connectionError(cause) {
+  const message =
+    cause.name === "TimeoutError"
+      ? "The competition server did not respond within 12 seconds."
+      : "The connection to the competition server was interrupted.";
+  throw Object.assign(new Error(message, { cause }), { reason: "connection" });
+}
 
 function endpoint(base, route, ids) {
   const path = route.path.replace(/:(\w+)/g, (_, k) =>
@@ -35,9 +44,20 @@ export function checkedUrl(value) {
 
 export function remoteTransport(service) {
   const base = checkedUrl(service);
+  let nextWait;
   return async (operation, ids, data, token) => {
     const route = rest[operation];
     const request = route.request.parse(data);
+    if (
+      operation === "decide" &&
+      request.selected_task_id === null &&
+      nextWait &&
+      nextWait.run === ids.run_id &&
+      nextWait.sequence === request.sequence
+    ) {
+      const remaining = nextWait.readyAt - performance.now();
+      if (remaining > 0) await sleep(Math.ceil(remaining));
+    }
     const response = await fetch(endpoint(base, route, ids), {
       method: route.method,
       redirect: "error",
@@ -47,9 +67,15 @@ export function remoteTransport(service) {
         ...(token && { Authorization: "Bearer " + token }),
       },
       body: route.method === "GET" ? undefined : JSON.stringify(request),
-    });
+    }).catch(connectionError);
+    const rawBody = await response.text().catch(connectionError);
     if (!response.ok) {
-      const problem = await response.json().catch(() => ({}));
+      let problem;
+      try {
+        problem = JSON.parse(rawBody);
+      } catch {
+        // A proxy may return an empty or HTML error with a Retry-After header.
+      }
       const error = new Error(
         typeof problem?.error === "string"
           ? problem.error
@@ -62,14 +88,36 @@ export function remoteTransport(service) {
           raw && !Number.isNaN(Number(raw))
             ? Number(raw)
             : (Date.parse(raw) - Date.now()) / 1000;
-        error.retryAfter = Math.max(
-          1,
-          Number.isFinite(seconds) ? Math.ceil(seconds) : 2,
-        );
+        error.retryMs =
+          Number.isSafeInteger(problem?.retry_ms) && problem?.retry_ms > 0
+            ? problem?.retry_ms
+            : Number.isFinite(seconds)
+              ? Math.max(1, Math.ceil(seconds * 1000))
+              : 2000;
+        error.reason =
+          problem?.reason === "simulation_pacing" ||
+          problem?.error === "Wait for simulation time"
+            ? "simulation_pacing"
+            : "rate_limit";
       }
       throw error;
     }
-    return route.response.parse(await response.json());
+    const result = route.response.parse(JSON.parse(rawBody));
+    if ("run_id" in result) {
+      // Before pacing metadata existed, official servers used one second per tick.
+      const tickMs = Number(response.headers.get("Embassy-Tick-Ms")) || 1000;
+      const waitMs = Number(response.headers.get("Embassy-Next-Wait-Ms"));
+      nextWait =
+        Number.isFinite(waitMs) && waitMs > 0 && waitMs <= tickMs
+          ? {
+              run: result.run_id,
+              sequence: result.next_sequence,
+              readyAt: performance.now() + waitMs,
+            }
+          : undefined;
+      return { ...result, tickMs };
+    }
+    return result;
   };
 }
 
@@ -252,10 +300,21 @@ export class Official {
       const task = before.observation.available_tasks.find(
         (t) => t.id === body.selected_task_id,
       );
-      d.log.unshift({
-        tick: before.tick,
-        text: task ? "Selected " + task.title : "Wait one tick",
-      });
+      const prior = d.log[0];
+      if (
+        !task &&
+        prior?.waitTicks &&
+        prior.tick + prior.waitTicks === before.tick
+      ) {
+        prior.waitTicks++;
+        prior.text = "Wait " + prior.waitTicks + " ticks";
+      } else {
+        d.log.unshift({
+          tick: before.tick,
+          text: task ? "Selected " + task.title : "Wait one tick",
+          ...(!task && { waitTicks: 1 }),
+        });
+      }
       if (task) {
         const travelled = after.metrics.travel - before.metrics.travel;
         route = shortestPath(
@@ -288,6 +347,7 @@ export class Official {
     return {
       mode: this.mock ? "rehearsal" : "official",
       seed: null,
+      officialSpeed: this.mock ? null : 1000 / (s.tickMs ?? 1000),
       tick: s.tick,
       status: s.status !== "playing" && !d.finished ? "verifying" : s.status,
       position: s.observation?.agent.position ?? d.position ?? entrance,
