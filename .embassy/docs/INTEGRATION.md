@@ -1,4 +1,14 @@
-# Workshop rehearsal, 21 November 2026
+# Local-first competition rehearsal, 22 November 2026
+
+At seed 42 the starter Python agent reached tick 318 and scored 1,045 in every browser run. The previous launcher forced 4× and took 79.48 s to reach game over. Selecting 8× with the updated launcher took 39.77 s in Practice and 39.83 s in Official. In both modes Chromium rendered one frame per simulation tick and used the same tile interpolation, work animation and urgency markers. The per-tick parity test compares all frames and terminal checkpoints. [Practice capture](qa/local-first/after-practice.jpg) · [Official capture](qa/local-first/after-official.jpg) · [Previous Official capture](qa/local-first/before-official.jpg)
+
+Against disposable PostgreSQL, all 200 players finished verification. The previous rehearsal made 7,443 requests, including 3,320 pacing rejections, for 3,320 accepted decisions. The local-first rehearsal accepted 11,818 decisions in 1,562 participant requests, including concurrent duplicates. It added a wait-heavy policy, simulated disconnects, five-second acknowledgements and slow agents. Both used seed 42. The workloads and playback rates differ. The new headless cohort used 5 ms tick delays to exercise backlog recovery. PostgreSQL recorded zero deadlocks and 5,982 commits. The API and simulated clients shared one Node process, which peaked at 284 MiB RSS and consumed 26.2 CPU seconds. [Previous measurements](qa/local-first/emb-preload.json) · [Local-first measurements](qa/local-first/emb-postload.json)
+
+The separate Supabase rehearsal runs an API container and two real WebSocket subscribers. Its GitHub Actions artifact includes the participant request distribution, database counters, verification latency, commit-to-delivery delays, browser durations and screenshots. The subscriber checks final scores and survival ticks for every participant. Run the workflow on a trusted PR or use the disposable local stack described in [PLATFORM.md](PLATFORM.md). None of these tests use the production workshop database or measure the free Render service.
+
+The failure tests delay every central API response by 20 seconds, finish offline, lose committed batch and finish replies, kill and restart the local launcher, and restart the API process. The launcher restores a mid-route or terminal checkpoint while offline. A second launcher cannot overwrite the same profile. Python process globals start fresh after a process restart.
+
+# Historical workshop rehearsal, 21 November 2026
 
 ## Participant and organiser experience
 

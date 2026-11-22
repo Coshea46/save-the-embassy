@@ -100,7 +100,7 @@ test("offline Python run survives a restart mid-route and lost batch and finish 
   );
   await f.request("/admin/workshops/" + w.id, { action: "end" }, f.cookie);
   online = true;
-  await until(() => client.data.finished || client.data.failure);
+  await until(() => client.frame().verified || client.data.failure);
   assert.equal(client.data.failure, undefined);
   const [{ n }] = await f.admin`select count(*)::int n from embassy.decisions`;
   assert.equal(n, saved.journal.length);
@@ -137,7 +137,7 @@ test(
       events.size > 1 && positions.size > 1 && client.frame().metrics.score > 0,
     );
     assert.equal(client.data.ack, 0);
-    await until(() => client.data.finished || client.data.failure, 200000);
+    await until(() => client.frame().verified || client.data.failure, 200000);
     assert.equal(client.data.verifiedScore, client.frame().metrics.score);
     assert.equal(client.frame().verified, true);
   },

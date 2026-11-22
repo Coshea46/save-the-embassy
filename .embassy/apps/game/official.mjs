@@ -270,6 +270,7 @@ export class Official {
   }
   frame() {
     const d = this.data;
+    const finished = d.finished && !this.sync?.saveOnly;
     const f = this.game?.frame() ?? {
       status: d.status.status,
       tick: d.status.tick,
@@ -284,13 +285,13 @@ export class Official {
     return {
       ...f,
       mode: this.mock ? "rehearsal" : "official",
-      verified: !this.mock && d.finished,
-      canStartAnother: !this.mock && (d.finished || d.excluded === true),
+      verified: !this.mock && finished,
+      canStartAnother: !this.mock && (finished || d.excluded === true),
       verifiedScore: d.verifiedScore ?? d.status?.metrics.score,
       deadline: d.assignment?.deadline,
       verification: d.failure
         ? "Verification failed"
-        : d.finished
+        : finished
           ? "Score verified"
           : this.sync?.offline
             ? "Offline"

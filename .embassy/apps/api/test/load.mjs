@@ -4,7 +4,7 @@ import { pathToFileURL } from "node:url";
 import { setTimeout as sleep } from "node:timers/promises";
 import { createClient } from "@supabase/supabase-js";
 import { subscribeStandings } from "../../leaderboard/src/live.js";
-import { rest } from "@embassy/contracts";
+import { batchLimit, rest } from "@embassy/contracts";
 import { createScenario, Simulation } from "@embassy/simulation";
 import { strategies } from "@embassy/strategies";
 import { Official } from "../../game/official.mjs";
@@ -36,12 +36,14 @@ function viewer(url, key, workshop) {
   });
   let stop;
   const delivered = new Map();
+  const observed = new Map();
   async function connect() {
     let ready = false;
     stop = subscribeStandings(
       client,
       workshop,
       (e) => {
+        observed.set(e.new.display_name, e.new);
         if (e.new.score > 0 && !delivered.has(e.new.display_name))
           delivered.set(
             e.new.display_name,
@@ -60,7 +62,7 @@ function viewer(url, key, workshop) {
     stop = undefined;
     client.realtime.disconnect();
   }
-  return { connect, close, delivered };
+  return { connect, close, delivered, observed };
 }
 // Invoke only with an isolated fixture. No production DB or prior workshop is mutated.
 export async function measure(f, { size = 200, realtime } = {}) {
@@ -202,7 +204,7 @@ export async function measure(f, { size = 200, realtime } = {}) {
         const localEnd = performance.now();
         localTimes.push(localEnd - t);
         assert.deepEqual(c.game.sim.checkpoint(), reference[policy]);
-        await waitFor(() => c.data.finished || c.data.failure, 120000);
+        await waitFor(() => c.frame().verified || c.data.failure, 120000);
         assert.equal(c.data.failure, undefined);
         assert.equal(c.data.verifiedScore, reference[policy].metrics.score);
         assert.equal(c.data.ack, c.data.journal.length);
@@ -210,7 +212,18 @@ export async function measure(f, { size = 200, realtime } = {}) {
       }),
     );
     if (viewers.length) {
-      await waitFor(() => viewers[0].delivered.size === size, 60000);
+      await waitFor(
+        () =>
+          players.every(({ i, name }) => {
+            const row = viewers[0].observed.get(name),
+              cp = reference[i % policies.length];
+            return (
+              row?.score === cp.metrics.score && row.survival_ticks === cp.tick
+            );
+          }),
+        60000,
+      );
+      assert.equal(viewers[0].delivered.size, size);
       await viewers[1].connect();
     }
     const board = (await f.request(base + "/display")).data;
@@ -222,6 +235,12 @@ export async function measure(f, { size = 200, realtime } = {}) {
       assert.ok(row.finalised);
       assert.equal(row.score, cp.metrics.score);
       assert.equal(row.survival_ticks, cp.tick);
+      const ahead = board.entries.filter(
+        (e) =>
+          e.score > row.score ||
+          (e.score === row.score && e.survival_ticks > row.survival_ticks),
+      );
+      assert.equal(row.rank, ahead.length + 1);
     }
     const [{ n, unique_runs }] =
       await f.admin`select count(*)::int n,count(distinct d.run_id)::int unique_runs from embassy.decisions d join embassy.runs r on r.id=d.run_id where r.workshop_id=${w.id}`;
@@ -230,6 +249,8 @@ export async function measure(f, { size = 200, realtime } = {}) {
       clients.reduce((n, c) => n + c.data.journal.length, 0),
     );
     assert.equal(unique_runs, size);
+    assert.ok(maxPending <= scenario.rules.horizon);
+    assert.equal(Math.max(...batchSizes), batchLimit);
     const publicRows =
       await f.admin`select display_name,score,survival_ticks from public.embassy_standings where workshop_id=${w.id}`;
     assert.equal(publicRows.length, size);
