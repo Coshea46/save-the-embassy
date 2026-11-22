@@ -22,7 +22,8 @@ if sys.platform == "win32":
             result.check_returncode()
 elif sys.platform == "darwin":
     bootstrap, install = blocks("macOS")
-    subprocess.run(["bash", "-ec", "command -v brew >/dev/null || " + bootstrap + "\n" + install], check=True)
+    # Also exercise the first-time installer on the Homebrew-equipped runner.
+    subprocess.run(["bash", "-ec", bootstrap + "\n" + install], check=True)
 else:
     debian, fedora, node = blocks("Linux · Ubuntu, Debian or Fedora")
     install = {"Ubuntu or Debian": debian, "Fedora": fedora}[os.environ["SECTION"]]
