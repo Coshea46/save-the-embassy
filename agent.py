@@ -146,7 +146,7 @@
 # - None to wait one simulated second
 #
 # You can use Codex to rewrite the function below or do it manually!
-
+from typing import Any
 
 def choose_next_task(observation: dict) -> str | None:
     """
@@ -162,7 +162,10 @@ def choose_next_task(observation: dict) -> str | None:
             The ID of the task to complete, or None to wait.
     """
 
-    tasks = observation["available_tasks"]
+    # list — a list of tasks.
+    # dict[str, Any] — each task is a dictionary with string keys
+    # and values of different types (str, int, bool, etc.).
+    tasks: list[dict[str, Any]] = observation["available_tasks"]
 
     if not tasks:
         return None
