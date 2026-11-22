@@ -3,7 +3,11 @@ import { randomUUID } from "node:crypto";
 import { pathToFileURL } from "node:url";
 import { setTimeout as sleep } from "node:timers/promises";
 import { createClient } from "@supabase/supabase-js";
-import { subscribeStandings } from "../../leaderboard/src/live.js";
+import { subscribeStandings, watchBoard } from "../../leaderboard/src/live.js";
+import { batchLimit, rest } from "@embassy/contracts";
+import { createScenario, Simulation } from "@embassy/simulation";
+import { strategies } from "@embassy/strategies";
+import { Official } from "../../game/official.mjs";
 import { fixture } from "./fixture.mjs";
 
 function stats(values) {
@@ -26,203 +30,309 @@ async function waitFor(check, timeout = 60000) {
     await sleep(50);
   }
 }
-function viewer(url, key, workshop) {
+function viewer(url, key, workshop, read) {
   const client = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
-  let stop;
+  let stop, snapshot;
   const delivered = new Map();
+  const observed = new Map();
   async function connect() {
     let ready = false;
-    stop = subscribeStandings(
-      client,
-      workshop,
-      (e) => {
-        if (e.new.score > 0 && !delivered.has(e.new.display_name))
-          delivered.set(
-            e.new.display_name,
-            Date.now() - Date.parse(e.commit_timestamp),
-          );
+    snapshot = null;
+    stop = watchBoard({
+      read,
+      paint(value) {
+        snapshot = value;
       },
-      (status) => {
+      onError(error) {
+        console.error("Viewer snapshot failed", error.message);
+      },
+      setState(status) {
         ready = status === "SUBSCRIBED";
       },
-      "UPDATE",
-    );
-    await waitFor(() => ready);
+      // No periodic poll within this rehearsal. A connected viewer must
+      // reach final standings via actual WAL notifications and refetches.
+      interval: 3600000,
+      subscribe: (notify, state) =>
+        subscribeStandings(
+          client,
+          workshop,
+          (e) => {
+            observed.set(e.new.display_name, e.new);
+            if (e.new.score > 0 && !delivered.has(e.new.display_name))
+              delivered.set(
+                e.new.display_name,
+                Date.now() - Date.parse(e.commit_timestamp),
+              );
+            notify();
+          },
+          state,
+          "UPDATE",
+        ),
+    });
+    await waitFor(() => ready && snapshot);
   }
   async function close() {
-    await stop?.();
+    stop?.();
     stop = undefined;
     client.realtime.disconnect();
   }
-  return { connect, close, delivered };
+  return {
+    connect,
+    close,
+    delivered,
+    observed,
+    get snapshot() {
+      return snapshot;
+    },
+  };
 }
 // Invoke only with an isolated fixture. No production DB or prior workshop is mutated.
-export async function measure(f, { size = 150, realtime } = {}) {
-  const start = performance.now(),
-    times = [],
-    phases = [],
-    unexpected = [],
-    viewers = [];
-  const w = await f.workshop({ attempt_limit: 2 }),
+export async function measure(f, { size = 200, realtime } = {}) {
+  const w = await f.workshop(),
     base = "/workshops/" + w.id;
-  const users = Array.from({ length: size }, (_, i) => ({
-    name: "Agent " + String(i + 1).padStart(3, "0"),
-  }));
-  async function call(path, body, headers, expected = 200) {
-    const r = await f.request(path, body, headers);
-    times.push(r.ms);
-    if (
-      !(Array.isArray(expected)
-        ? expected.includes(r.status)
-        : r.status === expected)
-    ) {
-      unexpected.push({ path, status: r.status });
-      throw Error(
-        path + " returned " + r.status + " " + JSON.stringify(r.data),
-      );
-    }
-    return r;
+  const [{ catalogue }] =
+    await f.admin`select catalogue from embassy.scenarios where id=(select scenario_id from embassy.workshops where id=${w.id})`;
+  const scenarioId = randomUUID(),
+    scenario = createScenario(42, scenarioId, catalogue);
+  await f.admin`insert into embassy.scenarios values(${scenarioId},${JSON.stringify(scenario)}::text::jsonb,${JSON.stringify(catalogue)}::text::jsonb)`;
+  await f.admin`update embassy.workshops set scenario_id=${scenarioId} where id=${w.id}`;
+  const phases = {},
+    localTimes = [],
+    finalLag = [],
+    batchSizes = [],
+    clients = [],
+    requests = [],
+    viewers = [];
+  let peak = 0,
+    duplicates = 0,
+    interruptions = 0,
+    maxPending = 0;
+  async function counters() {
+    await f.admin`select pg_stat_clear_snapshot()`;
+    return (
+      await f.admin`select xact_commit,xact_rollback,blks_hit,blks_read,deadlocks from pg_stat_database where datname=current_database()`
+    )[0];
   }
-  async function burst(name, operation) {
-    const before = performance.now(),
-      count = times.length;
-    const results = await Promise.allSettled(users.map(operation));
-    const ms = performance.now() - before;
-    phases.push({
-      name,
-      requests: times.length - count,
-      requests_per_s: +(((times.length - count) * 1000) / ms).toFixed(1),
-      ...stats(times.slice(count)),
-    });
-    for (const r of results) if (r.status === "rejected") throw r.reason;
+  const before = await counters(),
+    started = performance.now(),
+    cpu = process.cpuUsage();
+  const sample = setInterval(() => {
+    peak = Math.max(peak, process.memoryUsage.rss());
+  }, 100);
+  const policies = [
+    ...Object.values(strategies),
+    (o) => o.available_tasks.find((t) => t.mandatory)?.id ?? null,
+  ];
+  const reference = policies.map((choose) => {
+    const sim = new Simulation(scenario, catalogue);
+    while (sim.status === "playing") sim.decide(choose(sim.observe()));
+    return sim.checkpoint();
+  });
+  async function http(op, ids, body, token) {
+    const route = rest[op];
+    const path = route.path.replace(/:(\w+)/g, (_, k) => ids[k]);
+    const r = await f.request(
+      path,
+      body,
+      token ? { authorization: "Bearer " + token } : undefined,
+    );
+    requests.push(r.ms);
+    (phases[op] ??= []).push(r.ms);
+    assert.ok(
+      r.status === 200 || r.status === 201,
+      op + " " + r.status + " " + r.data.error,
+    );
+    return r.data;
   }
-  const dbBefore = (
-    await f.admin`select xact_commit,xact_rollback,blks_read,blks_hit,deadlocks from pg_stat_database where datname=current_database()`
-  )[0];
   try {
-    if (realtime)
+    if (realtime) {
       for (let i = 0; i < 2; i++) {
-        const v = viewer(realtime.url, realtime.key, w.id);
+        const v = viewer(realtime.url, realtime.key, w.id, async () => {
+          const r = await f.request(base + "/display");
+          assert.equal(r.status, 200);
+          return r.data;
+        });
         viewers.push(v);
         await v.connect();
       }
-    await call("/admin" + base, { action: "start" }, f.cookie);
-    await burst("register", async (u) => {
-      const r = await call(
-        "/participants",
-        { display_name: u.name },
-        undefined,
-        201,
-      );
-      u.auth = { authorization: "Bearer " + r.data.access_token };
-    });
-    await burst("join", (u) =>
-      call(base + "/join", { join_code: w.code }, u.auth),
+      await viewers[1].close();
+    }
+    await f.request("/admin" + base, { action: "start" }, f.cookie);
+    const players = await Promise.all(
+      Array.from({ length: size }, async (_, i) => {
+        const name = "Agent " + String(i + 1).padStart(3, "0");
+        const player = await http("register", {}, { display_name: name });
+        await http(
+          "join",
+          { workshop_id: w.id },
+          { join_code: w.code },
+          player.access_token,
+        );
+        return { i, name, player };
+      }),
     );
-    await burst("start", async (u) => {
-      u.run = (
-        await call(base + "/runs", { idempotency_key: randomUUID() }, u.auth)
-      ).data;
-    });
-    assert.equal(users[0].run.manifest.catalogue_version, "dispatch.1");
-    for (const user of users)
-      assert.deepEqual(user.run.observation, users[0].run.observation);
-    if (viewers.length) await viewers[1].close();
-    let paced = 0;
-    await burst("first decision", async (u) => {
-      u.choice = {
-        sequence: 0,
-        selected_task_id: u.run.observation.available_tasks[0].id,
-        idempotency_key: randomUUID(),
-      };
-      const r = await call(
-        "/runs/" + u.run.run_id + "/decisions",
-        u.choice,
-        u.auth,
-        [200, 429],
-      );
-      if (r.status === 429) {
-        assert.equal(r.data.reason, "simulation_pacing");
-        assert.ok(r.data.retry_ms > 0);
-        paced++;
-      }
-      u.ready = Date.now() + (r.data.retry_ms ?? 0);
-    });
-    await sleep(
-      Math.max(0, Math.max(...users.map((u) => u.ready)) - Date.now() + 100),
+    await Promise.all(
+      players.map(async ({ i, player }) => {
+        let first = true;
+        const service = async (op, ids, body, token) => {
+          if (op === "batch" && first) {
+            first = false;
+            if (i % 4 === 0) {
+              interruptions++;
+              throw new Error("Campus connection interrupted");
+            }
+            if (i % 4 === 1) {
+              duplicates++;
+              const [a, b] = await Promise.all([
+                http(op, ids, body, token),
+                http(op, ids, body, token),
+              ]);
+              assert.deepEqual(a, b);
+              return a;
+            }
+            if (i % 4 === 2) {
+              const result = await http(op, ids, body, token);
+              await sleep(5000);
+              return result;
+            }
+          }
+          if (op === "batch") batchSizes.push(body.decisions.length);
+          return http(op, ids, body, token);
+        };
+        const c = new Official(
+          service,
+          { load: async () => ({}), save: async () => {} },
+          w.id,
+          false,
+          null,
+        );
+        await c.connect(undefined, undefined, player);
+        clients[i] = c;
+        assert.deepEqual(c.data.assignment.scenario, scenario);
+      }),
     );
-    await burst("simultaneous decision and exact retry", async (u) => {
-      const path = "/runs/" + u.run.run_id + "/decisions";
-      const [a, b] = await Promise.all([
-        call(path, u.choice, u.auth),
-        call(path, u.choice, u.auth),
-      ]);
-      assert.deepEqual(a.data, b.data);
-      assert.equal(a.data.next_sequence, 1);
-      assert.ok(a.data.metrics.score > 0);
-    });
+    await f.request("/admin" + base, { action: "end" }, f.cookie);
+    await Promise.all(
+      clients.map(async (c, i) => {
+        const policy = i % policies.length;
+        const agent = {
+          choose: async (obs) => {
+            if (i % 7 === 0) await sleep(25);
+            return policies[policy](obs);
+          },
+        };
+        const t = performance.now();
+        while (c.game.sim.status === "playing") {
+          await c.advance(agent);
+          maxPending = Math.max(maxPending, c.durable - c.data.ack);
+          await sleep(5); // accelerated playback; 200 clients share this one JS process
+        }
+        const localEnd = performance.now();
+        localTimes.push(localEnd - t);
+        assert.deepEqual(c.game.sim.checkpoint(), reference[policy]);
+        await waitFor(() => c.frame().verified || c.data.failure, 120000);
+        assert.equal(c.data.failure, undefined);
+        assert.equal(c.data.verifiedScore, reference[policy].metrics.score);
+        assert.equal(c.data.ack, c.data.journal.length);
+        finalLag.push(performance.now() - localEnd);
+      }),
+    );
     if (viewers.length) {
-      await waitFor(() => viewers[0].delivered.size === size, 30000);
+      await waitFor(
+        () => viewers[0].delivered.size === size && viewers[0].snapshot?.final,
+        60000,
+      );
       await viewers[1].connect();
+      await waitFor(() => viewers[1].snapshot?.final);
     }
-    await burst("recovery after lost responses", async (u) => {
-      const r = await call("/runs/" + u.run.run_id, undefined, u.auth);
-      assert.equal(r.data.next_sequence, 1);
-    });
-    let recovered;
-    await burst("public snapshot reconnect", async () => {
-      recovered = (await call(base + "/leaderboard")).data;
-      assert.equal(recovered.entries.length, size);
-      assert.ok(recovered.entries.every((e) => e.rank === 1 && e.score > 0));
-    });
-    const rows =
-      await f.admin`select count(*)::int n,count(distinct d.run_id)::int distinct_runs from embassy.decisions d join embassy.runs r on r.id=d.run_id where r.workshop_id=${w.id}`;
-    assert.deepEqual({ ...rows[0] }, { n: size, distinct_runs: size });
-    const timings = [];
-    for (let i = 0; i < 50; i++) {
-      const a = performance.now();
-      await f.db`select * from embassy.best where workshop_id=${w.id} order by score desc,survival_ticks desc,run_id`;
-      timings.push(performance.now() - a);
+    const board = (await f.request(base + "/display")).data;
+    assert.ok(board.final && board.entries.length === size);
+    for (const viewer of viewers)
+      assert.deepEqual(viewer.snapshot.entries, board.entries);
+    const byName = new Map(board.entries.map((e) => [e.display_name, e]));
+    for (const { i, name } of players) {
+      const row = byName.get(name),
+        cp = reference[i % policies.length];
+      assert.ok(row.finalised);
+      assert.equal(row.score, cp.metrics.score);
+      assert.equal(row.survival_ticks, cp.tick);
+      const ahead = board.entries.filter(
+        (e) =>
+          e.score > row.score ||
+          (e.score === row.score && e.survival_ticks > row.survival_ticks),
+      );
+      assert.equal(row.rank, ahead.length + 1);
     }
+    const [{ n, unique_runs }] =
+      await f.admin`select count(*)::int n,count(distinct d.run_id)::int unique_runs from embassy.decisions d join embassy.runs r on r.id=d.run_id where r.workshop_id=${w.id}`;
+    assert.equal(
+      n,
+      clients.reduce((n, c) => n + c.data.journal.length, 0),
+    );
+    assert.equal(unique_runs, size);
+    assert.ok(maxPending <= scenario.rules.horizon);
+    assert.equal(Math.max(...batchSizes), batchLimit);
+    const publicRows =
+      await f.admin`select display_name,score,survival_ticks from public.embassy_standings where workshop_id=${w.id}`;
+    assert.equal(publicRows.length, size);
+    for (const row of publicRows)
+      assert.equal(row.score, byName.get(row.display_name).score);
     await sleep(1100);
-    await f.admin`select pg_stat_clear_snapshot()`;
-    const dbAfter = (
-      await f.admin`select xact_commit,xact_rollback,blks_read,blks_hit,deadlocks from pg_stat_database where datname=current_database()`
-    )[0];
-    const wall = (performance.now() - start) / 1000;
+    const after = await counters(),
+      wall = (performance.now() - started) / 1000,
+      used = process.cpuUsage(cpu);
     return {
-      manifest: users[0].run.manifest,
-      participants: size,
-      wall_seconds: +wall.toFixed(2),
-      requests: times.length,
-      requests_per_wall_second: +(times.length / wall).toFixed(1),
-      expected_pacing_rejections: paced,
-      unexpected_http_errors: unexpected.length,
-      api: stats(times),
-      phases,
-      database: {
-        standings_query: stats(timings),
-        ...Object.fromEntries(
-          Object.keys(dbBefore).map((k) => [
-            k,
-            Number(dbAfter[k]) - Number(dbBefore[k]),
-          ]),
-        ),
-      },
+      size,
+      seed: 42,
+      verified: size,
+      score_differences: 0,
+      committed_decisions: n,
+      participant_requests: requests.length,
+      requests_per_player: requests.length / size,
+      requests_per_second: requests.length / wall,
+      wall_seconds: wall,
+      concurrent_duplicate_batches: duplicates,
+      offline_reconnects: interruptions,
+      maximum_pending_decisions: maxPending,
+      maximum_batch: Math.max(...batchSizes),
+      local_gameplay: stats(localTimes),
+      terminal_to_verified: stats(finalLag),
+      http: Object.fromEntries(
+        Object.entries(phases).map(([op, times]) => [op, stats(times)]),
+      ),
+      database: Object.fromEntries(
+        Object.keys(before).map((k) => [
+          k,
+          Number(after[k]) - Number(before[k]),
+        ]),
+      ),
+      peak_node_rss_mib: peak / 2 ** 20,
+      node_cpu_seconds: (used.user + used.system) / 1e6,
       realtime: viewers.length
         ? {
-            connected_viewers: 2,
-            commit_to_delivery: stats([...viewers[0].delivered.values()]),
-            missed_by_offline_viewer: size - viewers[1].delivered.size,
-            recovered_snapshot_rows: recovered.entries.length,
+            commit_to_first_positive_score: stats([
+              ...viewers[0].delivered.values(),
+            ]),
+            connected_final_rows: viewers[0].snapshot.entries.length,
+            recovered_snapshot_rows: viewers[1].snapshot.entries.length,
+            final_scores_observed_in_raw_stream: players.filter(
+              ({ i, name }) => {
+                const row = viewers[0].observed.get(name),
+                  cp = reference[i % policies.length];
+                return (
+                  Number(row?.score) === cp.metrics.score &&
+                  Number(row?.survival_ticks) === cp.tick
+                );
+              },
+            ).length,
           }
         : null,
-      decision_rows: rows[0].n,
-      unique_runs: rows[0].distinct_runs,
     };
   } finally {
+    clearInterval(sample);
+    for (const c of clients) await c?.sync.stop();
     for (const v of viewers) await v.close();
   }
 }

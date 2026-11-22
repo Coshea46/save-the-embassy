@@ -64,7 +64,7 @@ test(
     assert.equal(joined.mode, "rehearsal");
     assert.equal(joined.verified, false);
     const frame = await send("/step", { revision: joined.revision });
-    assert(frame.tick > 1);
+    assert.equal(frame.tick, 1);
     assert.equal(frame.leaderboard, null);
     for (const filename of [
       "floor.png",

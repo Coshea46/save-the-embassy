@@ -142,6 +142,8 @@ Only official competition attempts count. Local practice runs do not appear on t
 8. Select **Join or resume**, then **Run agent**.
 9. When the game shows **Score verified**, select **Central leaderboard** to see your verified score beside your player name.
 
+If Wi-Fi drops after you join, keep playing. Leave the launcher running, or reopen it before the submission time shown in the game so your score can be verified.
+
 If the organiser allows another attempt, save your improved `agent.py`. On the finished official shift, select **Start another official attempt → Run agent**. The leaderboard keeps your best eligible score.
 
 ---

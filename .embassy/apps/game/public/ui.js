@@ -31,8 +31,7 @@ const map = new FloorView(el("map"), el("mini"), (id) => {
     detail();
   }
 });
-const delay = () =>
-  state?.mode === "practice" ? 1000 / Number(el("speed").value) : 220;
+const delay = () => 1000 / Number(el("speed").value);
 const terminal = () => ["closed", "finished"].includes(state?.status);
 async function request(path, body) {
   const res = await fetch(path, {
@@ -141,11 +140,6 @@ function buttons() {
   el("restart").disabled = !practice || locked;
   el("settings").disabled = locked;
   el("settings").hidden = !practice;
-  el("speed").hidden = !practice;
-  el("fixedSpeed").hidden = practice;
-  el("fixedSpeed").textContent = state?.officialSpeed
-    ? state.officialSpeed + "× official"
-    : "Rehearsal";
   for (const id of ["officialTab", "practiceTab", "again", "attempt"])
     el(id).disabled = locked;
 }
@@ -157,11 +151,14 @@ function connection(message) {
     message ??
     (state.mode === "rehearsal"
       ? "Local rehearsal · Unranked"
-      : state.verified
-        ? "Official · Score verified"
-        : state.status === "verifying"
-          ? "Official · Awaiting score verification"
-          : "Official · Connected at decision " + state.decisions);
+      : state.verification +
+        " · Verified score " +
+        state.verifiedScore +
+        (state.verificationError ? " · " + state.verificationError : ""));
+  if (state.deadline)
+    n.title = "Submit by " + new Date(state.deadline).toLocaleString();
+  if (state.deadline && !state.verified && state.mode === "official")
+    n.append(" · Submit by " + new Date(state.deadline).toLocaleTimeString());
   if (state.leaderboard) {
     const a = node("a", "Central leaderboard");
     a.href = state.leaderboard;
@@ -186,9 +183,10 @@ function render(next) {
       : "Official shift";
   el("seedTag").textContent = practice
     ? "Seed " + next.seed
-    : next.verified
-      ? "Verified"
-      : "Server protocol";
+    : next.seed == null
+      ? ""
+      : "Seed " + next.seed;
+  el("scoreLabel").textContent = practice ? "Score" : "Local score";
   for (const [id, val, len] of [
     ["score", next.metrics.score, 4],
     ["completed", next.metrics.completed, 2],
@@ -244,7 +242,7 @@ function render(next) {
     el("callout").hidden = true;
   }
   el("terminal").hidden = !terminal();
-  el("attempt").hidden = !next.verified;
+  el("attempt").hidden = !next.canStartAnother;
   if (terminal()) {
     running = false;
     el("terminalTitle").textContent =
@@ -279,14 +277,6 @@ function fail(error, retryAction) {
     const reload = node("button", "Reload agent");
     reload.onclick = () => command("/agent", {});
     n.append(retry, reload);
-    if (state.mode !== "practice")
-      connection(
-        (error.reason === "connection"
-          ? "Connection interrupted"
-          : "Run paused") +
-          " · Last accepted score " +
-          state.metrics.score,
-      );
   }
   buttons();
 }
@@ -298,27 +288,20 @@ function stop() {
 async function step() {
   if (!running || locked) return;
   locked = true;
-  let wait = state.mode === "official" ? 0 : delay();
+  const started = performance.now();
   try {
     render(await request("/step", { revision: state.revision }));
   } catch (e) {
-    if (e.retryMs > 0) {
-      wait = e.retryMs;
-      const seconds = Math.ceil(wait / 100) / 10 + " s";
-      connection(
-        e.reason === "simulation_pacing"
-          ? "Official " +
-              state.officialSpeed +
-              "× · Next simulation update in " +
-              seconds
-          : "Server request limit · Retrying in " + seconds,
-      );
-    } else fail(e);
+    fail(e);
   } finally {
     locked = false;
     buttons();
   }
-  if (running && !terminal()) timer = setTimeout(step, wait);
+  if (running && !terminal())
+    timer = setTimeout(
+      step,
+      Math.max(0, delay() - (performance.now() - started)),
+    );
 }
 function run() {
   if (!state || terminal()) return;
@@ -429,3 +412,42 @@ for (const b of document.querySelectorAll(".close"))
   b.onclick = () => b.closest("dialog").close();
 el("journalMode").onchange = journal;
 request("/state").then(render).catch(fail);
+
+// Read the local launcher while paused or on the game-over screen. During play,
+// every local tick already contains the latest acknowledgement.
+let polling = false;
+setInterval(async () => {
+  if (
+    running ||
+    locked ||
+    polling ||
+    state?.mode !== "official" ||
+    state.verified ||
+    state.verificationError
+  )
+    return;
+  polling = true;
+  const previous = state;
+  try {
+    const next = await request("/state");
+    if (
+      previous === state &&
+      !running &&
+      !locked &&
+      next.revision === state.revision
+    ) {
+      Object.assign(state, {
+        verification: next.verification,
+        verified: next.verified,
+        verifiedScore: next.verifiedScore,
+        verificationError: next.verificationError,
+      });
+      connection();
+      el("attempt").hidden = !next.canStartAnother;
+    }
+  } catch {
+    /* The next local refresh will retry. */
+  } finally {
+    polling = false;
+  }
+}, 1000);

@@ -51,19 +51,9 @@ export class FloorView {
     const last = this.state,
       p = next.position;
     const t = performance.now(),
-      consecutive =
-        last?.mode === "practice" &&
-        next.mode === "practice" &&
-        next.tick === last.tick + 1;
+      consecutive = last?.mode === next.mode && next.tick === last.tick + 1;
     if (!last || next.tick <= last.tick || next.mode !== last.mode)
       this.since.clear();
-    this.route =
-      last &&
-      last.mode === next.mode &&
-      next.tick > last.tick &&
-      next.route?.length
-        ? [last.position, ...next.route]
-        : null;
     this.from = consecutive ? last.position : p;
     this.walk = consecutive && !same(this.from, p);
     if (this.walk)
@@ -76,9 +66,7 @@ export class FloorView {
               ? 2
               : 0;
     this.start = t;
-    this.duration = this.route
-      ? Math.min(1600, next.route.length * 140)
-      : Math.min(700, ms);
+    this.duration = Math.min(700, ms);
     if (consecutive && next.metrics.completed > last.metrics.completed)
       this.celebrate = t + 600;
     this.state = next;
@@ -121,17 +109,9 @@ export class FloorView {
     const mix = reduced
       ? 1
       : Math.min(1, (now - this.start) / Math.max(this.duration, 1));
-    const progress = this.route ? mix * (this.route.length - 1) : mix;
-    const index = Math.floor(progress);
-    const from = this.route?.[index] ?? this.from;
-    const to = this.route?.[index + 1] ?? s.position;
-    const blend = this.route ? progress - index : mix;
-    if (this.route && !same(from, to))
-      this.direction =
-        to.x > from.x ? 3 : to.x < from.x ? 1 : to.y < from.y ? 2 : 0;
     const pos = {
-      x: from.x + (to.x - from.x) * blend,
-      y: from.y + (to.y - from.y) * blend,
+      x: this.from.x + (s.position.x - this.from.x) * mix,
+      y: this.from.y + (s.position.y - this.from.y) * mix,
     };
     const scale = !small && this.follow ? 1.65 : 1;
     const tile = small ? 10 : TILE;
@@ -153,8 +133,8 @@ export class FloorView {
     const phase =
       this.celebrate > now
         ? 4
-        : (this.walk || this.route) && mix < 1
-          ? (Math.floor(progress * 4) % 2) + 1
+        : this.walk && mix < 1
+          ? (Math.floor(mix * 4) % 2) + 1
           : s.active && s.active.distance === 0
             ? Math.floor(now / 320) % 2
               ? 3

@@ -54,13 +54,18 @@
                 <div class="overline">Shift report</div>
                 <h2 id="terminalTitle"></h2>
                 <p id="terminalText"></p>
-                <button id="attempt" hidden>Start another official attempt</button>
+                <button id="attempt" hidden>
+                  Start another official attempt
+                </button>
                 <button id="again">Restart shift</button>
               </div>
             </div>
           </div>
           <div class="hud">
-            <div><label>Score</label><strong id="score">0000</strong></div>
+            <div>
+              <label id="scoreLabel">Score</label
+              ><strong id="score">0000</strong>
+            </div>
             <div>
               <label>Shift clock</label><strong id="clock">00:00</strong>
             </div>
@@ -79,8 +84,7 @@
                 <option value="2">2×</option>
                 <option value="4" selected>4×</option>
                 <option value="8">8×</option>
-              </select>
-              <span id="fixedSpeed" hidden></span></label
+              </select> </label
             ><button id="settings" class="small">Shift settings</button>
           </div>
         </section>
@@ -204,7 +208,12 @@
             </select></label
           >
           <p id="joinHelp"></p>
-          <label hidden>Game credentials<input id="credentials" type="password" autocomplete="off" /></label>
+          <label hidden
+            >Game credentials<input
+              id="credentials"
+              type="password"
+              autocomplete="off"
+          /></label>
           <label
             >Display name
             <input

@@ -1,0 +1,76 @@
+{
+  "size": 200,
+  "seed": 42,
+  "verified": 200,
+  "score_differences": 0,
+  "committed_decisions": 11818,
+  "participant_requests": 1567,
+  "requests_per_player": 7.835,
+  "requests_per_second": 53.71584019270013,
+  "wall_seconds": 29.172028109,
+  "concurrent_duplicate_batches": 50,
+  "offline_reconnects": 50,
+  "maximum_pending_decisions": 274,
+  "maximum_batch": 32,
+  "local_gameplay": {
+    "count": 200,
+    "p50_ms": 17160.4,
+    "p95_ms": 18490.1,
+    "p99_ms": 24119.3,
+    "max_ms": 24145.1
+  },
+  "terminal_to_verified": {
+    "count": 200,
+    "p50_ms": 3501.8,
+    "p95_ms": 8023.1,
+    "p99_ms": 11156.4,
+    "max_ms": 11221.8
+  },
+  "http": {
+    "register": {
+      "count": 200,
+      "p50_ms": 608.9,
+      "p95_ms": 956.4,
+      "p99_ms": 991.2,
+      "max_ms": 997.5
+    },
+    "join": {
+      "count": 200,
+      "p50_ms": 200.8,
+      "p95_ms": 381.7,
+      "p99_ms": 432.4,
+      "max_ms": 864.6
+    },
+    "assign": {
+      "count": 200,
+      "p50_ms": 817.9,
+      "p95_ms": 1282.5,
+      "p99_ms": 1300,
+      "max_ms": 1305.2
+    },
+    "batch": {
+      "count": 767,
+      "p50_ms": 760.9,
+      "p95_ms": 17237.8,
+      "p99_ms": 17273.6,
+      "max_ms": 17301
+    },
+    "finish": {
+      "count": 200,
+      "p50_ms": 507.1,
+      "p95_ms": 821,
+      "p99_ms": 870.3,
+      "max_ms": 877.6
+    }
+  },
+  "database": {
+    "xact_commit": 5959,
+    "xact_rollback": 0,
+    "blks_hit": 227524,
+    "blks_read": 270,
+    "deadlocks": 0
+  },
+  "peak_node_rss_mib": 313.54296875,
+  "node_cpu_seconds": 28.001726,
+  "realtime": null
+}

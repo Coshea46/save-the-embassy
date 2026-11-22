@@ -76,49 +76,7 @@ test("practice frames follow the engine, preserve selected markers and account f
   assert.equal(previous.status, "closed");
   assert.deepEqual(new Practice(42).frame(), new Practice(42).frame());
 });
-test("official journal resends the exact decision after a lost response and verifies only on finish", async () => {
-  const transport = mockTransport(),
-    workshop = randomUUID(),
-    calls = [];
-  let dropped = false,
-    disk = {};
-  const store = {
-    load: async () => structuredClone(disk),
-    save: async (v) => {
-      disk = structuredClone(v);
-    },
-  };
-  const lossy = async (op, ...args) => {
-    const result = await transport(op, ...args);
-    if (op === "decide") {
-      calls.push(args[1]);
-      if (!dropped) {
-        dropped = true;
-        throw new Error("Disconnected");
-      }
-    }
-    return result;
-  };
-  let client = new Official(lossy, store, workshop, true, null);
-  await client.connect("Test", "local");
-  await assert.rejects(client.advance(officer), /Disconnected/);
-  client = new Official(lossy, store, workshop, true, null);
-  await client.connect("Test", "local");
-  const after = await client.advance({
-    choose: () => assert.fail("Must reuse journalled decision"),
-  });
-  assert.equal(after.decisions, 1);
-  assert.deepEqual(calls[0], calls[1]);
-  let frame = after;
-  while (frame.status === "playing") frame = await client.advance(officer);
-  assert.equal(frame.status, "verifying");
-  assert.equal(frame.verified, false);
-  frame = await client.advance(officer);
-  assert.equal(frame.status, "closed");
-  assert.equal(frame.verified, false);
-  assert.equal(frame.metrics.score, 1045);
-});
-test("REST transport uses bearer auth, validates responses, and honours server pacing", async (t) => {
+test("REST transport uses bearer auth, validates responses, and honours Retry-After", async (t) => {
   assert.throws(() => checkedUrl("http://example.com"));
   assert.throws(() => checkedUrl("https://user:secret@example.com"));
   const call = remoteTransport("https://competition.example/api"),
@@ -156,61 +114,95 @@ test("REST transport uses bearer auth, validates responses, and honours server p
     (e) =>
       e.reason === "connection" &&
       e.retryMs === undefined &&
-      /12 seconds/.test(e.message),
+      /45 seconds/.test(e.message),
   );
   stub.mock.mockImplementation(async () => Response.json({ invalid: true }));
   await assert.rejects(call("status", { run_id: id }, {}, "test-only"));
 });
 
-test("consecutive intentional waits use the next-sequence hint and keep each Python observation", async (t) => {
-  const workshop = randomUUID();
-  const mock = mockTransport();
-  const seen = [],
-    submitted = [];
-  t.mock.method(globalThis, "fetch", async (url, options) => {
-    const op = url.endsWith("/participants")
-      ? "register"
-      : url.endsWith("/join")
-        ? "join"
-        : url.endsWith("/decisions")
-          ? "decide"
-          : "start";
-    const body = JSON.parse(options.body);
-    if (op === "decide") submitted.push({ ...body, at: performance.now() });
-    const data = await mock(op, { workshop_id: workshop }, body);
-    return Response.json(data, {
-      headers: {
-        "Embassy-Tick-Ms": "250",
-        ...(op === "decide" && { "Embassy-Next-Wait-Ms": "60" }),
-      },
-    });
-  });
-  const client = new Official(
-    remoteTransport("https://competition.example"),
-    {
-      load: async () => ({}),
-      save: async () => {},
+test("both modes produce identical frames and terminal checkpoints with the same choices", async () => {
+  const official = new Official(
+    mockTransport(),
+    { load: async () => ({}), save: async () => {} },
+    randomUUID(),
+    true,
+    null,
+  );
+  await official.connect("Pilot", "local");
+  const { scenario, catalogue } = official.data.assignment;
+  const practice = Practice.assigned(scenario, catalogue);
+  const calls = [];
+  const agent = {
+    choose(obs) {
+      calls.push(obs.simulation_time);
+      return officer.choose(obs);
     },
-    workshop,
+  };
+  while (practice.sim.status === "playing") {
+    await official.advance(agent);
+    await practice.advance(officer);
+    assert.deepEqual(official.game.frame(), practice.frame());
+    assert.deepEqual(official.game.sim.checkpoint(), practice.sim.checkpoint());
+  }
+  assert.equal(calls.length, official.data.journal.length);
+  assert.deepEqual(
+    official.data.journal.map((d) => d.tick),
+    calls,
+  );
+  assert.equal(official.data.ack, 0);
+  await official.sync.stop();
+});
+
+test("rate limits and HTTP 500 keep the same pending batch while waits continue locally", async () => {
+  const mock = mockTransport(),
+    sent = [];
+  const call = async (op, ...args) => {
+    if (op === "batch") {
+      sent.push(structuredClone(args[1]));
+      if (sent.length === 1)
+        throw Object.assign(new Error("Throttled"), {
+          status: 429,
+          retryMs: 1000,
+        });
+      if (sent.length === 2)
+        throw Object.assign(new Error("Service restarting"), { status: 500 });
+    }
+    return mock(op, ...args);
+  };
+  const c = new Official(
+    call,
+    { load: async () => ({}), save: async () => {} },
+    randomUUID(),
     false,
     null,
   );
-  await client.connect("Wait pilot", "test");
-  const agent = {
-    choose(obs) {
-      seen.push(obs.simulation_time);
-      return null; // Deliberate, even when an incident is available.
-    },
-  };
-  for (let i = 0; i < 3; i++) await client.advance(agent);
-  assert.deepEqual(seen, [0, 1, 2]);
-  assert.deepEqual(client.frame().log, [
-    { tick: 0, text: "Wait 3 ticks", waitTicks: 3 },
-  ]);
+  await c.connect("Wait pilot", "test");
+  // Drive the worker manually so this test can distinguish a retry from newly
+  // journalled waits. The production timer is covered by the PostgreSQL tests.
+  await c.sync.stop();
+  const seen = [],
+    agent = {
+      choose: (obs) => {
+        seen.push(obs.simulation_time);
+        return null;
+      },
+    };
+  await c.advance(agent);
+  await c.sync.upload();
+  assert.equal(c.frame().verification, "Offline");
+  while (c.game.sim.status === "playing") await c.advance(agent);
+  await c.sync.upload();
+  await c.sync.upload();
+  assert.deepEqual(sent[0], sent[1]);
+  assert.deepEqual(sent[1], sent[2]);
+  while (!c.data.finished) await c.sync.upload();
   assert.deepEqual(
-    submitted.map((r) => r.sequence),
     seen,
+    c.data.journal.map((d) => d.sequence),
   );
-  assert.equal(new Set(submitted.map((r) => r.idempotency_key)).size, 3);
-  assert.ok(submitted[2].at - submitted[1].at >= 59);
+  assert.deepEqual(
+    seen,
+    c.data.journal.map((d) => d.tick),
+  );
+  assert.equal(c.data.ack, seen.length);
 });

@@ -1,22 +1,14 @@
-import { createHash, randomUUID } from "node:crypto";
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
-import { join } from "node:path";
-import { setTimeout as sleep } from "node:timers/promises";
-import { homedir } from "node:os";
-import { rest } from "@embassy/contracts";
-import {
-  createScenario,
-  Simulation,
-  entrance,
-  shortestPath,
-} from "@embassy/simulation";
+import { randomUUID } from "node:crypto";
+import { assignmentSchema, rest } from "@embassy/contracts";
+import { createScenario, Simulation, RULESET } from "@embassy/simulation";
 import { fullCatalogue } from "@embassy/tasks";
-import { roomAt } from "./session.mjs";
+import { Practice } from "./session.mjs";
+import { Synchroniser } from "./sync.mjs";
 
 function connectionError(cause) {
   const message =
     cause.name === "TimeoutError"
-      ? "The competition server did not respond within 12 seconds."
+      ? "The competition server did not respond within 45 seconds."
       : "The connection to the competition server was interrupted.";
   throw Object.assign(new Error(message, { cause }), { reason: "connection" });
 }
@@ -44,24 +36,17 @@ export function checkedUrl(value) {
 
 export function remoteTransport(service) {
   const base = checkedUrl(service);
-  let nextWait;
-  return async (operation, ids, data, token) => {
+
+  return async (operation, ids, data, token, signal) => {
     const route = rest[operation];
     const request = route.request.parse(data);
-    if (
-      operation === "decide" &&
-      request.selected_task_id === null &&
-      nextWait &&
-      nextWait.run === ids.run_id &&
-      nextWait.sequence === request.sequence
-    ) {
-      const remaining = nextWait.readyAt - performance.now();
-      if (remaining > 0) await sleep(Math.ceil(remaining));
-    }
     const response = await fetch(endpoint(base, route, ids), {
       method: route.method,
       redirect: "error",
-      signal: AbortSignal.timeout(12000),
+      signal: AbortSignal.any([
+        AbortSignal.timeout(45000),
+        ...(signal ? [signal] : []),
+      ]),
       headers: {
         "Content-Type": "application/json",
         ...(token && { Authorization: "Bearer " + token }),
@@ -102,22 +87,7 @@ export function remoteTransport(service) {
       }
       throw error;
     }
-    const result = route.response.parse(JSON.parse(rawBody));
-    if ("run_id" in result) {
-      // Before pacing metadata existed, official servers used one second per tick.
-      const tickMs = Number(response.headers.get("Embassy-Tick-Ms")) || 1000;
-      const waitMs = Number(response.headers.get("Embassy-Next-Wait-Ms"));
-      nextWait =
-        Number.isFinite(waitMs) && waitMs > 0 && waitMs <= tickMs
-          ? {
-              run: result.run_id,
-              sequence: result.next_sequence,
-              readyAt: performance.now() + waitMs,
-            }
-          : undefined;
-      return { ...result, tickMs };
-    }
-    return result;
+    return route.response.parse(JSON.parse(rawBody));
   };
 }
 
@@ -145,76 +115,72 @@ export function mockTransport() {
       result = { participant_id, access_token: "local-rehearsal" };
     else if (operation === "join")
       result = { workshop_id: ids.workshop_id, participant_id };
-    else if (receipts.has(body.idempotency_key))
-      result = receipts.get(body.idempotency_key);
-    else {
-      if (operation === "decide") {
-        if (sequence !== body.sequence)
-          throw new Error("Mock sequence mismatch");
-        sim.decide(body.selected_task_id);
-        sequence++;
+    else if (operation === "assign") {
+      const ids = new Set(scenario.events.map((e) => e.definition_id));
+      result = {
+        protocol: 2,
+        run_id,
+        deadline: new Date(Date.now() + 1800000).toISOString(),
+        scenario,
+        catalogue: {
+          version: fullCatalogue.version,
+          definitions: fullCatalogue.definitions.filter((d) => ids.has(d.id)),
+        },
+      };
+    } else if (operation === "batch") {
+      for (const d of body.decisions) {
+        if (
+          d.sequence < sequence &&
+          receipts.get(d.sequence) === d.idempotency_key
+        )
+          continue;
+        if (d.sequence !== sequence)
+          throw new Error("Rehearsal sequence mismatch");
+        sim.decide(d.selected_task_id);
+        receipts.set(sequence++, d.idempotency_key);
       }
-      if (operation === "finish" && sim.status === "playing")
-        throw new Error("Shift still running");
+      result = { run_id, next_sequence: sequence, score: sim.metrics.score };
+    } else if (operation === "finish" && sim.status !== "playing")
       result = status();
-      if (body.idempotency_key) receipts.set(body.idempotency_key, result);
-    }
+    else throw new Error("Unexpected rehearsal request");
     return route.response.parse(result);
-  };
-}
-
-export function credentialStore(base, workshop) {
-  const dir = join(homedir(), ".embassy-dispatch");
-  const file = join(
-    dir,
-    createHash("sha256")
-      .update(base + "|" + workshop)
-      .digest("hex") + ".json",
-  );
-  return {
-    async load() {
-      try {
-        return JSON.parse(await readFile(file, "utf8"));
-      } catch (error) {
-        if (error.code === "ENOENT") return {};
-        throw error;
-      }
-    },
-    async save(state) {
-      await mkdir(dir, { recursive: true, mode: 0o700 });
-      const temp = file + "." + randomUUID();
-      await writeFile(temp, JSON.stringify(state), { mode: 0o600 });
-      await rename(temp, file);
-    },
   };
 }
 
 export class Official {
   constructor(transport, store, workshop, mock, leaderboard) {
-    this.call = transport;
-    this.store = store;
-    this.workshop = workshop;
-    this.mock = mock;
-    this.leaderboard = leaderboard;
+    Object.assign(this, {
+      call: transport,
+      store,
+      workshop,
+      mock,
+      leaderboard,
+    });
+    this.writes = Promise.resolve();
   }
+  // Queue disk I/O only. A slow HTTP request never owns this queue.
   persist() {
-    return this.store.save(this.data);
+    const snapshot = structuredClone(this.data);
+    const write = this.writes.then(() => this.store.save(snapshot));
+    this.writes = write.catch(() => {});
+    return write;
   }
   async connect(display_name, join_code, player) {
-    this.data = await this.store.load();
-    const d = this.data;
-    const ids = { workshop_id: this.workshop };
-    if (player) {
-      if (d.participant_id && d.participant_id !== player.participant_id)
-        throw new Error(
-          "A different player already has a saved run for this workshop.",
-        );
-      Object.assign(d, player, { joined: true });
-    }
-    if (!d.joined && d.name && d.name !== display_name) {
-      delete d.access_token;
+    const d = (this.data = await this.store.load());
+    if (
+      player &&
+      d.participant_id &&
+      player.participant_id !== d.participant_id
+    )
+      throw new Error(
+        "A different player already has a saved run for this workshop.",
+      );
+    if (!d.joined && !player && d.name && d.name !== display_name) {
       delete d.participant_id;
+      delete d.access_token;
     }
+    if (player) Object.assign(d, player, { joined: true });
+    const ids = { workshop_id: this.workshop };
     if (!d.access_token) {
       Object.assign(d, await this.call("register", ids, { display_name }));
       d.name = display_name;
@@ -225,142 +191,116 @@ export class Official {
       d.joined = true;
       await this.persist();
     }
-    d.history ??= [];
-    d.log ??= [];
-    if (!d.status) {
-      d.startKey ??= randomUUID();
-      await this.persist();
-      d.status = await this.call(
-        "start",
-        ids,
-        { idempotency_key: d.startKey },
-        d.access_token,
-      );
-    } else if (!d.pending) {
-      d.status = await this.call(
-        "status",
-        { run_id: d.status.run_id },
-        {},
-        d.access_token,
-      );
+    if (d.status && !d.assignment) {
+      if (!d.finished)
+        throw new Error(
+          "This attempt started with the previous launcher. Resume it with that launcher before starting another attempt.",
+        );
+      return this.frame();
     }
-    await this.persist();
+    if (!d.assignment) await this.assign();
+    else this.restore();
     return this.frame();
   }
-  async anotherAttempt() {
+  async assign() {
     const d = this.data;
-    if (!d.finished || this.mock)
-      throw new Error("Finish this official run first.");
     d.nextStartKey ??= randomUUID();
     await this.persist();
-    const status = await this.call(
-      "start",
+    const bundle = await this.call(
+      "assign",
       { workshop_id: this.workshop },
       { idempotency_key: d.nextStartKey },
       d.access_token,
     );
-    Object.assign(d, {
-      status,
+    this.data = {
+      participant_id: d.participant_id,
+      access_token: d.access_token,
+      joined: true,
+      base: this.store.base,
+      workshop: this.workshop,
       startKey: d.nextStartKey,
-      history: [],
-      log: [],
+      assignment: bundle,
+      journal: [],
+      ack: 0,
+      verifiedScore: 0,
       finished: false,
-      position: entrance,
-    });
-    delete d.nextStartKey;
+      finishKey: randomUUID(),
+    };
+    this.restore();
     await this.persist();
+  }
+  restore() {
+    const d = this.data;
+    const { scenario, catalogue } = assignmentSchema.parse(d.assignment);
+    if (scenario.rules.version !== RULESET)
+      throw new Error("Update the launcher to use this scenario ruleset.");
+    this.game = Practice.assigned(scenario, catalogue, d.local);
+    this.durable = d.journal.length;
+    this.ended = this.game.sim.status !== "playing";
+    this.sync = new Synchroniser(this);
+    this.sync.wake();
+  }
+  async anotherAttempt() {
+    if ((!this.data.finished && !this.data.excluded) || this.mock)
+      throw new Error("Finish verification first.");
+    await this.sync?.stop();
+    await this.assign();
     return this.frame();
   }
   async advance(bridge) {
-    const d = this.data;
-    if (!d.pending) {
-      const playing = d.status.status === "playing";
-      const chosen = playing ? await bridge.choose(d.status.observation) : null;
-      d.pending = {
-        op: playing ? "decide" : "finish",
-        body: {
-          sequence: d.status.next_sequence,
+    // If a disk write failed, retry it before asking Python for another choice.
+    if (!this.dirty) {
+      await this.game.advance(bridge, (sequence, tick, selected_task_id) => {
+        this.data.journal.push({
+          sequence,
+          tick,
+          selected_task_id,
           idempotency_key: randomUUID(),
-          ...(playing && { selected_task_id: chosen }),
-        },
-      };
+        });
+      });
+      this.data.local = this.game.snapshot();
+      this.dirty = true;
     }
-    // Journal the exact choice before sending. A lost response reuses the same receipt.
     await this.persist();
-    const { op, body } = d.pending;
-    const before = d.status;
-    const after = await this.call(
-      op,
-      { run_id: before.run_id },
-      body,
-      d.access_token,
-    );
-    let route = [];
-    if (op === "decide") {
-      const task = before.observation.available_tasks.find(
-        (t) => t.id === body.selected_task_id,
-      );
-      const prior = d.log[0];
-      if (
-        !task &&
-        prior?.waitTicks &&
-        prior.tick + prior.waitTicks === before.tick
-      ) {
-        prior.waitTicks++;
-        prior.text = "Wait " + prior.waitTicks + " ticks";
-      } else {
-        d.log.unshift({
-          tick: before.tick,
-          text: task ? "Selected " + task.title : "Wait one tick",
-          ...(!task && { waitTicks: 1 }),
-        });
-      }
-      if (task) {
-        const travelled = after.metrics.travel - before.metrics.travel;
-        route = shortestPath(
-          before.observation.agent.position,
-          task.position,
-        ).slice(0, travelled);
-        d.position = route.at(-1) ?? before.observation.agent.position;
-      }
-      if (task && after.metrics.completed > before.metrics.completed) {
-        d.history.unshift({
-          tick: after.tick,
-          title: task.title,
-          outcome: "Completed",
-          reward: task.reward,
-        });
-      }
-    } else d.finished = true;
-    d.position =
-      after.observation?.agent.position ??
-      d.position ??
-      before.observation?.agent.position;
-    d.status = after;
-    d.pending = null;
-    await this.persist();
-    return { ...this.frame(), route };
+    this.dirty = false;
+    this.durable = this.data.journal.length;
+    this.ended = this.game.sim.status !== "playing";
+    this.sync.wake();
+    return this.frame();
   }
   frame() {
-    const d = this.data,
-      s = d.status;
-    return {
-      mode: this.mock ? "rehearsal" : "official",
-      seed: null,
-      officialSpeed: this.mock ? null : 1000 / (s.tickMs ?? 1000),
-      tick: s.tick,
-      status: s.status !== "playing" && !d.finished ? "verifying" : s.status,
-      position: s.observation?.agent.position ?? d.position ?? entrance,
+    const d = this.data;
+    const finished = d.finished && !this.sync?.saveOnly;
+    const f = this.game?.frame() ?? {
+      status: d.status.status,
+      tick: d.status.tick,
+      metrics: d.status.metrics,
+      decisions: d.status.next_sequence,
+      position: d.position ?? { x: 9, y: 5 },
       active: null,
-      reports: (s.observation?.available_tasks ?? []).map((t) => ({
-        ...t,
-        room: roomAt(t.position),
-      })),
-      history: d.history,
-      log: d.log,
-      metrics: s.metrics,
-      decisions: s.next_sequence,
-      verified: !this.mock && d.finished === true,
+      reports: [],
+      log: d.log ?? [],
+      history: d.history ?? [],
+    };
+    return {
+      ...f,
+      mode: this.mock ? "rehearsal" : "official",
+      verified: !this.mock && finished,
+      canStartAnother: !this.mock && (finished || d.excluded === true),
+      verifiedScore: d.verifiedScore ?? d.status?.metrics.score,
+      deadline: d.assignment?.deadline,
+      verification: d.failure
+        ? "Verification failed"
+        : finished
+          ? "Score verified"
+          : this.sync?.offline
+            ? "Offline"
+            : this.ended
+              ? "Awaiting final verification"
+              : d.ack < this.durable
+                ? "Synchronising"
+                : "Connected",
+      verificationError: d.failure,
       leaderboard: this.mock ? null : this.leaderboard,
     };
   }

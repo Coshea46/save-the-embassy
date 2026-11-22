@@ -28,3 +28,6 @@ The fairness CLI measures complete opportunity schedules before applying strateg
 ## Checkpoints
 
 checkpoint() returns a detached JSON record with format, version manifest, seed, tick, cursor, open task IDs, active route and work remaining, coordinates, status and score counters. Simulation.restore(scenario, checkpoint, catalogue) consumes a trusted persisted checkpoint. Restore from the identical immutable scenario and catalogue. replay(scenario, decisions, catalogue) constructs fresh state and applies accepted choices in order. Never accept a participant's checkpoint for official verification. tests/fixtures/golden.json pins seed, choices and the complete terminal record.
+
+
+Protocol 2 uses this same tick order locally and in server replay. The launcher persists mid-route checkpoints for animation recovery. The verifier advances from one decision boundary to the next using its own private checkpoint. A decision can therefore be verified while the officer is still animating that assignment. At game over the full replay and local terminal checkpoint agree for identical choices.

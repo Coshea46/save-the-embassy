@@ -129,7 +129,69 @@ const entry = z.strictObject({
   score: integer,
   survival_ticks: integer,
 });
+export const batchLimit = 32;
+const journalDecision = z.strictObject({
+  sequence: integer,
+  tick: integer,
+  selected_task_id: text.max(128).nullable(),
+  idempotency_key: id,
+});
+export const assignmentSchema = z.strictObject({
+  protocol: z.literal(2),
+  run_id: id,
+  deadline: z.iso.datetime(),
+  scenario: z.strictObject({
+    seed: integer.max(0xffffffff),
+    manifest: manifestSchema,
+    rules: z.strictObject({
+      version: text,
+      horizon: positive,
+      urgency: z.tuple([integer, integer, integer]),
+      stages: z
+        .array(
+          z.strictObject({
+            start: integer,
+            gap: positive,
+            duration: positive,
+            slack: integer,
+            farWeight: positive,
+            mandatoryEvery: positive,
+          }),
+        )
+        .nonempty(),
+      bands: z
+        .array(
+          z.strictObject({
+            reward: positive,
+            priority: positive,
+            extraWork: integer,
+          }),
+        )
+        .nonempty(),
+    }),
+    events: z.array(instanceSchema),
+  }),
+  catalogue: catalogueSchema,
+});
 export const rest = {
+  assign: {
+    method: "POST",
+    path: "/v2/workshops/:workshop_id/runs",
+    request: z.strictObject({ idempotency_key: id }),
+    response: assignmentSchema,
+  },
+  batch: {
+    method: "POST",
+    path: "/v2/runs/:run_id/decisions",
+    request: z.strictObject({
+      decisions: z.array(journalDecision).min(1).max(batchLimit),
+    }),
+    response: z.strictObject({
+      run_id: id,
+      next_sequence: integer,
+      score: integer,
+    }),
+  },
   register: {
     method: "POST",
     path: "/participants",
