@@ -6,6 +6,6 @@
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "zod": "4.1.12"
+    "zod": "4.6.7"
   }
 }
