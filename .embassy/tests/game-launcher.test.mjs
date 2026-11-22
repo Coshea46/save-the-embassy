@@ -3,13 +3,15 @@ import { execFileSync, spawn } from "node:child_process";
 import { once } from "node:events";
 import { readFileSync } from "node:fs";
 import { createInterface } from "node:readline";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 test(
   "actual launcher runs Python, resets practice, and enters the unranked rehearsal",
   { timeout: 20000 },
   async (t) => {
-    const child = spawn(process.execPath, ["apps/game/server.mjs"], {
+    const child = spawn(process.execPath, [fileURLToPath(new URL("../apps/game/server.mjs", import.meta.url))], {
+      cwd: new URL("../../", import.meta.url),
       env: {
         ...process.env,
         EMBASSY_PORT: "0",
@@ -81,7 +83,7 @@ test(
 
 test("setup checker and participant guides point to the root agent", () => {
   for (const file of [
-    "README.md",
+    "../README.md",
     "docs/WORKSHOP.md",
     "AGENTS.md",
     "apps/game/python/AGENTS.md",

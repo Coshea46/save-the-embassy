@@ -39,7 +39,7 @@ check(
 );
 check(
   "Participant agent",
-  existsSync(new URL("../../agent.py", import.meta.url)),
+  existsSync(new URL("../../../agent.py", import.meta.url)),
   "agent.py (repository root)",
 );
 let installed;
@@ -51,7 +51,7 @@ try {
 check(
   "Workspace dependencies",
   Boolean(installed),
-  installed ? "installed" : "run npm ci in the repository root",
+  installed ? "installed" : "run npm --prefix .embassy ci in the repository root",
 );
 console.log(
   "Editor check: in VS Code, open Extensions and search @installed Codex (OpenAI).",

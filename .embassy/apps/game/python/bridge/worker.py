@@ -8,8 +8,9 @@ import sys
 from contextlib import redirect_stdout
 from pathlib import Path
 
-AGENT_FILE = Path(__file__).resolve().parents[4] / "agent.py"
-sys.path.insert(0, str(AGENT_FILE.parent))
+WORKSPACE = Path(__file__).resolve().parents[4]
+AGENT_FILE = WORKSPACE.parent / "agent.py"
+sys.path[:0] = [str(AGENT_FILE.parent), str(WORKSPACE)]
 
 
 class EmbassyAgent:

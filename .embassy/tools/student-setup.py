@@ -16,9 +16,10 @@ commands = [
     "set -e",
     shell_block(os.environ["SECTION"]),
     shell_block("Node.js on Linux"),
-    "npm ci",
-    "npm run doctor",
-    "npm run build",
+    "npm --prefix .embassy ci",
+    "npm --prefix .embassy run doctor",
+    "npm --prefix .embassy run build",
+    "cd .embassy",
     "node --test tests/game-launcher.test.mjs",
 ]
 subprocess.run(["bash", "-c", "\n".join(commands)], check=True)
