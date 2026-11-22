@@ -130,8 +130,87 @@ test("REST transport uses bearer auth, validates responses, and honours server p
   });
   await assert.rejects(
     call("status", { run_id: id }, {}, "test-only"),
-    (e) => e.retryAfter === 4,
+    (e) => e.retryMs === 4000 && e.reason === "rate_limit",
+  );
+  stub.mock.mockImplementation(async () =>
+    Response.json(
+      {
+        error: "Wait for simulation time",
+        reason: "simulation_pacing",
+        retry_ms: 73,
+      },
+      { status: 429, headers: { "Retry-After": "1" } },
+    ),
+  );
+  await assert.rejects(
+    call("status", { run_id: id }, {}, "test-only"),
+    (e) =>
+      e.status === 429 && e.retryMs === 73 && e.reason === "simulation_pacing",
+  );
+  // A transport timeout has no pacing delay. The launcher offers Retry.
+  stub.mock.mockImplementation(async () => {
+    throw new DOMException("timed out", "TimeoutError");
+  });
+  await assert.rejects(
+    call("status", { run_id: id }, {}, "test-only"),
+    (e) =>
+      e.reason === "connection" &&
+      e.retryMs === undefined &&
+      /12 seconds/.test(e.message),
   );
   stub.mock.mockImplementation(async () => Response.json({ invalid: true }));
   await assert.rejects(call("status", { run_id: id }, {}, "test-only"));
+});
+
+test("consecutive intentional waits use the next-sequence hint and keep each Python observation", async (t) => {
+  const workshop = randomUUID();
+  const mock = mockTransport();
+  const seen = [],
+    submitted = [];
+  t.mock.method(globalThis, "fetch", async (url, options) => {
+    const op = url.endsWith("/participants")
+      ? "register"
+      : url.endsWith("/join")
+        ? "join"
+        : url.endsWith("/decisions")
+          ? "decide"
+          : "start";
+    const body = JSON.parse(options.body);
+    if (op === "decide") submitted.push({ ...body, at: performance.now() });
+    const data = await mock(op, { workshop_id: workshop }, body);
+    return Response.json(data, {
+      headers: {
+        "Embassy-Tick-Ms": "250",
+        ...(op === "decide" && { "Embassy-Next-Wait-Ms": "60" }),
+      },
+    });
+  });
+  const client = new Official(
+    remoteTransport("https://competition.example"),
+    {
+      load: async () => ({}),
+      save: async () => {},
+    },
+    workshop,
+    false,
+    null,
+  );
+  await client.connect("Wait pilot", "test");
+  const agent = {
+    choose(obs) {
+      seen.push(obs.simulation_time);
+      return null; // Deliberate, even when an incident is available.
+    },
+  };
+  for (let i = 0; i < 3; i++) await client.advance(agent);
+  assert.deepEqual(seen, [0, 1, 2]);
+  assert.deepEqual(client.frame().log, [
+    { tick: 0, text: "Wait 3 ticks", waitTicks: 3 },
+  ]);
+  assert.deepEqual(
+    submitted.map((r) => r.sequence),
+    seen,
+  );
+  assert.equal(new Set(submitted.map((r) => r.idempotency_key)).size, 3);
+  assert.ok(submitted[2].at - submitted[1].at >= 59);
 });

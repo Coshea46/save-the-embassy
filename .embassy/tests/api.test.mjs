@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { acceptDecision, rest } from "@embassy/api";
+import {
+  acceptDecision,
+  earliestDecisionMs,
+  runDeadlineMs,
+  rest,
+} from "@embassy/api";
 import { Simulation, createScenario } from "@embassy/simulation";
 test("official decisions reject extra fields and enforce owner, order, absolute pacing and retry receipts", async () => {
   const scenario = createScenario(4, "round-a"),
@@ -41,6 +46,12 @@ test("official decisions reject extra fields and enforce owner, order, absolute 
   await assert.rejects(apply({ ...req, sequence: 3 }, 1));
   const early = await apply(req, 0);
   assert.equal(early.status, "too_early");
+  sim.decide("report-1");
+  assert.equal(early.retry_ms, sim.checkpoint().tick * 250 - 375);
+  assert.deepEqual(await apply(req, early.retry_ms - 1), {
+    status: "too_early",
+    retry_ms: 1,
+  });
   assert.equal(writes, 0);
   const ok = await apply(req, early.retry_ms);
   assert.equal(ok.status, "accepted");
@@ -49,6 +60,18 @@ test("official decisions reject extra fields and enforce owner, order, absolute 
     apply({ ...req, selected_task_id: null }, early.retry_ms),
   );
   assert.equal(writes, 1);
-  sim.decide("report-1");
   assert.deepEqual(row.checkpoint, sim.checkpoint());
+});
+
+test("official clock gates terminal tick 360 at 4× and gives 90 wall seconds of grace", () => {
+  const start = 1_000_000;
+  const ready = (tick) =>
+    earliestDecisionMs({ started_ms: start, checkpoint: { tick } });
+  assert.equal(ready(0), start);
+  assert.equal(ready(1), start);
+  assert.equal(ready(2), start + 125);
+  assert.equal(ready(360) - ready(359), 250);
+  assert.equal(ready(360), start + 89_625);
+  assert.equal(runDeadlineMs(start, 360), start + 180_000);
+  assert.equal(runDeadlineMs(start, 120), start + 120_000);
 });

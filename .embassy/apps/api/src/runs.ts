@@ -8,7 +8,13 @@ import {
   type Scenario,
   type Checkpoint,
 } from "@embassy/simulation";
-import { applyDecision, earliestDecisionMs, type StoredRun } from "./index.js";
+import {
+  applyDecision,
+  earliestDecisionMs,
+  tickReadyMs,
+  runDeadlineMs,
+  type StoredRun,
+} from "./index.js";
 import {
   type Tx,
   HttpError,
@@ -17,6 +23,39 @@ import {
   json,
   requireValue,
 } from "./common.js";
+
+type Snapshot = { scenario: Scenario; catalogue: Catalogue };
+type LoadedScenario = Snapshot & { eventCatalogue: Catalogue };
+type LoadScenario = (tx: Tx, id: string) => Promise<LoadedScenario>;
+
+// A workshop's scenario and catalogue are immutable in Postgres. Retain one
+// snapshot per API instance so a room of players doesn't fetch 600 definitions
+// on every decision. Different workshops and process restarts reload by ID.
+export function scenarioLoader(): LoadScenario {
+  let cached: { id: string; snapshot: LoadedScenario } | undefined;
+  return async (tx, id) => {
+    if (cached?.id === id) return cached.snapshot;
+    const pinned = requireValue(
+      (
+        await tx<
+          Snapshot[]
+        >`select scenario,catalogue from embassy.scenarios where id=${id}`
+      )[0],
+    );
+    // A decision can reference only definitions used by the pinned events.
+    // Keep the complete original catalogue for independent final replay.
+    const ids = new Set(pinned.scenario.events.map((e) => e.definition_id));
+    const snapshot = {
+      ...pinned,
+      eventCatalogue: {
+        version: pinned.catalogue.version,
+        definitions: pinned.catalogue.definitions.filter((d) => ids.has(d.id)),
+      },
+    };
+    cached = { id, snapshot };
+    return snapshot;
+  };
+}
 
 function status(run: string, seq: number, sim: Simulation): RunStatus {
   const cp = sim.checkpoint();
@@ -49,12 +88,12 @@ export async function start(
   workshop: string,
   owner: string,
   raw: unknown,
+  loadScenario: LoadScenario,
 ) {
   const { idempotency_key: key } = rest.start.request.parse(raw);
   const w = requireValue(
     (
-      await tx`select w.*,s.scenario,s.catalogue from embassy.workshops w join embassy.scenarios s on s.id=w.scenario_id
-    where w.id=${workshop} for share of w`
+      await tx`select * from embassy.workshops where id=${workshop} for share`
     )[0],
   );
   const member = await membership(tx, workshop, owner);
@@ -69,12 +108,13 @@ export async function start(
     from embassy.runs where workshop_id=${workshop} and participant_id=${owner} and exclusion is distinct from 'reset'`;
   if (used?.active || used!.n >= w.attempt_limit)
     throw new HttpError(409, "Active run or attempt limit reached");
-  assertVersion(w.scenario);
-  const sim = new Simulation(w.scenario, w.catalogue);
+  const { scenario, catalogue } = await loadScenario(tx, w.scenario_id);
+  assertVersion(scenario);
+  const sim = new Simulation(scenario, catalogue);
   const id = randomUUID(),
     initial = status(id, 0, sim);
   const deadline = new Date(
-    now.getTime() + (w.scenario.rules.horizon + 90) * 1000,
+    runDeadlineMs(now.getTime(), scenario.rules.horizon),
   );
   await tx`insert into embassy.runs(id,workshop_id,participant_id,scenario_id,start_key,initial_response,started_at,deadline)
     values(${id},${workshop},${owner},${w.scenario_id},${key},${json(initial)}::text::jsonb,${now},${deadline})`;
@@ -89,6 +129,8 @@ export async function runAction(
   id: string,
   owner: string,
   raw: unknown,
+  loadScenario: LoadScenario,
+  adviseNextWait: (ms: number) => void,
 ) {
   const meta = requireValue(
     (
@@ -100,9 +142,9 @@ export async function runAction(
   const member = await membership(tx, meta.workshop_id, owner);
   const row = requireValue(
     (
-      await tx`select r.*,s.scenario,s.catalogue,c.state,
+      await tx`select r.*,c.state,
     c.checksum=encode(sha256(convert_to(c.state::text,'UTF8')),'hex') intact,clock_timestamp() as now
-    from embassy.runs r join embassy.scenarios s on s.id=r.scenario_id join embassy.checkpoints c on c.run_id=r.id
+    from embassy.runs r join embassy.checkpoints c on c.run_id=r.id
     where r.id=${id} for update of r`
     )[0],
   );
@@ -127,9 +169,11 @@ export async function runAction(
   if (row.exclusion || (!row.finished_at && row.now > row.deadline))
     throw new HttpError(410, "Attempt is no longer eligible");
   if (!row.intact) throw new Error("Checkpoint integrity failure");
-  const scenario: Scenario = row.scenario,
-    catalogue: Catalogue = row.catalogue,
-    cp: Checkpoint = row.state;
+  const { scenario, catalogue, eventCatalogue } = await loadScenario(
+    tx,
+    row.scenario_id,
+  );
+  const cp: Checkpoint = row.state;
   assertVersion(scenario);
   if (input && input.sequence !== row.next_sequence)
     throw new HttpError(409, "Unexpected sequence");
@@ -153,17 +197,23 @@ export async function runAction(
       stored,
       decision,
       scenario,
-      catalogue,
+      eventCatalogue,
     );
     const delay = earliestDecisionMs(updated) - row.now.getTime();
-    if (delay > 0) throw new HttpError(429, "Wait for simulation time", delay);
+    if (delay > 0)
+      throw new HttpError(
+        429,
+        "Wait for simulation time",
+        delay,
+        "simulation_pacing",
+      );
     const selected = decision.selected_task_id;
     const completed = response.metrics.completed > cp.metrics.completed;
     const def =
       completed &&
       scenario.events.find((e) => e.id === selected)?.definition_id;
     const title = def
-      ? catalogue.definitions.find((d) => d.id === def)?.title
+      ? eventCatalogue.definitions.find((d) => d.id === def)?.title
       : null;
     await tx`insert into embassy.decisions(run_id,sequence,selected_task_id,idempotency_key,response,completed_title)
       values(${id},${decision.sequence},${selected},${decision.idempotency_key},${json(response)}::text::jsonb,${title ?? null})`;
@@ -171,6 +221,15 @@ export async function runAction(
     await tx`update embassy.runs set next_sequence=${updated.next_sequence},seen_at=clock_timestamp() where id=${id}`;
     await score(tx, response);
     await project(tx, meta.workshop_id, owner, member.display_name);
+    // A deliberate wait always advances exactly one tick. Slow clients can spend
+    // their accumulated time immediately. This hint never authorises a decision.
+    if (response.status === "playing")
+      adviseNextWait(
+        Math.max(
+          0,
+          tickReadyMs(stored.started_ms, response.tick + 1) - row.now.getTime(),
+        ),
+      );
     return response;
   }
   const sim = Simulation.restore(scenario, cp, catalogue);
