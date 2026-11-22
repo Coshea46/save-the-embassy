@@ -5,6 +5,7 @@ import { batchLimit } from "@embassy/contracts";
 export class Synchroniser {
   constructor(session) {
     this.session = session;
+    this.abort = new AbortController();
     this.failures = 0;
   }
   wake(delay = 1000) {
@@ -14,9 +15,10 @@ export class Synchroniser {
       this.stopped ||
       this.timer ||
       this.busy ||
-      d.failure ||
-      d.finished ||
-      (d.ack === s.durable && !s.ended && !d.pending)
+      (!this.saveOnly &&
+        (d.failure ||
+          d.finished ||
+          (d.ack === s.durable && !s.ended && !d.pending)))
     )
       return;
     this.timer = setTimeout(
@@ -24,12 +26,13 @@ export class Synchroniser {
         this.timer = null;
         this.flight = this.upload();
       },
-      delay + Math.random() * 200,
+      Math.min(2_147_483_647, delay + Math.random() * 200),
     );
     this.timer.unref();
   }
   stop() {
     this.stopped = true;
+    this.abort.abort();
     clearTimeout(this.timer);
     return this.flight;
   }
@@ -39,6 +42,7 @@ export class Synchroniser {
     this.busy = true;
     let delay = 1000;
     try {
+      if (this.saveOnly) return;
       // Save the batch boundary as well as the individual decision keys.
       d.pending ??=
         d.ack < s.durable
@@ -51,7 +55,13 @@ export class Synchroniser {
         op === "batch"
           ? { decisions: d.journal.slice(d.ack, end) }
           : { sequence: end, idempotency_key: d.finishKey };
-      const ack = await s.call(op, ids, body, d.access_token);
+      const ack = await s.call(
+        op,
+        ids,
+        body,
+        d.access_token,
+        this.abort.signal,
+      );
       if (
         ack.run_id !== ids.run_id ||
         ack.next_sequence !== end ||
@@ -70,7 +80,7 @@ export class Synchroniser {
       d.pending = null;
       this.offline = false;
       this.failures = 0;
-      await s.persist();
+      this.saveOnly = true;
       if (s.ended || s.durable - d.ack >= batchLimit) delay = 100;
     } catch (error) {
       if (
@@ -79,7 +89,8 @@ export class Synchroniser {
         ![408, 425, 429].includes(error.status)
       ) {
         d.failure = error.message;
-        await s.persist();
+        d.excluded = error.status === 410;
+        this.saveOnly = true;
       } else {
         this.offline = true;
         this.failures++;
@@ -90,6 +101,15 @@ export class Synchroniser {
         delay += (Math.random() * delay) / 3;
       }
     } finally {
+      if (this.saveOnly) {
+        try {
+          await s.persist();
+          this.saveOnly = false;
+        } catch {
+          // Retry just the local receipt write. The server already answered.
+          delay = 3000;
+        }
+      }
       this.busy = false;
       this.wake(delay);
     }

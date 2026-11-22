@@ -33,7 +33,7 @@ Put the output in `ORGANISER_PASSWORD_HASH`. Start the service with `node --env-
 1. Choose a Supabase project dedicated to this competition. Run `supabase login` and `supabase link --project-ref YOUR_WORKSHOP_PROJECT_REF` from `.embassy/`. Run `supabase db push --dry-run`, inspect the proposed migration, then `supabase db push`. Verify the expected migration with `supabase migration list --linked`. The schema expects the standard Supabase roles and the `supabase_realtime` publication. The Data API should expose `public` and exclude `embassy`.
 2. Using a database administrator, create an application login with a randomly generated password and membership in `embassy_api`. In psql, run `CREATE ROLE embassy_web LOGIN INHERIT;`, then `\password embassy_web` at the interactive prompt and `GRANT embassy_api TO embassy_web;`. Supply the login's direct or pooler connection string in `DATABASE_URL`. With Supavisor follow the project Connect panel and replace the postgres username with the custom role while preserving the project reference. URL-encode reserved characters in credentials.
 3. Set the runtime variables below in the hosting dashboard. From `.embassy/`, build with `docker build -f deploy/Dockerfile.platform -t embassy-platform .`. Set the six required values in the table. Set `PUBLIC_ORIGIN` to the service’s exact HTTPS URL and deploy the approved commit. The blueprint selects the free plan and manual deployment. A plain Node host can instead build with `npm ci && npm run build` and start with `npm run start:platform`. Keep the API and frontend on the same origin. Hosting must support a continuously running Node service and outbound PostgreSQL connections. Wake and rehearse a scale-to-zero host before the event.
-4. Test `/health/ready`, log in at `/organiser`, create a rehearsal workshop, and test registration, pace/retry, projection, moderation and final results. Project the link under **Projector**. Use a new workshop for the actual competition. Run a full rehearsal on the chosen host and room network.
+4. Test `/health/ready`, log in at `/organiser`, create a rehearsal workshop, and test registration, offline recovery, projection, moderation and final results. Project the link under **Projector**. Use a new workshop for the actual competition. Run a full rehearsal on the chosen host and room network.
 
 ### Moving the existing Render Blueprint
 
@@ -68,7 +68,7 @@ Every backend instance shares the same database, organiser configuration and eng
 
 ## Load and Realtime checks
 
-`npm run load:platform` starts an isolated PostgreSQL database, registers 200 distinct agents and verifies complete local-first runs, concurrent duplicate batches and reconnects. It prints latency percentiles, per-burst throughput, database counters and transaction counts. No cloud resources are needed.
+`npm run load:platform` starts an isolated PostgreSQL database, registers 200 distinct agents and verifies complete local-first runs, concurrent duplicate batches and reconnects. It prints latency percentiles, request throughput, database counters and transaction counts. No cloud resources are needed.
 
 For the WebSocket measurement, start the local Supabase stack and Node API as above. Supply the same local environment and the organiser's cleartext password **only to the rehearsal process**, via a hidden prompt. The command creates a fresh workshop. Two real subscribers observe the round. One disconnects during the score burst and checks the snapshot on return.
 
@@ -80,7 +80,7 @@ node --env-file=.env apps/api/test/local-stack.mjs
 unset TEST_ORGANISER_PASSWORD
 ```
 
-The test rejects remote target URLs. It asserts exactly one decision per entrant, exact retry responses, equal final standings and delivery of every scored update to the connected observer. Commit-to-delivery timing uses the database commit timestamp and a subscriber on the same machine. See [the integrated measurements and browser captures](INTEGRATION.md).
+The test rejects remote target URLs. It compares the number of accepted rows with the complete local journals, checks concurrent retry responses, and verifies every player’s score and survival against independent simulation. The connected observer must receive a positive scored update for every player. The disconnected observer reads the complete standings after reconnecting. Commit-to-delivery timing uses the database commit timestamp and a subscriber on the same machine. See [the integrated measurements and browser captures](INTEGRATION.md).
 
 For a legacy protocol-1 comparison at 4× using five scheduling policies across 200 clients, run `npm run build` followed by `node apps/api/test/full-round.mjs`. It checks every final score against a replay and reports request latency, decision latency including pacing, CPU and memory measurements. Pass `--wait-only` to exercise 200 agents that return a one-tick wait at every boundary, or `--mandatory-only` to exercise frequent waits through the full horizon.
 

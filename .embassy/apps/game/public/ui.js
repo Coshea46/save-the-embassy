@@ -242,7 +242,7 @@ function render(next) {
     el("callout").hidden = true;
   }
   el("terminal").hidden = !terminal();
-  el("attempt").hidden = !next.verified;
+  el("attempt").hidden = !next.canStartAnother;
   if (terminal()) {
     running = false;
     el("terminalTitle").textContent =
@@ -443,7 +443,7 @@ setInterval(async () => {
         verificationError: next.verificationError,
       });
       connection();
-      el("attempt").hidden = !state.verified;
+      el("attempt").hidden = !next.canStartAnother;
     }
   } catch {
     /* The next local refresh will retry. */

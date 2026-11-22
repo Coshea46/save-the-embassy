@@ -5,12 +5,12 @@ import { rest } from "@embassy/contracts";
 import { floor, newWorker, Practice } from "./session.mjs";
 import {
   checkedUrl,
-  credentialStore,
   mockTransport,
   Official,
   remoteTransport,
-  savedWorkshops,
 } from "./official.mjs";
+
+import { credentialStore, savedWorkshops } from "./journal.mjs";
 
 const secret = randomBytes(24).toString("hex");
 const files = new Map(
@@ -37,6 +37,7 @@ let session = new Practice(42),
   bridge,
   busy = false,
   serial = 0;
+let ready = false;
 const workshops = new Map();
 const frame = () => ({
   ...session.frame(),
@@ -142,6 +143,10 @@ const server = createServer(async (req, res) => {
   const host = "127.0.0.1:" + server.address().port;
   if (req.headers.host !== host)
     return reply(res, 403, { error: "Open the printed loopback URL." });
+  if (!ready)
+    return reply(res, 503, {
+      error: "The launcher is restoring your session.",
+    });
   try {
     const path = req.url;
     if (req.method === "GET" && files.has(path)) {
@@ -187,28 +192,42 @@ server.on("error", (error) => {
   console.error(error.message + " • Try setting EMBASSY_PORT to a free port.");
   process.exitCode = 1;
 });
-for (const { base, workshop } of await savedWorkshops()) {
-  const recovered = new Official(
-    remoteTransport(base),
-    credentialStore(base, workshop),
-    workshop,
-    false,
-    leaderboard ?? base + "/board/" + workshop,
-  );
-  await recovered.connect();
-  workshops.set(base + "|" + workshop, recovered);
-  session = recovered;
-}
-server.listen(Number(process.env.EMBASSY_PORT ?? 4173), "127.0.0.1", () => {
-  console.log(
-    "Embassy Dispatch is ready. Open http://127.0.0.1:" +
-      server.address().port +
-      " in your browser. Ctrl+C ends the session.",
-  );
-});
+server.listen(
+  Number(process.env.EMBASSY_PORT ?? 4173),
+  "127.0.0.1",
+  async () => {
+    try {
+      for (const { base, workshop } of await savedWorkshops()) {
+        const recovered = new Official(
+          remoteTransport(base),
+          credentialStore(base, workshop),
+          workshop,
+          false,
+          leaderboard ?? base + "/board/" + workshop,
+        );
+        try {
+          await recovered.connect();
+          workshops.set(base + "|" + workshop, recovered);
+          session = recovered;
+        } catch (error) {
+          console.error("Could not resume workshop", workshop, error.message);
+        }
+      }
+    } catch (error) {
+      console.error("Could not open saved workshops:", error.message);
+    }
+    ready = true;
+    console.log(
+      "Embassy Dispatch is ready. Open http://127.0.0.1:" +
+        server.address().port +
+        " in your browser. Ctrl+C ends the session.",
+    );
+  },
+);
 async function shutdown() {
   server.closeAllConnections();
   server.close();
+  await Promise.all([...workshops.values()].map((s) => s.sync?.stop()));
   if (bridge) await bridge.close().catch(() => {});
 }
 process.once("SIGINT", shutdown);

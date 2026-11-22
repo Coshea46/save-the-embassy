@@ -1,15 +1,4 @@
-import { createHash, randomUUID } from "node:crypto";
-import {
-  mkdir,
-  readFile,
-  rename,
-  writeFile,
-  readdir,
-  stat,
-} from "node:fs/promises";
-import { join } from "node:path";
-
-import { homedir } from "node:os";
+import { randomUUID } from "node:crypto";
 import { assignmentSchema, rest } from "@embassy/contracts";
 import { createScenario, Simulation, RULESET } from "@embassy/simulation";
 import { fullCatalogue } from "@embassy/tasks";
@@ -48,13 +37,16 @@ export function checkedUrl(value) {
 export function remoteTransport(service) {
   const base = checkedUrl(service);
 
-  return async (operation, ids, data, token) => {
+  return async (operation, ids, data, token, signal) => {
     const route = rest[operation];
     const request = route.request.parse(data);
     const response = await fetch(endpoint(base, route, ids), {
       method: route.method,
       redirect: "error",
-      signal: AbortSignal.timeout(45000),
+      signal: AbortSignal.any([
+        AbortSignal.timeout(45000),
+        ...(signal ? [signal] : []),
+      ]),
       headers: {
         "Content-Type": "application/json",
         ...(token && { Authorization: "Bearer " + token }),
@@ -155,61 +147,6 @@ export function mockTransport() {
   };
 }
 
-export function credentialStore(base, workshop) {
-  const dir = join(homedir(), ".embassy-dispatch");
-  const file = join(
-    dir,
-    createHash("sha256")
-      .update(base + "|" + workshop)
-      .digest("hex") + ".json",
-  );
-  return {
-    base,
-    workshop,
-    async load() {
-      try {
-        return JSON.parse(await readFile(file, "utf8"));
-      } catch (error) {
-        if (error.code === "ENOENT") return {};
-        throw error;
-      }
-    },
-    async save(state) {
-      await mkdir(dir, { recursive: true, mode: 0o700 });
-      const temp = file + "." + randomUUID();
-      await writeFile(temp, JSON.stringify(state), {
-        mode: 0o600,
-        flush: true,
-      });
-      await rename(temp, file);
-    },
-  };
-}
-
-// Only v2 journals carry their service origin. Resume locally even if the API is down.
-export async function savedWorkshops() {
-  const dir = join(homedir(), ".embassy-dispatch");
-  let files;
-  try {
-    files = await readdir(dir);
-  } catch (e) {
-    if (e.code === "ENOENT") return [];
-    throw e;
-  }
-  const saved = [];
-  for (const name of files.filter((n) => /^[a-f0-9]{64}\.json$/.test(n))) {
-    const file = join(dir, name);
-    const data = JSON.parse(await readFile(file, "utf8"));
-    if (data.assignment && data.base && !data.finished)
-      saved.push({
-        base: checkedUrl(data.base),
-        workshop: data.workshop,
-        mtime: (await stat(file)).mtimeMs,
-      });
-  }
-  return saved.sort((a, b) => a.mtime - b.mtime);
-}
-
 export class Official {
   constructor(transport, store, workshop, mock, leaderboard) {
     Object.assign(this, {
@@ -304,8 +241,9 @@ export class Official {
     this.sync.wake();
   }
   async anotherAttempt() {
-    if (!this.data.finished || this.mock)
+    if ((!this.data.finished && !this.data.excluded) || this.mock)
       throw new Error("Finish verification first.");
+    await this.sync?.stop();
     await this.assign();
     return this.frame();
   }
@@ -347,6 +285,7 @@ export class Official {
       ...f,
       mode: this.mock ? "rehearsal" : "official",
       verified: !this.mock && d.finished,
+      canStartAnother: !this.mock && (d.finished || d.excluded === true),
       verifiedScore: d.verifiedScore ?? d.status?.metrics.score,
       deadline: d.assignment?.deadline,
       verification: d.failure
