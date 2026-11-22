@@ -89,6 +89,7 @@ export async function start(
   owner: string,
   raw: unknown,
   loadScenario: LoadScenario,
+  protocol = 1,
 ) {
   const { idempotency_key: key } = rest.start.request.parse(raw);
   const w = requireValue(
@@ -98,8 +99,17 @@ export async function start(
   );
   const member = await membership(tx, workshop, owner);
   const [prior] =
-    await tx`select initial_response from embassy.runs where workshop_id=${workshop} and participant_id=${owner} and start_key=${key}`;
-  if (prior) return prior.initial_response;
+    await tx`select protocol,initial_response,deadline,scenario_id,id from embassy.runs where workshop_id=${workshop} and participant_id=${owner} and start_key=${key}`;
+  if (prior) {
+    if (protocol !== prior.protocol)
+      throw new HttpError(409, "Start key belongs to another protocol");
+    if (protocol === 1) return prior.initial_response;
+    return assignment(
+      prior.id,
+      prior.deadline,
+      await loadScenario(tx, prior.scenario_id),
+    );
+  }
   const { now } = requireValue((await tx`select clock_timestamp() as now`)[0]);
   if (w.phase !== "running" || w.entry_until <= now)
     throw new HttpError(409, "Entry window closed");
@@ -108,24 +118,36 @@ export async function start(
     from embassy.runs where workshop_id=${workshop} and participant_id=${owner} and exclusion is distinct from 'reset'`;
   if (used?.active || used!.n >= w.attempt_limit)
     throw new HttpError(409, "Active run or attempt limit reached");
-  const { scenario, catalogue } = await loadScenario(tx, w.scenario_id);
+  const pinned = await loadScenario(tx, w.scenario_id);
+  const { scenario, catalogue } = pinned;
   assertVersion(scenario);
   const sim = new Simulation(scenario, catalogue);
   const id = randomUUID(),
     initial = status(id, 0, sim);
   const deadline = new Date(
-    runDeadlineMs(now.getTime(), scenario.rules.horizon),
+    protocol === 2
+      ? now.getTime() + 30 * 60_000
+      : runDeadlineMs(now.getTime(), scenario.rules.horizon),
   );
-  await tx`insert into embassy.runs(id,workshop_id,participant_id,scenario_id,start_key,initial_response,started_at,deadline)
-    values(${id},${workshop},${owner},${w.scenario_id},${key},${json(initial)}::text::jsonb,${now},${deadline})`;
+  await tx`insert into embassy.runs(id,workshop_id,participant_id,scenario_id,start_key,initial_response,started_at,deadline,protocol)
+    values(${id},${workshop},${owner},${w.scenario_id},${key},${json(initial)}::text::jsonb,${now},${deadline},${protocol})`;
   await checkpoint(tx, id, sim.checkpoint());
   await score(tx, initial);
   await project(tx, workshop, owner, member.display_name);
-  return initial;
+  return protocol === 2 ? assignment(id, deadline, pinned) : initial;
+}
+function assignment(run_id: string, deadline: Date, pinned: LoadedScenario) {
+  return {
+    protocol: 2,
+    run_id,
+    deadline: deadline.toISOString(),
+    scenario: pinned.scenario,
+    catalogue: pinned.eventCatalogue,
+  };
 }
 export async function runAction(
   tx: Tx,
-  action: "status" | "decide" | "finish",
+  action: "status" | "decide" | "finish" | "batch",
   id: string,
   owner: string,
   raw: unknown,
@@ -148,6 +170,92 @@ export async function runAction(
     where r.id=${id} for update of r`
     )[0],
   );
+  if (action === "batch") {
+    if (row.protocol !== 2)
+      throw new HttpError(409, "This attempt uses the original protocol");
+    const { decisions } = rest.batch.request.parse(raw);
+    const first = decisions[0]!;
+    if (
+      first.sequence > row.next_sequence ||
+      decisions.some((d, i) => d.sequence !== first.sequence + i) ||
+      new Set(decisions.map((d) => d.idempotency_key)).size !== decisions.length
+    )
+      throw new HttpError(
+        409,
+        "Expected contiguous decisions with unique keys",
+      );
+
+    // Retry an acknowledged prefix after a lost response, even after expiry.
+    const receipts =
+      await tx`select sequence,idempotency_key,selected_task_id,response from embassy.decisions
+      where run_id=${id} and sequence between ${first.sequence} and ${decisions.at(-1)!.sequence} order by sequence`;
+    for (const [i, receipt] of receipts.entries()) {
+      const d = decisions[i]!;
+      if (
+        receipt.sequence !== d.sequence ||
+        receipt.idempotency_key !== d.idempotency_key ||
+        receipt.selected_task_id !== d.selected_task_id ||
+        receipt.response.tick !== d.tick
+      )
+        throw new HttpError(409, "Decision conflicts with accepted history");
+    }
+    const fresh = decisions.slice(receipts.length);
+    if (!fresh.length)
+      return {
+        run_id: id,
+        next_sequence: decisions.at(-1)!.sequence + 1,
+        score: receipts.at(-1)!.response.score,
+      };
+    if (fresh[0]!.sequence !== row.next_sequence || row.finished_at)
+      throw new HttpError(409, "Unexpected decision sequence");
+    if (row.exclusion || row.now > row.deadline)
+      throw new HttpError(
+        410,
+        "The official submission window has closed or the attempt was excluded",
+      );
+    if (!row.intact) throw new Error("Checkpoint integrity failure");
+    const { scenario, eventCatalogue } = await loadScenario(
+      tx,
+      row.scenario_id,
+    );
+    assertVersion(scenario);
+    const sim = Simulation.restore(scenario, row.state, eventCatalogue);
+    const records = fresh.map((d) => {
+      const before = sim.metrics;
+      if (sim.status !== "playing" || d.tick !== before.survival_ticks)
+        throw new HttpError(
+          409,
+          "Decision tick differs from authoritative replay",
+        );
+      let title = null;
+      if (d.selected_task_id !== null) {
+        const task = sim
+          .observe()
+          .available_tasks.find((t) => t.id === d.selected_task_id);
+        if (!task) throw new HttpError(422, "Unavailable task");
+        title = task.title;
+      }
+      sim.decide(d.selected_task_id);
+      return {
+        run_id: id,
+        sequence: d.sequence,
+        selected_task_id: d.selected_task_id,
+        idempotency_key: d.idempotency_key,
+        response: tx.json({ tick: d.tick, score: sim.metrics.score }),
+        completed_title:
+          sim.metrics.completed > before.completed ? title : null,
+      };
+    });
+    const next = decisions.at(-1)!.sequence + 1;
+    await tx`insert into embassy.decisions ${tx(records)}`;
+    await checkpoint(tx, id, sim.checkpoint());
+    await tx`update embassy.runs set next_sequence=${next},seen_at=clock_timestamp() where id=${id}`;
+    await score(tx, status(id, next, sim));
+    await project(tx, meta.workshop_id, owner, member.display_name);
+    return { run_id: id, next_sequence: next, score: sim.metrics.score };
+  }
+  if (action === "decide" && row.protocol !== 1)
+    throw new HttpError(409, "Submit ordered batches for this attempt");
   const decision = action === "decide" ? rest.decide.request.parse(raw) : null;
   const finish = action === "finish" ? rest.finish.request.parse(raw) : null;
   const input = decision ?? finish;

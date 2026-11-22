@@ -9,6 +9,7 @@ import {
   mockTransport,
   Official,
   remoteTransport,
+  savedWorkshops,
 } from "./official.mjs";
 
 const secret = randomBytes(24).toString("hex");
@@ -35,12 +36,11 @@ const leaderboard = process.env.EMBASSY_LEADERBOARD_URL
 let session = new Practice(42),
   bridge,
   busy = false,
-  serial = 0,
-  route = [];
+  serial = 0;
+const workshops = new Map();
 const frame = () => ({
   ...session.frame(),
   revision: serial,
-  route,
   floor,
   connected: Boolean(service),
 });
@@ -55,7 +55,6 @@ async function resetAgent() {
   bridge = await newWorker();
 }
 async function operation(path, body) {
-  route = [];
   if (path === "/practice") {
     const next = new Practice(body.seed ?? undefined, body.thresholds);
     await resetAgent();
@@ -92,22 +91,32 @@ async function operation(path, body) {
         !/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(workshop))
     )
       throw new Error("Supply an official API URL and a valid workshop ID.");
-    const store = mock
-      ? { load: async () => ({}), save: async () => {} }
-      : credentialStore(base, workshop);
-    const next = new Official(
-      mock ? mockTransport() : remoteTransport(base),
-      store,
-      workshop,
-      mock,
-      leaderboard ?? base + "/board/" + workshop,
-    );
-    await resetAgent();
-    await next.connect(
-      body.name || "Desk officer",
-      mock ? "rehearsal" : body.code || "",
-      player,
-    );
+    const key = base + "|" + workshop;
+    let next = workshops.get(key);
+    if (!next) {
+      next = new Official(
+        mock ? mockTransport() : remoteTransport(base),
+        mock
+          ? { load: async () => ({}), save: async () => {} }
+          : credentialStore(base, workshop),
+        workshop,
+        mock,
+        leaderboard ?? base + "/board/" + workshop,
+      );
+      await next.connect(
+        body.name || "Desk officer",
+        mock ? "rehearsal" : body.code || "",
+        player,
+      );
+      if (!mock) workshops.set(key, next);
+    } else if (
+      player &&
+      (player.participant_id !== next.data.participant_id ||
+        player.access_token !== next.data.access_token)
+    ) {
+      throw new Error("These credentials do not match the saved participant.");
+    }
+    if (next !== session) await resetAgent();
     session = next;
   } else if (path === "/attempt") {
     if (!(session instanceof Official))
@@ -117,8 +126,8 @@ async function operation(path, body) {
   } else if (path === "/step") {
     if (body.revision !== serial) return;
     if (!bridge) bridge = await newWorker();
-    if (["playing", "verifying"].includes(session.frame().status))
-      route = (await session.advance(bridge)).route ?? [];
+    if (session.frame().status === "playing" || session.dirty)
+      await session.advance(bridge);
   } else throw new Error("Unknown operation");
   serial++;
 }
@@ -178,6 +187,18 @@ server.on("error", (error) => {
   console.error(error.message + " • Try setting EMBASSY_PORT to a free port.");
   process.exitCode = 1;
 });
+for (const { base, workshop } of await savedWorkshops()) {
+  const recovered = new Official(
+    remoteTransport(base),
+    credentialStore(base, workshop),
+    workshop,
+    false,
+    leaderboard ?? base + "/board/" + workshop,
+  );
+  await recovered.connect();
+  workshops.set(base + "|" + workshop, recovered);
+  session = recovered;
+}
 server.listen(Number(process.env.EMBASSY_PORT ?? 4173), "127.0.0.1", () => {
   console.log(
     "Embassy Dispatch is ready. Open http://127.0.0.1:" +

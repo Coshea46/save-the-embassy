@@ -68,7 +68,7 @@ Every backend instance shares the same database, organiser configuration and eng
 
 ## Load and Realtime checks
 
-`npm run load:platform` starts an isolated PostgreSQL database, registers 150 distinct agents and submits paced decisions, duplicate POSTs and reconnect bursts. It prints latency percentiles, per-burst throughput, database counters and transaction counts. No cloud resources are needed.
+`npm run load:platform` starts an isolated PostgreSQL database, registers 200 distinct agents and verifies complete local-first runs, concurrent duplicate batches and reconnects. It prints latency percentiles, per-burst throughput, database counters and transaction counts. No cloud resources are needed.
 
 For the WebSocket measurement, start the local Supabase stack and Node API as above. Supply the same local environment and the organiser's cleartext password **only to the rehearsal process**, via a hidden prompt. The command creates a fresh workshop. Two real subscribers observe the round. One disconnects during the score burst and checks the snapshot on return.
 
@@ -82,4 +82,14 @@ unset TEST_ORGANISER_PASSWORD
 
 The test rejects remote target URLs. It asserts exactly one decision per entrant, exact retry responses, equal final standings and delivery of every scored update to the connected observer. Commit-to-delivery timing uses the database commit timestamp and a subscriber on the same machine. See [the integrated measurements and browser captures](INTEGRATION.md).
 
-For a six-minute simulated round at 4× using five scheduling policies across 200 clients, run `npm run build` followed by `node apps/api/test/full-round.mjs`. It checks every final score against a replay and reports request latency, decision latency including pacing, CPU and memory measurements. Pass `--wait-only` to exercise 200 agents that return a one-tick wait at every boundary, or `--mandatory-only` to exercise frequent waits through the full horizon.
+For a legacy protocol-1 comparison at 4× using five scheduling policies across 200 clients, run `npm run build` followed by `node apps/api/test/full-round.mjs`. It checks every final score against a replay and reports request latency, decision latency including pacing, CPU and memory measurements. Pass `--wait-only` to exercise 200 agents that return a one-tick wait at every boundary, or `--mandatory-only` to exercise frequent waits through the full horizon.
+
+
+## Local-first rollout
+
+1. Review the PR and the checks on its latest commit, including the Windows, macOS and Linux clean installations and the 200-player Supabase rehearsal. Use the rehearsal artifact for hosted-runner timings. Merge the reviewed branch into `main` and record the resulting SHA. Keep the Render service on manual deployment.
+2. Between workshops, record the currently deployed SHA, export current standings and confirm a recoverable database backup. From the repository root, change into `.embassy`. Run `supabase migration list --linked` and `supabase db push --dry-run` against the existing competition project. Confirm the only new migration is `20261122195900_local_competition.sql`. Apply it with `supabase db push` and verify the linked migration list. The change adds a small protocol column to runs with default 1. It preserves existing rows, grants and publication membership.
+3. In Render, open the existing `embassy-competition-31iy` service and manually deploy the recorded merge commit. Its existing Blueprint path, Docker context, CA certificate and environment variables already support this release. The previous API continues to work with the additive migration.
+4. Wait for `/health/ready` to return 200. Compare the pre-deployment standings export with the existing workshop. In a separate organiser-created smoke-test workshop, register, import credentials, pause connectivity after assignment, complete the run, reconnect and confirm the same score on a separate leaderboard browser. Check the private organiser view and an existing historical result.
+5. Distribute the updated launcher once the smoke test passes. Students use the same three-step README and launch command. Let active legacy attempts finish using their original launcher and deadlines.
+6. If rollback is necessary, pause new starts and redeploy the recorded prior Render commit. Keep the additive migration, data and participant journals. Legacy clients still work. Restore the v2 API before outstanding v2 deadlines to allow pending batches to finish. For an attempt that expired during an extended outage, the organiser can audit it and explicitly grant a replacement attempt under the workshop’s rules.

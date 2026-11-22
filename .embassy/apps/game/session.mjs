@@ -18,19 +18,38 @@ export const roomAt = (position) =>
 
 export class Practice {
   constructor(seed = randomInt(2 ** 32), thresholds = standardRules.urgency) {
-    this.seed = seed;
     const scenario = createScenario(seed, undefined, fullCatalogue, {
       ...standardRules,
       urgency: thresholds,
     });
-    this.sim = new Simulation(scenario, fullCatalogue);
+    this.initialise(scenario, fullCatalogue);
+  }
+  static assigned(scenario, catalogue, saved) {
+    const game = Object.create(Practice.prototype);
+    game.initialise(scenario, catalogue, saved);
+    return game;
+  }
+  initialise(scenario, catalogue, saved) {
+    this.seed = scenario.seed;
+    this.sim = saved
+      ? Simulation.restore(scenario, saved.checkpoint, catalogue)
+      : new Simulation(scenario, catalogue);
     this.events = new Map(scenario.events.map((e) => [e.id, e]));
     this.stages = scenario.rules.stages;
-    this.thresholds = thresholds;
-    this.log = [];
-    this.history = [];
-    this.active = null;
-    this.decisions = 0;
+    this.thresholds = scenario.rules.urgency;
+    this.log = saved?.log ?? [];
+    this.history = saved?.history ?? [];
+    this.active = saved?.active ?? null;
+    this.decisions = saved?.decisions ?? 0;
+  }
+  snapshot() {
+    return {
+      checkpoint: this.sim.checkpoint(),
+      log: this.log,
+      history: this.history,
+      active: this.active,
+      decisions: this.decisions,
+    };
   }
   frame() {
     const obs = this.sim.observe();
@@ -77,12 +96,13 @@ export class Practice {
       verified: false,
     };
   }
-  async advance(bridge) {
+  async advance(bridge, record) {
     const obs = this.sim.observe();
     if (!this.sim.busy) {
       const id = await bridge.choose(obs);
       this.sim.select(id);
       this.active = obs.available_tasks.find((t) => t.id === id) ?? null;
+      record?.(this.decisions, obs.simulation_time, id);
       this.decisions++;
       this.log.unshift({
         tick: obs.simulation_time,

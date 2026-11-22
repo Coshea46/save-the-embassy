@@ -106,7 +106,7 @@ export function createApp(db: DB, config: Settings) {
   );
   app.get(
     ["/", "/organiser", "/join", "/board/:id", "/projector/:id"],
-    (_req, res) => res.sendFile(staticDir + "index.html"),
+    (_req, res) => res.sendFile("index.html", { root: staticDir }),
   );
   app.use(
     "/assets",
@@ -125,9 +125,8 @@ export function createApp(db: DB, config: Settings) {
   app.use(async (req, _res, next) => {
     // A shared venue IP can carry 200 players. Budget one pacing retry per
     // simulated tick for run traffic, including clients without wait hints.
-    const runTraffic = /^\/runs\/[^/]+(?:\/(?:decisions|finish))?\/?$/.test(
-      req.path,
-    );
+    const runTraffic =
+      /^\/(?:v2\/)?runs\/[^/]+(?:\/(?:decisions|finish))?\/?$/.test(req.path);
     await limit(
       db,
       (runTraffic ? "runs-ip:" : "ip:") + req.ip,
@@ -147,14 +146,12 @@ export function createApp(db: DB, config: Settings) {
       await tx`insert into embassy.participants values(${id},${display})`;
       await tx`insert into embassy.sessions(token_hash,participant_id) values(${hash(credential)},${id})`;
     });
-    res
-      .status(201)
-      .json(
-        rest.register.response.parse({
-          participant_id: id,
-          access_token: credential,
-        }),
-      );
+    res.status(201).json(
+      rest.register.response.parse({
+        participant_id: id,
+        access_token: credential,
+      }),
+    );
   });
   app.post("/workshops/resolve", async (req, res) => {
     await limit(db, "resolve:" + req.ip, 1000, 600);
@@ -194,14 +191,20 @@ export function createApp(db: DB, config: Settings) {
       }),
     );
   });
-  app.post("/workshops/:id/runs", async (req, res) => {
-    const owner = await participant(db, req),
-      id = uuid.parse(req.params.id);
-    res.set("Embassy-Tick-Ms", String(OFFICIAL_TICK_MS));
-    res.json(
-      await db.begin((tx) => start(tx, id, owner, req.body, loadScenario)),
-    );
-  });
+  app.post(
+    ["/workshops/:id/runs", "/v2/workshops/:id/runs"],
+    async (req, res) => {
+      const owner = await participant(db, req),
+        id = uuid.parse(req.params.id);
+      const protocol = req.path.startsWith("/v2/") ? 2 : 1;
+      if (protocol === 1) res.set("Embassy-Tick-Ms", String(OFFICIAL_TICK_MS));
+      res.json(
+        await db.begin((tx) =>
+          start(tx, id, owner, req.body, loadScenario, protocol),
+        ),
+      );
+    },
+  );
   app.get("/workshops/:id/me", async (req, res) => {
     const owner = await participant(db, req),
       id = uuid.parse(req.params.id);
@@ -210,6 +213,7 @@ export function createApp(db: DB, config: Settings) {
     );
   });
   for (const [method, path, action] of [
+    ["post", "/v2/runs/:id/decisions", "batch"],
     ["get", "/runs/:id", "status"],
     ["post", "/runs/:id/decisions", "decide"],
     ["post", "/runs/:id/finish", "finish"],
@@ -217,7 +221,8 @@ export function createApp(db: DB, config: Settings) {
     app[method](path, async (req, res) => {
       const id = uuid.parse(req.params.id),
         owner = await participant(db, req);
-      res.set("Embassy-Tick-Ms", String(OFFICIAL_TICK_MS));
+      if (action === "decide")
+        res.set("Embassy-Tick-Ms", String(OFFICIAL_TICK_MS));
       if (action === "status") rest.status.request.parse(req.query);
       res.json(
         await db.begin((tx) =>

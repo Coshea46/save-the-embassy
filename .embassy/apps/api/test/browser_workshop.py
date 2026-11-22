@@ -1,6 +1,7 @@
 """Exercise a full wall-clock shift on the disposable local Supabase stack."""
 import json
 import os
+import time
 from pathlib import Path
 from uuid import uuid4
 
@@ -56,8 +57,9 @@ def rehearse(browser, screenshots):
     game.locator("#credentials").fill(credentials)
     game.get_by_role("button", name="Join or resume").click()
     expect(game.locator("#modeTag")).to_have_text("Official shift")
-    expect(game.locator("#fixedSpeed")).to_have_text("4× official")
-    expect(game.locator("#speed")).to_be_hidden()
+    expect(game.locator("#speed")).to_have_value("8")
+    seed = game.evaluate("""async () => (await (await fetch('/state', {headers: {
+        'X-Embassy-Launch': document.querySelector('meta[name=launch]').content}})).json()).seed""")
 
     # The public observer has no participant or organiser session.
     public = browser.new_context(viewport={"width": 1440, "height": 950})
@@ -77,6 +79,7 @@ def rehearse(browser, screenshots):
     board.goto(API + "/board/" + workshop)
     expect(board.locator("#ranks")).to_contain_text("Aurora")
     expect(board.locator("#sync")).to_contain_text("Live", timeout=60000)
+    official_start = time.monotonic()
     game.locator("#play").click()
     organiser.locator("#round").click()
     expect(organiser.locator("#round")).to_be_disabled()
@@ -93,7 +96,9 @@ def rehearse(browser, screenshots):
     expect(organiser.locator(".scroll table")).to_contain_text("Aurora")
     organiser.screenshot(path=screenshots / "organiser.jpg", quality=82)
 
-    expect(game.locator("#network")).to_contain_text("Score verified", timeout=430000)
+    expect(game.locator("#terminal")).to_be_visible(timeout=120000)
+    official_duration = time.monotonic() - official_start
+    expect(game.locator("#network")).to_contain_text("Score verified", timeout=90000)
     score = int(game.locator("#score").inner_text())
     result = board.request.get(API + "/workshops/" + workshop + "/display").json()
     entry = result["entries"][0]
@@ -113,17 +118,24 @@ def rehearse(browser, screenshots):
     expect(practice.locator("#modeTag")).to_have_text("Practice shift")
     expect(practice.locator("#map")).to_be_visible()
     expect(practice.locator("#mini")).to_be_visible()
+    practice.locator("#settings").click()
+    practice.locator("#seed").fill(str(seed))
+    practice.get_by_role("button", name="Start fresh shift").click()
+    expect(practice.locator("#seedTag")).to_have_text("Seed " + str(seed))
     practice.locator("#speed").select_option("8")
+    practice_start = time.monotonic()
     practice.locator("#play").click()
     expect(practice.locator("#journal")).to_contain_text("Selected")
     expect(practice.locator("#terminal")).to_be_visible(timeout=120000)
+    practice_duration = time.monotonic() - practice_start
+    assert int(practice.locator("#score").inner_text()) == score
     practice.locator("#journalMode").select_option("History")
     expect(practice.locator("#journal")).to_contain_text("Expired")
     practice.screenshot(path=screenshots / "practice-end.jpg", quality=82)
     practice.locator("#again").click()
     expect(practice.locator("#clock")).to_have_text("00:00")
     assert not errors, errors
-    print(json.dumps(entry))
+    print(json.dumps(dict(entry, practice_seconds=practice_duration, official_seconds=official_duration)))
 
 
 if __name__ == "__main__":
