@@ -1,78 +1,51 @@
 # Save the Finnish Embassy
 
-**Your mission: Open [agent.py](agent.py) and build the best task-selection algorithm you can.**
+Your officer has six simulated minutes to keep the embassy open. Try the starter strategy, improve it with Codex and enter it in the workshop competition.
 
-Give a Python agent six simulated minutes to keep a fictional Finnish embassy open. It can rescue the coffee service, investigate a wandering paperweight, or cross the entire building for a report that expires on arrival. Every walk and every second of work counts. A missed mandatory report closes the shift.
+## 1. Get the game running
 
-When your officer is free, the game calls `choose_next_task(observation)`. You can see the officer’s position and every available task’s priority, reward, deadline, travel time and work duration. Return a task’s `id` to take it, or `None` to wait one tick. The starter picks the highest priority.
+**Install the tools.** Open the instructions for your laptop. A terminal is a window where you paste commands and press **Enter** to run them. Wait for each block to finish.
 
-For workshop strategy changes, edit only `agent.py`. Keep scoring, competition rules, the simulator and the leaderboard intact.
+<details>
+<summary>Windows 10 or 11</summary>
 
-Already set up? Run `npm --prefix .embassy start` and select **Run agent** at the printed address. After you edit and save **agent.py**, select **Restart → Run agent** to try your change on the same seed.
-
-![The running game with a pixel-art floor, report radar, Python decision journal and score](.embassy/apps/game/qa/practice.jpg)
-
-## Get ready for the workshop
-
-You'll need Git to download your fork, Node.js and npm to launch the game, Python 3.11 or newer to run your agent, and VS Code for editing it. The first install needs internet. Practice runs locally with the Python standard library.
-
-### Windows 10 or 11
-
-Open **PowerShell** from Start. Run these lines individually. If Windows cannot find `winget`, install or update **App Installer** from the Microsoft Store and reopen PowerShell.
+Open **Start**, type **PowerShell** and open **Windows PowerShell**. Paste these commands. Approve the installation prompts. If `winget` is missing, update **App Installer** in the Microsoft Store and reopen PowerShell.
 
 ```powershell
-winget install -e --id Git.Git
-winget install -e --id Python.Python.3.12
-winget install -e --id OpenJS.NodeJS.LTS
-winget install -e --id Microsoft.VisualStudioCode
+winget install --id Git.Git -e --source winget
+winget install --id Python.Python.3.12 -e --source winget
+winget install --id OpenJS.NodeJS.LTS -e --source winget
+winget install --id Microsoft.VisualStudioCode -e --source winget
 ```
 
-Close PowerShell, open a new window and check:
+Once all four finish, close PowerShell. If VS Code was already open, quit it too.
 
-```powershell
-git --version
-python --version
-node --version
-npm.cmd --version
-code --version
-```
+</details>
 
-Use `npm.cmd` anywhere this guide says `npm` if PowerShell blocks npm.ps1. You can run the entire workshop in native Windows.
+<details>
+<summary>macOS</summary>
 
-### macOS, Apple Silicon or Intel
-
-Open **Terminal**. If you already have Homebrew, skip its installer. Otherwise run:
+Press **Command + Space**, type **Terminal** and press **Return**. If you already use Homebrew, skip the first block. Otherwise install it below. Enter your Mac password if asked (typing stays invisible), then run the commands printed under **Next steps**.
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Run the line for your Mac. **Apple menu → About This Mac** shows either an Apple chip or an Intel processor.
-
-| Mac | Terminal command |
-| --- | --- |
-| Apple Silicon | `eval "$(/opt/homebrew/bin/brew shellenv)"` |
-| Intel | `eval "$(/usr/local/bin/brew shellenv)"` |
-
-Follow the installer's **Next steps** to keep Homebrew available in new terminals. Then run:
+In the same Terminal, install the workshop tools. If VS Code was already open, quit it when the commands finish.
 
 ```sh
-brew install git python node@24
-brew install --cask visual-studio-code
-echo 'export PATH="$(brew --prefix node@24)/bin:$PATH"' >> ~/.zprofile
-export PATH="$(brew --prefix node@24)/bin:$PATH"
-git --version
-python3 --version
-node --version
-npm --version
-code --version
+brew install git python node
+test -d "/Applications/Visual Studio Code.app" || brew install --cask visual-studio-code
 ```
 
-If `code` is missing, open VS Code from Applications, press **Cmd+Shift+P**, run **Shell Command: Install 'code' command in PATH**, then open a new Terminal.
+</details>
 
-### Ubuntu or Debian
+<details>
+<summary>Linux · Ubuntu, Debian or Fedora</summary>
 
-Open **Terminal**. These commands select the VS Code package for your processor.
+Open **Terminal** from your apps. Run the block for your distribution, then the shared Node.js block below. Enter your laptop password when asked.
+
+**Ubuntu 24.04 or newer / Debian 12 or newer**
 
 ```sh
 sudo apt update
@@ -81,11 +54,7 @@ curl -fL "https://update.code.visualstudio.com/latest/linux-deb-$(dpkg --print-a
 sudo apt install -y /tmp/embassy-code.deb
 ```
 
-Continue with **Node.js on Linux** below.
-
-### Fedora
-
-Open **Terminal** and run:
+**Fedora**
 
 ```sh
 sudo dnf install -y git python3
@@ -95,9 +64,7 @@ curl -fL "https://update.code.visualstudio.com/latest/linux-rpm-${code_arch}/sta
 sudo dnf install -y /tmp/embassy-code.rpm
 ```
 
-### Node.js on Linux
-
-For both Linux families, install the workshop version in your own account and check your tools:
+**All three distributions** · Install Node.js in the same terminal.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.7/install.sh | bash
@@ -105,69 +72,78 @@ export NVM_DIR="$HOME/.nvm"
 . "$NVM_DIR/nvm.sh"
 nvm install 24
 nvm alias default 24
-git --version
-python3 --version
-node --version
-npm --version
-code --version
 ```
 
-If your distribution ships Python below 3.11, install a separate interpreter with [uv](https://docs.astral.sh/uv/getting-started/installation/) and select it for the workshop:
+If VS Code was already open, quit it before continuing.
+
+</details>
+
+**In your browser, make your own copy (a fork).**
+
+1. Sign in to GitHub and open [Save the Embassy](https://github.com/Coshea46/save-the-embassy).
+2. Click **Fork** at the top right. Under **Owner**, select your GitHub account. Keep the name `save-the-embassy` and click **Create fork**.
+3. Your username should now appear above the files. Click the green **Code** button, choose **HTTPS** and click the copy icon beside the address.
+
+**In VS Code, download your fork and install Codex.**
+
+1. Open **Visual Studio Code** from your apps. Press **F1**, type `Git: Clone` and select it. Paste the address you copied and press **Enter**.
+2. Choose a folder such as **Documents**. When the download finishes, click **Open**. If asked whether you trust your fork, select **Yes, I trust the authors**. You should see `agent.py` in the left-hand file list.
+3. Click **Extensions** in the left sidebar. Search for `@id:openai.chatgpt`, select **Codex** by **OpenAI** and click **Install**. Open **Codex** in the sidebar and select **Sign in with ChatGPT**.
+
+**In VS Code, start the game.** Choose **Terminal → New Terminal**. Paste the block for your laptop. The first line installs the game's dependencies and the second starts the game.
+
+<details>
+<summary>Windows · PowerShell</summary>
+
+```powershell
+npm.cmd --prefix .embassy ci
+npm.cmd --prefix .embassy start
+```
+
+</details>
+
+<details>
+<summary>macOS or Linux · Terminal</summary>
 
 ```sh
-curl -LsSf https://astral.sh/uv/install.sh | sh
-"$HOME/.local/bin/uv" python install 3.12
-export EMBASSY_PYTHON="$("$HOME/.local/bin/uv" python find 3.12)"
+npm --prefix .embassy ci
+npm --prefix .embassy start
 ```
 
-## Fork, open and play
+</details>
 
-1. Sign in to GitHub. Open [Coshea46/save-the-embassy](https://github.com/Coshea46/save-the-embassy), choose **Fork → Create fork**, then open **Code → HTTPS** on your fork and copy the URL.
-2. In PowerShell or Terminal, type `git clone`, add a space, paste that URL, and press Enter. Then run:
+**In your browser, play a practice shift.** When the terminal says **Embassy Dispatch is ready**, leave it open. On the same laptop, open [http://127.0.0.1:4173](http://127.0.0.1:4173) and click **Run agent**. When the shift clock moves and the officer picks a task, setup is complete. Note your score when the shift ends.
 
-   ```sh
-   cd save-the-embassy
-   code --install-extension openai.chatgpt
-   code --list-extensions
-   code .
-   ```
+![Practice shift showing the officer on the embassy floor, the shift clock and the score](.embassy/apps/game/qa/practice.jpg)
 
-3. In VS Code, open **Codex** in the sidebar and choose **Sign in with ChatGPT**. Check that the installed extension is **Codex** from **OpenAI**. Open [agent.py](agent.py) in the top level of the Explorer. Try asking Codex “Edit only agent.py. Help my officer reach mandatory reports before their deadlines and compare the score on the same seeds.” Review the change and save the file.
-4. In VS Code choose **Terminal → New Terminal**. From the folder containing `agent.py`, run:
+## 2. Build your agent
 
-   ```sh
-   npm --prefix .embassy ci
-   npm --prefix .embassy start
-   ```
+In VS Code, open [agent.py](agent.py) at the top of the file list. It's the only file you need to change. You can describe your strategy to Codex in plain English, without writing Python yourself.
 
-5. Open **http://127.0.0.1:4173** in your browser, or the address printed by the launcher. Select **Run agent**. Click a document on the floor, radar or queue to inspect its deadline and travel cost. Select **Follow agent** for a closer view.
-6. To try another strategy, edit [agent.py](agent.py), save it, then click **Restart → Run agent**. Restart creates a fresh Python process and reuses the seed. **Shift settings** accepts a chosen seed or a blank field for a random one.
-7. Use **Shift journal → History** to see what completed or expired. Compare the score and survival clock on the same seed. The [workshop guide](.embassy/docs/WORKSHOP.md) includes prompts and a faster multi-seed experiment.
-8. To enter an official round, open the organiser’s invitation, register your player name, then select **Copy game credentials**. In the local game choose **Competition → Joined on the website**, paste and select **Join or resume → Run agent**. Follow [Join an official shift](.embassy/docs/WORKSHOP.md#join-an-official-shift). **Competition → Local rehearsal** exercises this flow offline and earns an unranked score.
+The starter already picks the highest-priority task. Its `choose_next_task` function receives the available tasks, including their priorities, deadlines, rewards and travel distances. It returns the ID of the task the officer should tackle next.
 
-Stop the launcher with **Ctrl+C** in the terminal. Return to this folder and run **npm --prefix .embassy start** next time.
+**Paste this into Codex:**
 
-## Benchmark your agent
+> Improve my agent so it considers task deadlines, rewards and travel distances. Only modify agent.py.
 
-In a second terminal, run the same seeds before and after each edit.
+Review the change and save `agent.py` (**Ctrl+S** or **Command+S** on Mac). Back in the game, click **Restart → Run agent**. You’ll get the same practice shift, so you can compare your new score with the starter’s.
 
-```sh
-npm --prefix .embassy run agent:benchmark -- 1,7,42,2026
-```
+## 3. Join the leaderboard
 
-## Troubleshooting
+Only official competition attempts count. Local practice runs do not appear on the leaderboard. You can register early. Wait for the organiser to open the competition before selecting **Join or resume**.
 
-| What you see | What to do |
-| --- | --- |
-| `package.json` missing or `Missing script: start` | Open the cloned repository folder in VS Code. Check that it contains `agent.py` and use the commands under **Fork, open and play**. |
-| `node`, `git`, `code` or `python` is unrecognised | Reopen VS Code and its terminal after installation. Run the version checks for your OS. On Linux/macOS use `python3`. |
-| Python opens the Microsoft Store | Run `py -3.12 --version`, then `$env:EMBASSY_PYTHON = (py -3.12 -c "import sys; print(sys.executable)")` in the same terminal before launch. |
-| Syntax error, missing module or agent timeout | The shift pauses. Read the error and the launcher terminal, correct the file, and choose **Reload agent → Resume**. Reload resets your agent’s memory. For a comparable practice run, choose **Restart**. |
-| Third-party Python dependency missing | Ordinary play needs none. If you deliberately added one, install it into the same interpreter named by `npm --prefix .embassy run doctor`. |
-| Port already in use | Stop the other launcher, or set `$env:EMBASSY_PORT="4174"` in PowerShell or `export EMBASSY_PORT=4174` on macOS/Linux, then relaunch and open the printed URL. |
-| Browser refuses a launch request | Open the exact printed `127.0.0.1` address. Reload the tab after restarting Node. |
-| Official workshop is greyed out | Choose **Joined on the website** and paste the credentials from your invitation. The **Official workshop** option also works when the launcher has the organiser’s API URL. |
+1. Open the organiser’s invitation link from WhatsApp or the presentation screen on the laptop running the game.
+2. Enter your **Player name**.
+3. Select **Join competition**.
+4. Select **Copy game credentials**. Keep these private.
+5. Return to the local game at [http://127.0.0.1:4173](http://127.0.0.1:4173).
+6. Open **Competition**. Under **Connection**, choose **Joined on the website**.
+7. Paste into **Game credentials**.
+8. Select **Join or resume**, then **Run agent**.
+9. When the game shows **Score verified**, select **Central leaderboard** to see your verified score beside your player name.
 
-[Integration results and screenshots](.embassy/docs/INTEGRATION.md) · [Organiser deployment and environment variables](.embassy/docs/PLATFORM.md) · [Simulation rules](.embassy/docs/SIMULATION.md) · [Architecture](.embassy/docs/ARCHITECTURE.md) · [REST contracts](.embassy/docs/API.md) · [Catalogue audit](.embassy/apps/game/qa/catalogue-audit.json) · [MIT licence](.embassy/LICENSE)
+If the organiser allows another attempt, save your improved `agent.py`. On the finished official shift, select **Start another official attempt → Run agent**. The leaderboard keeps your best eligible score.
 
-Installation references: [VS Code for Linux](https://code.visualstudio.com/docs/setup/linux), [Homebrew](https://brew.sh), [Node.js](https://nodejs.org/en/download), [WinGet](https://learn.microsoft.com/windows/package-manager/winget/install), [Codex extension](https://marketplace.visualstudio.com/items?itemName=openai.chatgpt).
+---
+
+**Further help** · [Setup troubleshooting](.embassy/docs/WORKSHOP.md#setup-troubleshooting) · [Strategy ideas](.embassy/docs/WORKSHOP.md#make-one-decision) · [Benchmark your agent](.embassy/docs/WORKSHOP.md#benchmark-your-agent) · [Optional Decisions API](.embassy/docs/WORKSHOP.md#optional-openai-decisions-strategy) · [Developer guide](.embassy/docs/ARCHITECTURE.md) · [Organiser guide](.embassy/docs/PLATFORM.md)

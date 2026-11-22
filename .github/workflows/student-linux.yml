@@ -1,9 +1,9 @@
-name: Clean Linux student setup
+name: Student setup
 on: pull_request
 permissions:
   contents: read
 jobs:
-  setup:
+  linux:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -32,3 +32,49 @@ jobs:
             chown -R student:student /home/student/game
             sudo -HEu student env SECTION="$SECTION" bash -ec "cd /home/student/game && python3 .embassy/tools/student-setup.py"
           '
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2025, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      NONINTERACTIVE: "1"
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+    steps:
+      - uses: actions/checkout@v6
+      - name: Make WinGet available on Windows Server
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+            Install-Module Microsoft.WinGet.Client -Force -Repository PSGallery
+            Repair-WinGetPackageManager -Latest
+          }
+      - name: Run the native installer commands from the README
+        run: python .embassy/tools/student-setup.py
+      - name: Check the Windows installation and Codex extension
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User') + ';' + $env:Path
+          git --version
+          python --version
+          node --version
+          npm.cmd --version
+          code --install-extension openai.chatgpt
+          if (-not ((code --list-extensions) -contains 'openai.chatgpt')) { throw 'Codex was not installed' }
+          npm.cmd --prefix .embassy ci
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          npm.cmd --prefix .embassy run doctor
+      - name: Check the Mac installation and Codex extension
+        if: runner.os == 'macOS'
+        run: |
+          git --version
+          python3 --version
+          node --version
+          npm --version
+          "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" --install-extension openai.chatgpt
+          "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" --list-extensions | grep -Fx openai.chatgpt
+          npm --prefix .embassy ci
+          npm --prefix .embassy run doctor

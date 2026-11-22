@@ -33,7 +33,11 @@ Start each prompt with **“Change only the root agent.py file.”**
 | Hybrid | “Implement a deterministic rule for obvious mandatory jobs. Call the optional Decisions policy only when two feasible alternatives are close.” |
 | Benchmark | “Run npm --prefix .embassy run agent:benchmark -- 1,7,42,2026 on my current agent, try one change, compare identical seeds, then check fresh seeds 11,39,123.” |
 
-Save the file. Click **Restart → Run agent**. Switch the journal to **History** for the reward or expiry of each report. The multi-seed command starts a new Python process per run. In a second VS Code terminal:
+Save the file. Click **Restart → Run agent**. Switch the journal to **History** for the reward or expiry of each report.
+
+## Benchmark your agent
+
+The multi-seed command starts a new Python process per run. In a second VS Code terminal, run the commands below. In Windows PowerShell use `npm.cmd` in place of `npm`.
 
 ```sh
 npm --prefix .embassy run agent:benchmark -- 1,7,42,2026
@@ -107,6 +111,29 @@ npm --prefix .embassy start
 ```
 
 Close that terminal to end the opt-in session. To exercise only the fallback, set `EMBASSY_DECISIONS=1` in a terminal without a key. [Official Decisions reference](https://developers.openai.com/api/reference/resources/decisions/methods/create) · [API and ChatGPT billing](https://help.openai.com/en/articles/9039756-billing-settings-in-chatgpt-vs-platform)
+
+## Setup troubleshooting
+
+| What you see | What to do |
+| --- | --- |
+| `package.json` missing or `Missing script: start` | Open the cloned repository folder in VS Code. Check that it contains `agent.py` and use the commands under [Get the game running](../../README.md#1-get-the-game-running). |
+| `node`, `git`, `code` or `python` is unrecognised | Reopen VS Code and its terminal after installation. Check `git --version`, `node --version` (22.13 or newer) and `python --version` (3.11 or newer). On Linux/macOS use `python3 --version`. |
+| Python opens the Microsoft Store | Run `py -3.12 --version`, then `$env:EMBASSY_PYTHON = (py -3.12 -c "import sys; print(sys.executable)")` in the same terminal before launch. |
+| Syntax error, missing module or agent timeout | The shift pauses. Read the error and the launcher terminal, correct the file, and choose **Reload agent → Resume**. Reload resets your agent’s memory. For a comparable practice run, choose **Restart**. |
+| Third-party Python dependency missing | Ordinary play needs none. If you deliberately added one, install it into the same interpreter named by `npm --prefix .embassy run doctor`. |
+| Port already in use | Stop the other launcher, or set `$env:EMBASSY_PORT="4174"` in PowerShell or `export EMBASSY_PORT=4174` on macOS/Linux, then relaunch and open the printed URL. |
+| Browser refuses a launch request | Open the exact printed `127.0.0.1` address. Reload the tab after restarting Node. |
+| Official workshop is greyed out | Choose **Joined on the website** and paste the credentials from your invitation. The **Official workshop** option also works when the launcher has the organiser’s API URL. |
+
+If an older Linux distribution provides Python below 3.11, install Python 3.12 in your account. Open the VS Code terminal in your fork and run:
+
+```sh
+curl -LsSf https://astral.sh/uv/install.sh | sh
+"$HOME/.local/bin/uv" python install 3.12
+export EMBASSY_PYTHON="$("$HOME/.local/bin/uv" python find 3.12)"
+```
+
+Then run the launcher in that same terminal.
 
 ## Reproduce the checks
 
