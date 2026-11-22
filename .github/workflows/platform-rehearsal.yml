@@ -30,7 +30,13 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install playwright==1.62.0
       - name: Build deployment image
-        run: docker build -f deploy/Dockerfile.platform -t embassy-platform:test .
+        working-directory: .
+        run: |
+          ruby -ryaml -e '
+            service = YAML.load_file(".embassy/deploy/render.yaml").fetch("services").fetch(0)
+            exec "docker", "build", "-f", service.fetch("dockerfilePath"),
+                 "-t", "embassy-platform:test", service.fetch("dockerContext")
+          '
       - name: Start disposable Supabase
         run: supabase start -x studio,logflare,vector,supavisor,edge-runtime,mailpit,postgres-meta,imgproxy
       - name: Exercise committed score updates and recovery
