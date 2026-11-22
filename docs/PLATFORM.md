@@ -38,7 +38,7 @@ Put the output in `ORGANISER_PASSWORD_HASH`. Start the service with `node --env-
 | Variable | Value |
 | --- | --- |
 | DATABASE_URL | Server-only application login. Use the session or transaction pooler for IPv4-only hosts. The driver disables prepared statements. |
-| DATABASE_CA_FILE | Optional path to the Supabase CA PEM. Remote connections verify TLS certificates. |
+| DATABASE_CA_FILE | Path to the Supabase CA PEM when required by the database endpoint. For a Supabase pooler using the 2021 root, set this to `/app/certs/supabase-prod-ca-2021.crt` in the platform Docker image. Remote connections verify TLS certificates. |
 | PUBLIC_ORIGIN | Exact external HTTPS origin, or loopback HTTP in development. |
 | SUPABASE_URL | Supabase project API origin. |
 | SUPABASE_PUBLISHABLE_KEY | Publishable key or legacy anon JWT. This is the only Supabase key sent to browsers. |
